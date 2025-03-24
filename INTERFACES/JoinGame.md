@@ -1,4 +1,5 @@
 Join Game Interface Description
+
 Primary Interface: The primary interface is between Join Game and Page Mgr. The Join Game html component will display all players that are waiting to play a game and possibly other options including available games and options to play against a bot. It will also accept user input to select or join games.
 
 Recommended Change to Block Diagram: The current block diagram shows a unidirectional connection from Join Game to Page Mgr. This should be a bidirectional connection as Page Mgr must send the Join Game component updated information about available players/games to play. 
