@@ -21,8 +21,8 @@ Data Exchange:
     - Status updates on player and game availability
 
 Direct Interface Functions:
-    - Send data from Join Game to Page Mgr
-    - Received data from Page Mgr to Join Game.
+-   Send data from Join Game to Page Mgr
+-   Received data from Page Mgr to Join Game.
 
 Communication Mechanisms: The system is event-driven and will use web sockets.
 
