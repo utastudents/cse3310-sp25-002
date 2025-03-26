@@ -15,6 +15,12 @@ BotII will primarily interface with the game manager through these 2 function ca
     - The LinkedList will contain the moves that BotII has decided to make based on the game state it received.
     - The moves will be represented as a list of objects, each containing the necessary information to execute the move in the game.
 
+3. Description of objects:
+
+    - Game: This object will represent the current state of the gameand any other relevant data.
+    - Move: This object will represent a single move that BotII wants to make.
+    - LinkedList: This object will be used to store the list of moves that BotII wants to make. It will allow for easy addition and removal of moves, as well as iteration through the list of moves.
+
 Notes: 
 - This interface is designed to be simple and efficient, allowing BotII to receive the game state and send its move(s) in a single function call. 
 - The game manager will handle the details of updating the game state (checking with game play) and notifying the other players.
