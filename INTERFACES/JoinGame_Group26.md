@@ -1,4 +1,4 @@
-#<u>**Join Game Interface Description**</u>
+# <u>**Join Game Interface Description**</u>
 
 Primary Interface: The primary interface is between Join Game and Page Mgr. The Join Game html component will display all players that are waiting to play a game and possibly other options including available games and options to play against a bot. It will also accept user input to select or join games.
 
