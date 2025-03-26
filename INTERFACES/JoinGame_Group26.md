@@ -1,4 +1,4 @@
-<u>**Join Game Interface Description**</u>
+#<u>**Join Game Interface Description**</u>
 
 Primary Interface: The primary interface is between Join Game and Page Mgr. The Join Game html component will display all players that are waiting to play a game and possibly other options including available games and options to play against a bot. It will also accept user input to select or join games.
 
@@ -20,9 +20,14 @@ Data Exchange:
 
     - Status updates on player and game availability
 
+Direct Interface Functions:
+    - Send data from Join Game to Page Mgr
+    - Received data from Page Mgr to Join Game.
+
 Communication Mechanisms: The system is event-driven and will use web sockets.
 
 Notes:
 -	Further details regarding specific elements, form structure, and exact data fields will be determined during the design phase.
+-   Function types and parameters will also be specified during the design phase.
 -	Additional interfaces may be implemented such as an intermediary interface between four html components to facilitate real-time communication between these html components. However, this can be handled through Page Mgr and is likely not needed. Any other possible interfaces are also not needed and would add unnecessary complexity.
 
