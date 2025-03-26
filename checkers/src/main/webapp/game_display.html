@@ -1,7 +1,380 @@
-<div class="game_display_body">
-game display
+<!-- style -->
+<style type="text/css">
+    .game_display_body {
+        background: #f8f8f8;
+        padding: 20px;
+        font-family: Arial, sans-serif;
+    }
 
+    #container {
+        width: 336px;
+        margin: 10px auto;
+    }
+
+    #game {
+        display: inline-block;
+        border: 4px solid #333;
+        background: #333;
+        margin: 0 auto;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        width: 328px;
+        height: 328px;
+        padding: 0;
+        box-sizing: content-box;
+    }
+
+    .row {
+        display: flex;
+        height: 41px;
+    }
+
+    .square {
+        border: 1px solid #333;
+        width: 41px;
+        height: 41px;
+        position: relative;
+        cursor: pointer;
+        box-sizing: border-box;
+    }
+
+    .square.odd {
+        background: #EEE;
+    }
+
+    .square:not(.odd) {
+        background: #866442;
+    }
+    .square.shown-step {
+        background: rgb(209, 150, 111);
+    }
+
+    .piece {
+        border-radius: 50%;
+        position: relative;
+        width: 30px;
+        height: 30px;
+        border: 2px solid #333;
+        top: 3px;
+        left: 3px;
+        display: inline-block;
+        cursor: pointer;
+        background-image: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 10%, transparent 60%);
+    }
+
+    .K {
+        display: none;
+        font-family: sans-serif;
+        font-weight: bold;
+        font-size: 24px;
+        text-align: center;
+        position: absolute;
+        width: 100%;
+    }
+
+    .square[data-piece="."] .piece {
+        display: none;
+    }
+
+    .square[data-piece=b] .piece {
+        background-color: #222;
+        box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+    }
+
+    .square[data-piece=B] .piece {
+        background-color: #222;
+        box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+    }
+
+    .square[data-piece=w] .piece {
+        background-color: #eee;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+    }
+
+    .square[data-piece=W] .piece {
+        background-color: #eee;
+        box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+    }
+
+    .square.show-hint {
+        background: rgba(190, 228, 229, 0.5);
+    }
+
+    .controls {
+        margin-top: 15px;
+        text-align: center;
+    }
+
+    .turn-indicator {
+        text-align: center;
+        font-size: 16px;
+        margin-top: 10px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .button {
+        padding: 8px 16px;
+        font-size: 14px;
+        border: none;
+        cursor: pointer;
+        margin: 5px;
+        border-radius: 20px;
+        font-weight: bold;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        transition: all 0.2s ease;
+    }
+
+    .button.resign {
+        background-color: #ff4f4f;
+        color: white;
+    }
+
+    .button.draw {
+        background-color: #ffcb45;
+        color: #333;
+    }
+
+    .button:active {
+        transform: translateY(1px);
+    }
+
+</style>
+
+<!-- Main html body for game display -->
+<div id="game_display">
+    game display
+    <div class="game_display_body">
+        <div id="container">
+            <div id="game"></div>
+
+            <!-- Current player and controls -->
+            <div class="turn-indicator">
+                <!-- TODO: New Account / Login Team responsible for displatying the current player. This information will be received via websockets -->
+                <p id="current-player">Current Player: Player 1</p>
+            </div>
+            <div class="controls">
+                <!-- TODO: Page Manager Team responsible to handling the sequencing between pages. The button press events will be sent to java via websockets -->
+                <button id="resign_buttom" class="button resign">Resign</button>
+                <button id="draw_button" class="button draw">Offer Draw</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+
+
 <script>
+    // TODO: The game manager team is responsible for providing us with the game_id. This unique id will be used to send information to the java webseckt server
+    var game_id = null;
+    var connection = null;
+
+
+
+    var serverUrl;
+    serverUrl = "ws://" + window.location.hostname + ":" + (parseInt(location.port) + 100);
+    connection = new WebSocket(serverUrl);
+
+    connection.onopen = function (evt) {
+        console.log("open");
+    }
+
+    connection.onclose = function (evt) {
+        console.log("close");
+    }
+
+    connection.onmessage = function (evt) {
+        var msg;
+        msg = evt.data;
+
+        console.log("Message received: " + msg);
+        const obj = JSON.parse(msg);
+    }
+
+
+    // game display js
+
+    let currentPlayer = 'Player 1'; // Track current player
+    let selectedPiece = null; // Track selected piece
+    let board = []; // The checkers board
+
+    // TODO: The game manager team is responsible for using the provided information to handle page transimition
+    const resignHandler = () =>  connection.send(JSON.stringify({type: "resign", game_id: game_id, player: currentPlayer}));
+    const drawHandler = () => connection.send(JSON.stringify({type: "draw", game_id: game_id, player: currentPlayer}));
+
+    const removeAndAddListener = (element, eventType, handler) => {
+        // Note: I am adding this function to prevent event duplication
+        // First remove any existing listener
+        element.removeEventListener(eventType, handler);
+        // Then add the new listener
+        element.addEventListener(eventType, handler);
+    };
+
+    const add_game_display_user_control_event_listener = () => {
+
+        const resignButton = document.getElementById("resign_buttom");
+        const drawButton = document.getElementById("draw_button");
+
+        removeAndAddListener(resignButton, "click", resignHandler);
+        removeAndAddListener(drawButton, "click", drawHandler);
+    };
+
+
+
+    const pieceClicked = (i, j) => {
+        const square = board.find(sq => sq.i === i && sq.j === j);
+        if (!square) return;
+        
+        const pieceType = square.el.getAttribute("data-piece");
+        console.log(`Clicked on square [${i},${j}] with piece type: ${pieceType}`);
+
+        // If no piece is selected yet and we clicked on a piece
+        if (!selectedPiece && pieceType !== ".") {
+            selectedPiece = {i, j, type: pieceType};
+            lastClickedPosition = {i, j};
+            highlightMoves(i, j);
+        }
+        // If a piece is already selected
+        else if (selectedPiece) {
+            // If clicking on the same piece, deselect it
+            if (selectedPiece.i === i && selectedPiece.j === j) {
+                selectedPiece = null;
+                clearHighlights();
+            } 
+            // If clicking on a valid move square
+            else if (isValidMove(selectedPiece.i, selectedPiece.j, i, j)) {
+
+                makeMove(selectedPiece.i, selectedPiece.j, i, j);
+
+                // reset piece selection
+                selectedPiece = null;
+                clearHighlights();
+            }
+            // Clicked on another piece or invalid square
+            else {
+                selectedPiece = null;
+                clearHighlights();
+                // If clicked on another piece, select it
+                if (pieceType !== ".") {
+                    selectedPiece = {i, j, type: pieceType};
+                    lastClickedPosition = {i, j};
+                    highlightMoves(i, j);
+                }
+            }
+        }
+    }
+
+    const makeMove = (fromI, fromJ, toI, toJ) => {
+        const fromSquare = board.find(sq => sq.i === fromI && sq.j === fromJ);
+        const toSquare = board.find(sq => sq.i === toI && sq.j === toJ);
+
+        if (fromSquare && toSquare) {
+            const pieceType = fromSquare.el.getAttribute("data-piece");
+            fromSquare.el.setAttribute("data-piece", ".");
+            toSquare.el.setAttribute("data-piece", pieceType);
+
+            // Change turns after a move
+            currentPlayer = currentPlayer === 'Player 1' ? 'Player 2' : 'Player 1';
+            document.getElementById("current-player").innerText = `Current Player: ${currentPlayer}`;
+            console.log({type: "move", game_id: game_id, player: currentPlayer, square: {"from":[fromI, fromJ],"to":[toI, toJ]}})
+            connection.send(JSON.stringify({type: "move", game_id: game_id, player: currentPlayer, square: {"from":[fromI, fromJ],"to":[toI, toJ]}}));
+        }
+    }
+
+
+    const clearHighlights = () => {
+        board.forEach(square => {
+            square.el.classList.remove('show-hint');
+        });
+    }
+
+    const handleClick = (i, j) => {
+        pieceClicked(i, j);
+    }
+
+    const highlightMoves = (i, j) => {
+        const validMoves = getValidMoves(i, j);
+        board.forEach((square) => {
+            const isValidMove = validMoves.some(move => move.i === square.i && move.j === square.j);
+            square.el.classList.toggle('show-hint', isValidMove);
+        });
+    }
+
+    const isValidMove = (fromI, fromJ, toI, toJ) => {
+        const validMoves = getValidMoves(fromI, fromJ);
+        return validMoves.some(move => move.i === toI && move.j === toJ);
+    }
+
+    const createBoard = async() => {
+        const gameEl = document.querySelector("#game");
+        gameEl.innerHTML = ''; // Clear any existing content
+        board = []; // Reset board array
+
+        for (let i = 0; i < 8; i++) {
+            let rowEl = document.createElement("div");
+            rowEl.classList.add("row");
+            gameEl.appendChild(rowEl);
+
+            for (let j = 0; j < 8; j++) {
+                let squareEl = document.createElement("div");
+                squareEl.classList.add("square");
+
+                // Checkerboard pattern - dark squares should be where pieces go
+                const isDarkSquare = (i + j) % 2 !== 0;
+                squareEl.classList.toggle("odd", !isDarkSquare);
+
+                // Create the pieces
+                if (i < 3 && isDarkSquare) {
+                    squareEl.setAttribute("data-piece", "b"); // Black pieces
+                } else if (i > 4 && isDarkSquare) {
+                    squareEl.setAttribute("data-piece", "w"); // White pieces
+                } else {
+                    squareEl.setAttribute("data-piece", "."); // Empty square
+                }
+
+                squareEl.innerHTML = "<div class='piece'><div class='K'>K</div></div>";
+
+                // Clean event listener setup
+                const clickHandler = () => handleClick(i, j);
+                squareEl.addEventListener("click", clickHandler);
+
+                rowEl.appendChild(squareEl);
+                board.push({ el: squareEl, i, j });
+            }
+        }
+
+        console.log("Board created with " + board.length + " squares");
+    }
+
+    
+    const getValidMoves = (i, j) => {
+        const square = board.find(sq => sq.i === i && sq.j === j);
+        if (!square) return [];
+        // TODO: This needs to be handled by the java backend since this involves making game logic
+        return []
+
+    }
+
+
+
+    const initialize_game_display = async() => {
+        /*
+            This function generates the game board and initializes the game
+            Load the game display file and render it into index.html
+        */
+
+        await createBoard();
+        // after the html has been rendered, initialize the javascript code
+        add_game_display_user_control_event_listener();
+
+
+    }
+
+
+    // TODO: This function should be called to start the game display. Page manager team is responsible for calling this function.
+    initialize_game_display();
+    //game display js end
+
+
 
 </script>

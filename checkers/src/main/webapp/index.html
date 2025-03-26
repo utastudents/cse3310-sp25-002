@@ -4,6 +4,7 @@
     <div id="join_game"></div>
     join game
     <div id="game_display"></div>
+    game display
     <div id="summary"></div>
     summary
 </html>
@@ -29,11 +30,4 @@
         console.log("Message received: " + msg);
         const obj = JSON.parse(msg);
     }
-    fetch("game_display.html")
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById("game_display").innerHTML = data;
-    })
-    .catch(error => console.error('Error loading game_display.html:', error));
-
 </script>
