@@ -20,9 +20,21 @@ Data Exchange:
 
     - Status updates on player and game availability
 
-Direct Interface Functions:
--   Send data from Join Game to Page Mgr
--   Received data from Page Mgr to Join Game.
+Direct Interface Prototype Functions:
+
+    function send(eventType, data)
+
+Sends data to Page Mgr
+   Two Parameters:
+   - eventType: String identifying the type of event such as playerSelected
+   - data: JSON object containing relevant information
+
+    function receive(eventType, data)
+
+Processes data received from Page Mgr
+   Two Parameters:
+   - eventType: String identifying the type of incoming data such as availablePlayersList
+   - data: JSON object containing information to display
 
 Communication Mechanisms: The system is event-driven and will use web sockets.
 
