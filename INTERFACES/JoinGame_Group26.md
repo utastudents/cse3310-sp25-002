@@ -25,6 +25,7 @@ Direct Interface Prototype Functions:
     function send(eventType, data)
 
 Sends data to Page Mgr
+   
    Two Parameters:
    - eventType: String identifying the type of event such as playerSelected
    - data: JSON object containing relevant information
@@ -32,6 +33,7 @@ Sends data to Page Mgr
     function receive(eventType, data)
 
 Processes data received from Page Mgr
+   
    Two Parameters:
    - eventType: String identifying the type of incoming data such as availablePlayersList
    - data: JSON object containing information to display
