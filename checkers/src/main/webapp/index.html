@@ -1,14 +1,35 @@
 <html>
-    <div id="new_account"></div>
+    <div id="new_account">
     new account
-    <div id="join_game"></div>
+    </div>
+    <div id="join_game">
     join game
-    <div id="game_display"></div>
+    </div>
+    <div id="game_display">
     game display
-    <div id="summary"></div>
+    </div>
+    <div id="summary">
     summary
+    </div>
+    <div id="stuff">
+     <input type="button" value="Send Something" onclick="msg()">
+      <label for="tbox">Received</label>
+      <textarea id="tbox" name="tbox" rows="4" cols="50">
+     </textarea>
+    </div>
 </html>
 <script>
+    // each of the 'divs' in the html page should have attributes to allow them to be hidden.
+    // the page manager should send a small json message, that tells which of these are hidden
+    // and which are visible when there is a change
+    // something like "{"display_new_account":t,"display_join_game":f,"display_game_display:f,"display_summary":f}"
+
+
+    // a reminder.  we want to create one websocket connection, and use if, basically forever.
+    // or until the user decides to go to another page.
+    // this requires everything to load from this page.
+
+   
     var connection = null;
 
     var serverUrl;
@@ -28,6 +49,19 @@
         msg = evt.data;
 
         console.log("Message received: " + msg);
-        const obj = JSON.parse(msg);
+        document.getElementById("tbox").innerHTML = msg + '\n' + document.getElementById("tbox").innerHTML;
+        //const obj = JSON.parse(msg);
+    }
+
+    class UserEvent {
+        msg;
+    }
+
+    function msg() {
+        console.log("button clicked");
+        U = new UserEvent();
+        U.msg="i pushed a button";
+        connection.send(JSON.stringify(U));
+        console.log(JSON.stringify(U))
     }
 </script>
