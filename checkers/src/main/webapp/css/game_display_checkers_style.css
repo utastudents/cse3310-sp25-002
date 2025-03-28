@@ -1,0 +1,77 @@
+.row {
+    display: flex;
+    height: 41px;
+}
+
+.square {
+    border: 1px solid #333;
+    width: 41px;
+    height: 41px;
+    position: relative;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.square.odd {
+    background: #EEE;
+}
+
+.square:not(.odd) {
+    background: #866442;
+}
+
+.square.shown-step {
+    background: rgb(209, 150, 111);
+}
+
+.piece {
+    border-radius: 50%;
+    position: relative;
+    width: 30px;
+    height: 30px;
+    border: 2px solid #333;
+    top: 3px;
+    left: 3px;
+    display: inline-block;
+    cursor: grabbing;
+    background-image: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 10%, transparent 60%);
+}
+
+.King {
+    display: none;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    position: absolute;
+    width: 100%;
+}
+
+.square[data-piece="B"] .King,
+.square[data-piece="W"] .King {
+    display: block;
+}
+
+.square[data-piece=b] .piece,
+.square[data-piece=B] .piece {
+    background-color: #222;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.8);
+}
+
+.square[data-piece=w] .piece,
+.square[data-piece=W] .piece {
+    background-color: #eee;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+}
+
+.square[data-piece="."] .piece {
+    display: none;
+}
+
+.square.show-valid-moves {
+    background: rgba(190, 228, 229, 0.5);
+}
+
+.button:active {
+    transform: translateY(1px);
+}
