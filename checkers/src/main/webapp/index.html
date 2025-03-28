@@ -19,7 +19,7 @@
     </div>
     <div id="game_display">
         game display
-        <div style="width: 336px; max-width:auto; margin: 10px auto;" class="hidden">
+        <div style="width: 336px; max-width:auto; margin: 10px auto;" class="hidden" id="game_display_container">
             <div style="text-align: center; font-size: 16px; margin-top: 10px; font-weight: bold; color: #333;">
                 <!-- TODO: New Account / Login Team responsible for displatying the current player. This information will be received via websockets -->
                 <p id="current-player">Current Player: Player 1</p>
@@ -94,7 +94,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        // For the page manager team: to create the checker board (game display component), simple create a new instance of CheckersBoard, pass the websocket connection, a unique gameid for this game, and the play who first starts the match.
+        // For the page manager team: to create the checker board (game display component), simply create a new instance of CheckersBoard, pass the websocket connection instance, a unique gameid for this game, and the player who is supposed to start the match.
 
         window.checkerBoard = new CheckersBoard(conn=connection, g_id="123", starting_player="player1");
         // Create the checkers board and display it
@@ -104,5 +104,8 @@
 
         // Add the resign and draw button to the event listener to the DOM
         add_game_display_user_control_event_listener();
+
+        // Note: The div for game display is currently rendered on pagestart. However, the element with id "game_display_container" has been assigned the class "hidden". To make it visible, either remove the class or replace it with the class "visible"
+        // More information for other teams: To get an idea of the game display logic please look at: js/game_display_checkers.js. We have create a bunch of // TODO: Notes for the other teams.
     });
 </script>
