@@ -101,7 +101,7 @@ class CheckersBoard {
     /*
         move_checkers_piece() simply moves a checkers piece from one square to another. This function is called once the java backend has confirmed that the move is valid.
         Therefore, there is no complex logic here. This function simply moves the piece and sends the information to the java backend via ws.
-        This function is also generic and custom implemented.
+        This function is also custom implemented.
     */
     move_checkers_piece(move_from_x, move_from_y, move_to_x, move_to_y) {
         const move_from_square = this.checkers_board.find(sq => sq.x === move_from_x && sq.y === move_from_y);
@@ -138,6 +138,8 @@ class CheckersBoard {
         }
     }
 
+
+    // custom css styling for the checkers board. We use this function to update the style of the board after every move. This function uses standard css styles and the design (colors, size, shape) was custom made by us.
     update_board_style() {
         this.checkers_board.forEach(square => {
             const pieceElement = square.el.querySelector('.piece');
@@ -186,7 +188,7 @@ class CheckersBoard {
 
     /*
         show_possible_moves() relies on the return_allowed_moves() function to determine if a move is valid.
-        This function is extremely generic and custom implemented.
+        This function is custom implemented.
     */
     show_possible_moves(x, y) {
         const valid_moves = this.return_allowed_moves(x, y);
@@ -202,7 +204,7 @@ class CheckersBoard {
 
 
     /*
-        Extremely simple and generic function that simply removes a class from the squares to hide the best possible moves for a clicked checkers piece. This function is custom implemented.
+        Simple function that simply removes a class from the squares to hide the best possible moves for a clicked checkers piece. This function is custom implemented.
     */
     hide_possible_moves() {
         this.checkers_board.forEach(square => {
@@ -218,7 +220,7 @@ class CheckersBoard {
 
     /*
         is_valid_move() relies on the return_allowed_moves() function (which relies on the java backend) to determine if a move is valid.
-        This function is extremely generic and custom implemented. It simply displays all possible moves for a clicked checkers pieces.
+        This function is custom implemented. It simply displays all possible moves for a clicked checkers pieces.
     */
     is_valid_move(move_from_x, move_from_y, move_to_x, move_to_y) {
         const valid_moves = this.return_allowed_moves(move_from_x, move_from_y);
@@ -239,7 +241,7 @@ class CheckersBoard {
         -A board array (`this.checkers_board`) to track pieces dynamically.
         -Uses `data-piece` attributes to store piece types for easy DOM manipulation.
         -Click event handlers are attached differently.
-        -The only part reused directly is the basic structure of the `for` loops that iterate over the board rows and squares.
+        -The only part reused directly is the basic structure of the `for` loops that iterate over the board rows and squares (inspiration is the idea of using for loops to dynamicall create divs/rows). This excludes the logic to add css styles, event listeners, and the logic to determine the piece type for each square.
     */
     async create_checkers_board() {
         const checkers_board_ = document.querySelector(".game");

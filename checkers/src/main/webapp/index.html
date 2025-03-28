@@ -19,15 +19,13 @@
     </div>
     <div id="game_display">
         game display
-        <div style="width: 336px;margin: 10px auto;" class="hidden">
+        <div style="width: 336px; max-width:auto; margin: 10px auto;" class="hidden">
             <div style="text-align: center; font-size: 16px; margin-top: 10px; font-weight: bold; color: #333;">
                 <!-- TODO: New Account / Login Team responsible for displatying the current player. This information will be received via websockets -->
                 <p id="current-player">Current Player: Player 1</p>
             </div>
             <br/>
             <div class="game" style="display: inline-block; border: 4px solid #333; background: #333; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.3); width: 328px; height: 328px; padding: 0; box-sizing: content-box;"></div>
-
-
             <div style="margin-top: 15px; text-align: center;">
                 <!-- TODO: Page Manager Team responsible to handling the sequencing between pages. The button press events will be sent to java via websockets -->
                 <button id="resign_buttom" class="button" style="background-color: #ff4f4f; color: white; padding: 8px 16px; font-size: 14px; border: none; cursor: pointer; margin: 5px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: all 0.2s ease;">Resign</button>
@@ -44,6 +42,7 @@
       <textarea id="tbox" name="tbox" rows="4" cols="50">
      </textarea>
     </div>
+    <!-- This javascript code contains logic for the game display. It is currently incomplete. -->
     <script src="js/game_display_checkers.js" defer></script>
     </body>
 </html>
@@ -95,11 +94,15 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        console.log(connection);
+        // For the page manager team: to create the checker board (game display component), simple create a new instance of CheckersBoard, pass the websocket connection, a unique gameid for this game, and the play who first starts the match.
+
         window.checkerBoard = new CheckersBoard(conn=connection, g_id="123", starting_player="player1");
         // Create the checkers board and display it
         checkerBoard.create_checkers_board();
-        // Register the resign and draw button to the event listener
+
+        // To update the current player after a move, use update_current_player method of the CheckersBoard instance. This will update the display of the current player in the game display area. You may use websocket events to do this.
+
+        // Add the resign and draw button to the event listener to the DOM
         add_game_display_user_control_event_listener();
     });
 </script>
