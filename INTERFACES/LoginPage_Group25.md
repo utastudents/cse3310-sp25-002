@@ -1,10 +1,10 @@
-##Project description: 
+#Project description: 
 
 	The Login Page is the initial user interface that allows players 	
 	to enter the game system by providing a valid username.  
 
  
-##Enter Username/Join Game:
+## Enter Username/Join Game:
 
 	At the center of the interface is a single input field labeled “Enter Username”, 
 	accompanied by a “Join Game” button. When the user clicks the button without entering 
@@ -12,7 +12,7 @@
 	This ensures basic input validation on the client side. 
 
  
-##Interfacing to Page Manager:
+### Interfacing to Page Manager:
 
 	After entering a username and clicking “Join Game,” the system packages the input into a 
 	JSON object and sends it to the Page Manager (Project 29). The Page Manager is responsible 
@@ -20,7 +20,7 @@
 	track the user session throughout the game. 
 
  
-##Cross-Project Discussions:
+#### Cross-Project Discussions:
 
 	Based on team and cross-project discussions, we decided to: 
 
@@ -34,9 +34,14 @@
  
 
  
-##Conclusion:
+##### Conclusion:
 
 	This interface plays a crucial role in initiating the user experience and interfacing 	
 	with backend components without introducing unnecessary dependencies or burdens on 
 	other subsystems. 
 
+###### Mockup
+
+	![alt text](LoginPage_Mockup/interface1.png)
+
+	![alt text](LoginPage_Mockup/interface2.png)
