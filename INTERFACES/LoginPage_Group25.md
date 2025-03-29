@@ -12,7 +12,7 @@
 	This ensures basic input validation on the client side. 
 
  
-### Interfacing to Page Manager:
+## Interfacing to Page Manager:
 
 	After entering a username and clicking “Join Game,” the system packages the input into a 
 	JSON object and sends it to the Page Manager (Project 29). The Page Manager is responsible 
@@ -20,7 +20,7 @@
 	track the user session throughout the game. 
 
  
-#### Cross-Project Discussions:
+## Cross-Project Discussions:
 
 	Based on team and cross-project discussions, we decided to: 
 
@@ -34,13 +34,13 @@
  
 
  
-##### Conclusion:
+## Conclusion:
 
 	This interface plays a crucial role in initiating the user experience and interfacing 	
 	with backend components without introducing unnecessary dependencies or burdens on 
 	other subsystems. 
 
-###### Mockup
+### Mockup
 
 ![interface1](https://github.com/utastudents/cse3310-sp25-002/blob/fd4c29f25d2bed41bc68c1e8d1465dbfe98b7217/INTERFACES/LoginPage_Mockup/interface1.png)
 
