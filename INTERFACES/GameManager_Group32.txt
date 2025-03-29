@@ -1,0 +1,17 @@
+Suhas Gillipelli, Game Manager Negotiator
+
+Bot1/Bot2
+Communicated with Joel (Bot II) and Raul (Bot I)
+Game Manager will send the current Board object state and Player object states in the form of a JSON.
+The bot will respond with a JSON of the requested Move object.
+Once Move object is processed by Game Play, Game Manager will send an alert of either approval (in which case the updated Board object state as well) or disapproval.
+
+Page Manager
+Communicated with Mariah
+Game Manager will send the current Board object state and Player object states in the form of a JSON.
+Page Manager will respond with a JSON of the requested Move object.
+Once Move object is processed by Game Play, Game Manager will send an alert of either approval (in which case the updated Board object state as well) or disapproval.
+
+Pair Up
+Communicated with Ire
+Decided that the only communication would be Pair Up subsystem sending a JSON of the Player 1 and Player 2 IDs.
