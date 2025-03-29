@@ -42,6 +42,6 @@
 
 ###### Mockup
 
-	![alt text](LoginPage_Mockup/interface1.png)
+	![alt text](INTERFACES/LoginPage_Mockup/interface1.png "Interface 1")
 
-	![alt text](LoginPage_Mockup/interface2.png)
+	![alt text](INTERFACES/LoginPage_Mockup/interface2.png "Interface 2")
