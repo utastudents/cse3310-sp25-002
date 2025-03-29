@@ -1,4 +1,4 @@
-#Project description: 
+# Project description: 
 
 	The Login Page is the initial user interface that allows players 	
 	to enter the game system by providing a valid username.  
@@ -42,6 +42,6 @@
 
 ###### Mockup
 
-	<img src="https://github.com/utastudents/cse3310-sp25-002/blob/a73ec2e1c0606e1df7e2c15047c8ba24180c8501/INTERFACES/LoginPage_Mockup/interface1.png" alt="interface1">
+![interface1](https://github.com/utastudents/cse3310-sp25-002/blob/fd4c29f25d2bed41bc68c1e8d1465dbfe98b7217/INTERFACES/LoginPage_Mockup/interface1.png)
 
-	<img src="https://github.com/utastudents/cse3310-sp25-002/blob/a73ec2e1c0606e1df7e2c15047c8ba24180c8501/INTERFACES/LoginPage_Mockup/interface2.png" alt="interface2">
+![interface2](https://github.com/utastudents/cse3310-sp25-002/blob/fd4c29f25d2bed41bc68c1e8d1465dbfe98b7217/INTERFACES/LoginPage_Mockup/interface2.png)
