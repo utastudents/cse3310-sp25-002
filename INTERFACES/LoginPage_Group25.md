@@ -42,6 +42,6 @@
 
 ###### Mockup
 
-	![alt text](INTERFACES/LoginPage_Mockup/interface1.png "Interface 1")
+	<img src="https://github.com/utastudents/cse3310-sp25-002/blob/a73ec2e1c0606e1df7e2c15047c8ba24180c8501/INTERFACES/LoginPage_Mockup/interface1.png" alt="interface1">
 
-	![alt text](INTERFACES/LoginPage_Mockup/interface2.png "Interface 2")
+	<img src="https://github.com/utastudents/cse3310-sp25-002/blob/a73ec2e1c0606e1df7e2c15047c8ba24180c8501/INTERFACES/LoginPage_Mockup/interface2.png" alt="interface2">
