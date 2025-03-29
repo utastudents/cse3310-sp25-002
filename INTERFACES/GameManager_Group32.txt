@@ -1,4 +1,4 @@
-Suhas Gillipelli, Game Manager Negotiator
+Suhas Gillipelli & Sushant, Game Manager Negotiators
 
 Bot1/Bot2
 Communicated with Joel (Bot II) and Raul (Bot I)
@@ -15,3 +15,7 @@ Once Move object is processed by Game Play, Game Manager will send an alert of e
 Pair Up
 Communicated with Ire
 Decided that the only communication would be Pair Up subsystem sending a JSON of the Player 1 and Player 2 IDs.
+
+Game Play
+The system shall send requested Move and current Board object to Game Play in the form of a JSON
+The system shall accept input from Game Play indicating the validity of the move and updated game state in the form of a JSON object.
