@@ -310,7 +310,20 @@ class CheckersBoard {
         // TODO: This needs to be handled by the java backend since this involves making game logic
         this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, player: this.currentPlayer, square: [x, y]}));
         // later we will implement an event listener that listen to the allowed moves and update the moves array
-        return []; // an array of possibly [x,y] positions that this piece can more to
+        let loopLock=0;
+        while(loopLock===0){
+            //This loop waits for a message to be recieved
+            this.connection.addEventListener("message", (event) => {
+                //Continues to listen until it recieves an array in a message.
+                if(event.data === Array){
+                    moves = event.data;
+                    loopLock++;
+                }
+              });
+              
+        }
+
+        return moves; // an array of possibly [x,y] positions that this piece can more to
     }
 }
 
