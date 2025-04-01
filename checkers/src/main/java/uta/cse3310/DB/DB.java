@@ -1,5 +1,11 @@
 package uta.cse3310.DB;
 
-public class DB {
+import java.sql.SQLException;
 
+public class DB {
+    public static void connect() throws SQLException
+    {
+
+    }
+    
 }
