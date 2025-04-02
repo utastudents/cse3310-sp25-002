@@ -5,41 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Page</title>
-  
+  <link rel = "stylesheet" href="styles.css">
 </head>
-<style>
-  .body{
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      height: 100vh;
-      background-size: cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-    .container {
-
-      background-color: rgba(255, 255, 255, 1.0);
-      padding: 100px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      z-index: 1;
-    }
-
-     button {
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: black;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-
-  </style>
-<body>
 
   <div class="about-game">About Game</div>
   <div class="container">
@@ -50,15 +17,7 @@
     <button onclick="joinGame()">Join Game</button>
   </div>
 
-  <script>
-    function joinGame() {
-      const username = document.getElementById('username').value;
-      if (username) {
-        alert('Joining Game');
-      } else {
-        alert('Please enter a username.');
-      }
-    }
+  <script src = "script.js"></script>
   </script>
 </body>
 </html>
