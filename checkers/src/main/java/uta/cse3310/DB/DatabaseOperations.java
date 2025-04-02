@@ -20,6 +20,8 @@ public class DatabaseOperations
 
 		string Attributes; // will parse attributes from other interfaces
 
+		string Checkstmt; // will be used to chekc if user is in db already 
+
 		string InsertStatement; //here the insert statement created
 
 		string pstmt; //here we will parse through the data and set the 
