@@ -17,6 +17,11 @@ public class GameManager {
         b1 = new BotI();
         b2 = new BotII();
 
+        //list<Game> Games = new List<>
+
     }
 
 }
+// Game class 
+// GamePageController
+// GamePairController

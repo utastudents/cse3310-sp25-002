@@ -28,4 +28,19 @@ public class Board {
      public Square getSquare(int row, int col){return board[row][col];}
      public void setSquare(Square square){board[square.getRow()][square.getCol()] = square;}
 
+     public String toString(){
+          StringBuilder builder = new StringBuilder();
+          builder.append("\n------------------\n");
+          for(int i = 0; i<8; i++){
+               builder.append("|");
+               for(int j=0;j<8;j++){
+                    int piece = getSquare(i, j).hasPiece() ? 1 : 0;
+                    builder.append(piece + " ");
+               }
+               builder.append("|\n");
+          }
+          builder.append("------------------");
+          return builder.toString();
+     }
+
 }
