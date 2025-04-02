@@ -93,6 +93,12 @@
                 connection.send(JSON.stringify({type: "draw_accept", game_id: game_id, player: currentPlayer}))
             }
         }
+        else if(data.type === 'draw_accept'){
+            alert("The draw has been accepted. The game is now over.")
+        }
+        else if(data.type === 'player_name_update'){
+            checkerBoard.update_player_name(data.current_move);
+        }
     }
 
     
