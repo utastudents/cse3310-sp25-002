@@ -22,6 +22,7 @@ public class GameManager {
     }
 
 }
-// Game class 
-// GamePageController
-// GamePairController
+
+// public String boardtoJSON(Board board){
+//     return String;
+// }
