@@ -1,6 +1,10 @@
 package uta.cse3310.PageManager;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import uta.cse3310.PageManager.Match_PairUP;
+import uta.cse3310.PageManager.JSONconverter_PairUP;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
@@ -14,26 +18,22 @@ public class PageManager {
                       // is not unique per client (or game)
 
 
-
-    
-
-
-// CODE FOR PAIR UP subsystem
-    private final PairUp pairUp = new PairUp();
-
+    // CODE FOR PAIR UP subsystem
     public String handleUserReq(String json_UI) {
+        /*
         try {
          
-            List<PlayerEntry_PairUP> PlayersWaiting = JSONConverter_PairUP.parsePlayersFromJson(jsonFromClient);
+            List<PlayerEntry_PairUP> PlayersWaiting = JSONconverter_PairUP.parsePlayersFromJson(json_UI);
+            List<Match_PairUP> PlayersActive = pu.pairPlayers(PlayersWaiting);
 
-            List<Match_PairUPr> PlayersActive = PairUp.pairPlayers(PlayersWaiting);
-
-            return JSONConverter_PairUP.convertMatchesToJson(PlayersActive);
+            return JSONconverter_PairUP.convertMatchesToJson(PlayersActive);
 
         } catch (Exception e) {
             e.printStackTrace();
             return "{\"error\": \"Failed to process player pairing.\"}";
         }
+        */
+       return "{\"status\": \"PairUp not implemented yet.\"}";
     }
 
     // CODE FOR PAIR UP SUB system
