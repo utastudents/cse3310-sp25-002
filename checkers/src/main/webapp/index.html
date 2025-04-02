@@ -84,6 +84,29 @@
         //const obj = JSON.parse(msg);
     }
 
+    let gameContainer;
+    let boardInitialization = false;
+
+    //showing the game board
+    function showGameDisplay(gameid, startingPlayer){
+        gameContainer.classList.remove("hidden");
+        gameContainer.classList.add("visible");
+
+        if(!boardInitialization){
+            window.checkerBoard = new CheckersBoard(conn = connection, g_id = gameid, starting_player = startingPlayer);
+            checkerBoard.create_checkers_board();
+            add_game_display_user_control_event_listener();
+            boardInitialization = true;
+        }
+        document.getElementById("current-player").textContent = 'Current Player: ${startingPlayer}';
+    }
+
+    //function to hide the board
+    function hideGameDisplay(){
+        gameContainer.classList.add("hidden");
+        gameContainer.classList.remove("visible");
+    }
+
     class UserEvent {
         msg;
     }
@@ -99,6 +122,7 @@
     document.addEventListener("DOMContentLoaded", () => {
         // For the page manager team: to create the checker board (game display component), simply create a new instance of CheckersBoard, pass the websocket connection instance, a unique gameid for this game, and the player who is supposed to start the match.
 
+        gameContainer = document.getElementById("game_display_container");
         window.checkerBoard = new CheckersBoard(conn=connection, g_id="123", starting_player="player1");
         // Create the checkers board and display it
         checkerBoard.create_checkers_board();
