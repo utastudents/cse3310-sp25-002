@@ -85,11 +85,15 @@
                   } 
     }
 
-    let gameContainer;
+    let gameContainer = document.getElementById("game_display_container");
     let boardInitialization = false;
 
     //showing the game board
     function showGameDisplay(gameid, startingPlayer){
+        if (!gameContainer){
+            console.log("game display container not found");
+            return;
+        }
         gameContainer.classList.remove("hidden");
         gameContainer.classList.add("visible");
 
@@ -104,6 +108,13 @@
 
     //function to hide the board
     function hideGameDisplay(){
+        if(!gameContainer){
+            console.log("game display container not found");
+            return;
+        }
+        if(!boardInitialization){
+            return;
+        }
         gameContainer.classList.add("hidden");
         gameContainer.classList.remove("visible");
     }
@@ -120,20 +131,4 @@
         console.log(JSON.stringify(U))
     }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        // For the page manager team: to create the checker board (game display component), simply create a new instance of CheckersBoard, pass the websocket connection instance, a unique gameid for this game, and the player who is supposed to start the match.
-
-        gameContainer = document.getElementById("game_display_container");
-        window.checkerBoard = new CheckersBoard(conn=connection, g_id="123", starting_player="player1");
-        // Create the checkers board and display it
-        checkerBoard.create_checkers_board();
-
-        // To update the current player after a move, use update_current_player method of the CheckersBoard instance. This will update the display of the current player in the game display area. You may use websocket events to do this.
-
-        // Add the resign and draw button to the event listener to the DOM
-        add_game_display_user_control_event_listener();
-
-        // Note: The div for game display is currently rendered on pagestart. However, the element with id "game_display_container" has been assigned the class "hidden". To make it visible, either remove the class or replace it with the class "visible"
-        // More information for other teams: To get an idea of the game display logic please look at: js/game_display_checkers.js. We have create a bunch of // TODO: Notes for the other teams.
-    });
 </script>
