@@ -7,6 +7,7 @@ import uta.cse3310.Bot.BotI.BotI;
 import uta.cse3310.Bot.BotII.BotII;
 
 public abstract class Bot {
+    
     // The moves object is a LinkedList of Moves, which is used to store the moves
     // the bot will make.
     private Moves moves;
@@ -16,7 +17,6 @@ public abstract class Bot {
     private Board currentGameBoard;
 
     /**
-     * 
      * 
      * Constructor for the Bot class.
      * 
