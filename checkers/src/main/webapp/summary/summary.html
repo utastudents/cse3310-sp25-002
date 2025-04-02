@@ -1,16 +1,47 @@
 <!DOCTYPE html>
 <html lang="en" hidden>
-  <head> 
-    <title>The Leaderboard</title>
+  <head>
+    <div class="title">
+        The Leaderboard
+    </div>     
     <style>
-      .text { // Adjust if needed
+      .title { 
           position: absolute;
           top: 10px; 
           left: 50%;
           transform: translateX(-50%);
-          font-size: 32px;
+          font-size: 75px;
           font-weight: bold;
         }
     </style>
   </head>
-</html>
+  <body>
+  <div class="search">
+Enter Player Name (insert search box around text)
+  </div>
+  <div class="personal">
+    Personal stats ...
+  </div>
+  <div class="mainLB">
+    Main leaderboard list each player name on the left then Wins then Losses then time played 
+    list players from 1-100 based off w/l
+  </div>
+  <style>
+    .search{
+        position: absolute;
+        top: 150px;
+        left: 35%;
+    }
+    .personal{
+        position: absolute;
+        top: 225px;
+        left: 35%;
+    }
+    .mainLB{
+        position:absolute;
+        top:275px;
+    }
+  </style>
+  </body>
+</html> 
+
