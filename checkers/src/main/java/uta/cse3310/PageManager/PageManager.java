@@ -13,6 +13,35 @@ public class PageManager {
     Integer turn = 0; // just here for a demo. note it is a global, effectively and
                       // is not unique per client (or game)
 
+
+
+    
+
+
+// CODE FOR PAIR UP subsystem
+    private final PairUp pairUp = new PairUp();
+
+    public String handleUserReq(String json_UI) {
+        try {
+         
+            List<PlayerEntry_PairUP> PlayersWaiting = JSONConverter_PairUP.parsePlayersFromJson(jsonFromClient);
+
+            List<Match_PairUPr> PlayersActive = PairUp.pairPlayers(PlayersWaiting);
+
+            return JSONConverter_PairUP.convertMatchesToJson(PlayersActive);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"error\": \"Failed to process player pairing.\"}";
+        }
+    }
+
+    // CODE FOR PAIR UP SUB system
+
+
+
+    
+
     public UserEventReply ProcessInput(UserEvent U) {
         UserEventReply ret = new UserEventReply();
         ret.status = new game_status();
