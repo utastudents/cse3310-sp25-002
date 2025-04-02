@@ -78,6 +78,9 @@
 
         console.log("Message received: " + msg);
         document.getElementById("tbox").innerHTML = msg + '\n' + document.getElementById("tbox").innerHTML;
+        if(checkerBoard.allowed_moves_validation(JSON.parse(msg))){
+                      checkerBoard.valid_moves = msg;
+                  } 
         //const obj = JSON.parse(msg);
     }
 

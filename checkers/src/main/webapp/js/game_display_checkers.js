@@ -46,14 +46,6 @@ class CheckersBoard {
     }
 
     
-    this.connection.onmessage = function (event) => {
-                  var moves = JSON.parse(event.data);
-                    //This if statement checks if the message is a set of co-ordinates
-                  if(allowed_moves_validation(moves)){
-                      this.valid_moves = moves;
-                  } 
-              };
-    
     update_current_player(player) {
         // TODO: The game manager will call this method from the class to change the current player after each move
         this.currentPlayer = player;
@@ -344,5 +336,5 @@ class CheckersBoard {
 
         }
     }
-}
+
 
