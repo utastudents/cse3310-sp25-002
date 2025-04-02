@@ -1,3 +1,5 @@
+package uta.cse3310.GameManager;
+
 public class Square{
      private int row, col;
      private Boolean piece;
