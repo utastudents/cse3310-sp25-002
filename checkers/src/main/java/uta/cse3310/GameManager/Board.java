@@ -15,14 +15,12 @@ public class Board {
      public void initializeBoard() {
           for (int i = 0; i < 3; i++) {
                for (int j = (i % 2 == 0) ? 1 : 0; j < 8; j += 2) {
-                    board[i][j].placeBlack();
-                    ; // Black pieces
+                    board[i][j].placeBlack(); // Black pieces
                }
           }
           for (int i = 5; i < 8; i++) {
                for (int j = (i % 2 == 0) ? 1 : 0; j < 8; j += 2) {
-                    board[i][j].placeWhite();
-                    ; // White pieces
+                    board[i][j].placeWhite(); // White pieces
                }
           }
      }

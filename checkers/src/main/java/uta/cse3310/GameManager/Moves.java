@@ -29,6 +29,7 @@ public class Moves{
 
      public LinkedList<Move> getMoves(){return moves;}
      public Move getFirst(){return moves.getFirst();}
+     public int size(){return moves.size();}
      public Move getNext(int n){return moves.get(n + 1);}
      public Move getNext(Move move){return moves.get(moves.indexOf(move) + 1);}
 }
