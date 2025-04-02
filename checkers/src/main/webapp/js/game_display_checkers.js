@@ -37,7 +37,10 @@ connection.onmessage = (event) => {
     }
 
     else if(data.type === 'draw_accept'){
-        alert({"The draw has been accepted. The game is now over."})
+        alert("The draw has been accepted. The game is now over.")
+    }
+    else if (data.type === 'player_name_update') {
+        CheckersBoard.update_player_name(data.current_move);
     }
 };
 
@@ -59,7 +62,7 @@ class CheckersBoard {
         this.currentPlayer = starting_player;
         // this is used to keep track of the last clicked coordinate to 1) prevent user from clicking on the same square twice 2) to keep track of from and to coordinates when a piece is moved
         this.last_clicked_coordinate = null;
-        this.valid_moves = [];
+        this.valid_moves = [];        
     }
 
     
@@ -68,6 +71,14 @@ class CheckersBoard {
         this.currentPlayer = player;
         currentPlayer = player;
         document.getElementById("current-player").innerText = `Current Player: ${player}`;
+    }
+
+    update_current_player_name(player_name) {
+        this.currentPlayer = player_name;
+        currentPlayer = player_name;
+        
+        // Update the UI to show whose turn it is
+        document.getElementById("current-player").innerText = `Current Player: ${player_name}`;
     }
 
 
