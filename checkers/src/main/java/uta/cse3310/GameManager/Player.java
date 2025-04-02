@@ -10,23 +10,9 @@ public class Player {
           this.pieceCount = 12;
      }
 
-     public int getPlayerId() {
-          return playerId;
-     }
-
-     public int getScore() {
-          return score;
-     }
-
-     public void addScore(int points) {
-          score += points;
-     }
-
-     public int getPieces() {
-          return pieceCount;
-     }
-
-     public void takePieces(int numPieces) {
-          pieceCount -= numPieces;
-     }
+     public int getPlayerId(){return playerId;}
+     public int getScore(){return score;}
+     public void addScore(int points){score += points;}
+     public int getPieces(){return pieceCount;}
+     public void takePieces(int numPieces){pieceCount -= numPieces;}
 }

@@ -31,8 +31,6 @@ public class Board {
           }
      }
 
-     public void setSquare(Square square) {
-          board[square.getRow()][square.getCol()] = square;
-     }
+     public void setSquare(Square square){board[square.getRow()][square.getCol()] = square;}
 
 }
