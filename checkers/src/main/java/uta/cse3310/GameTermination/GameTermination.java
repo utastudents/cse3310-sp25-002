@@ -1,13 +1,22 @@
 package uta.cse3310.GameTermination;
+import uta.cse3310.GameManager.Player;
 
 public class GameTermination {
-    //will decide if the game has winner
-    public boolean hasAWinner(BoardState boardState){
-        //this method will return either true or false depending if there is a winner or not.
-        //this will depend on having no legal moves or capturing all of the opponet pieces.
+
+    //sends a request for game restart and players wait in queue.
+    public void gameRestartReq(){
+
     }
 
-    public boolean isGameDraw(BoardState boardState){
-        //this method will return if game has no winner and is draw
+    //saves results to the database after the game ends that will aid in creating the leaderboard.
+    public void saveResults(Player player1, Player player2){
+
     }
+
+    //sends a final termination message to gameplay once a match is over
+    public String sendResults(){
+        
+    }
+
+
 }

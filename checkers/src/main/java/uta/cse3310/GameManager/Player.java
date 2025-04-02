@@ -1,4 +1,5 @@
 package uta.cse3310.GameManager;
+
 public class Player {
      private int playerId;
      private int score;
