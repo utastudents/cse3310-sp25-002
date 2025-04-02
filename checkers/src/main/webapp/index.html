@@ -80,9 +80,9 @@
         console.log("Message received: " + msg);
         document.getElementById("tbox").innerHTML = msg + '\n' + document.getElementById("tbox").innerHTML;
         const obj = JSON.parse(msg);
-        //If the message data is a stringified 2d array, it will assign the values to checkerBoard.valid_moves
+        //If the message data is a stringified 2d array, it will assign the values to checkerBoard.received_coords
         if(checkerBoard.allowed_moves_validation(obj)){
-                      checkerBoard.valid_moves = obj;
+                      checkerBoard.received_coords = obj;
                   } 
 
         if(data.type === "resign") {
