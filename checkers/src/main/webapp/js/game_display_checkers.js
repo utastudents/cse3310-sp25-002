@@ -40,7 +40,7 @@ connection.onmessage = (event) => {
         alert("The draw has been accepted. The game is now over.")
     }
     else if (data.type === 'player_name_update') {
-        CheckersBoard.update_player_name(data.current_move);
+        checkerBoard.update_player_name(data.current_move);
     }
 };
 
