@@ -42,7 +42,7 @@ class CheckersBoard {
         this.currentPlayer = starting_player;
         // this is used to keep track of the last clicked coordinate to 1) prevent user from clicking on the same square twice 2) to keep track of from and to coordinates when a piece is moved
         this.last_clicked_coordinate = null;
-        this.valid_moves = [];
+        this.received_coords = [];
     }
 
     
@@ -95,6 +95,7 @@ class CheckersBoard {
                     this.show_possible_moves(x, y);
                 }
             }
+            
         }
     }
 
@@ -137,8 +138,7 @@ class CheckersBoard {
             // relay the move to the backend through the ws connection
             console.log({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
             this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
-            //This resets this.valid_moves in preparation for the next return_allowed_moves call
-            this.valid_moves = [];
+            
         }
     }
 
@@ -211,6 +211,7 @@ class CheckersBoard {
         Simple function that simply removes a class from the squares to hide the best possible moves for a clicked checkers piece. This function is custom implemented.
     */
     hide_possible_moves() {
+
         this.checkers_board.forEach(square => {
             if (square.el.dataset.highlighted === "true") {
                 square.el.style.background = square.el.dataset.originalBackground;
@@ -330,10 +331,13 @@ class CheckersBoard {
         // TODO: This needs to be handled by the java backend since this involves making game logic
         this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, player: this.currentPlayer, square: [x, y]}));
         
-        while(!allowed_moves_validation(this.valid_moves)){
-            //This loop waits for this.valid_moves to be filled with data
+        while(!allowed_moves_validation(this.received_coords)){
+            //This loop waits for this.received_coords to be filled with data
               };
-
+              //Returns an array of possible moves and resets the class-level variable in preparation for the next call.
+              moves = this.received_coords;
+              this.received_coords = [];
+              return moves;
         }
     }
 
