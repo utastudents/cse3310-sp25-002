@@ -3,9 +3,9 @@ package uta.cse3310.DB;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DatabaseOperations
+public class DB
 {
-	public static void createTable(Connection Database)
+	public static void createTable()
 	{
 		/*string url;
 
@@ -17,7 +17,7 @@ public class DatabaseOperations
 		string stmt; */// will be used to during implementation of CREATE statement for table   
 	}
 
-	public static void insertUser(Connection Conn, String Username, int rank, int GamesPlayed)
+	public static void insertUser()
 	{
 		/*string url;
 
@@ -30,13 +30,13 @@ public class DatabaseOperations
 		string pstmt; */ //here we will parse through the data and set the 
 	}
 
-	public static void getLeaderboard(Connection Database)
+	public static void getLeaderboard()
 	{
 		/* string url;
 		string selectStatement; */ //will be used to create the select statements 
 	}
 
-	public static void UpdatePlayer(Connection Database)
+	public static void UpdatePlayer()
 	{
 		//   string updateStatement;
 	}
