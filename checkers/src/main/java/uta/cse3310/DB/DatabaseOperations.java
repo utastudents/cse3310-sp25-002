@@ -9,7 +9,10 @@ public class DatabaseOperations
 	{
 		string url;
 
-		string CreateStatement; //here the schema is to be established and create statement 
+		string CreateStatement = "CREATE TABLE IF NOT EXISTS users (\n"
+                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+                + " username TEXT NOT NULL,\n"
+                + ")"; //here the schema is to be established and create statement 
 		
 		string stmt; // will be used to during implementation of CREATE statement for table
 	}
