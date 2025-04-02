@@ -295,7 +295,23 @@ class CheckersBoard {
         this.update_board_style();
     }
 
-
+    //This function checks an array to make sure that it is a valid set of co-ordinates for the board
+    allowed_moves_validation(moves){
+        for(let i=0;i<moves.length;i++){
+              if(moves[i].length!=2){
+                  return false;
+              }
+              for(let j=0;j<2;i++){
+                  if(!Number.isInteger(moves[i][j])){
+                    return false;
+                  }
+                  if(!(0<=moves[i]<8)){
+                    return false;
+                  }
+              }
+          }
+        return true;
+    }
     /*
         return_allowed_moves relies on the backend to provide the allowed moves for a piece at a given position.
         This function is custom implemented.
@@ -305,25 +321,23 @@ class CheckersBoard {
         if (!square) return [];
 
         const checkers_piece_type = square.el.getAttribute("data-piece");
-        const moves = [];
+        let moves = [];
         // checkers_piece_type = "b" or "w"
         // TODO: This needs to be handled by the java backend since this involves making game logic
         this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, player: this.currentPlayer, square: [x, y]}));
         // later we will implement an event listener that listen to the allowed moves and update the moves array
-        let loopLock=0;
-        while(loopLock===0){
-            //This loop waits for a message to be recieved
-            this.connection.addEventListener("message", (event) => {
-                //Continues to listen until it recieves an array in a message.
-                if(event.data === Array){
-                    moves = event.data;
-                    loopLock++;
-                }
-              });
-              
-        }
+        while(true){
+            //This loop waits for a message containing a stringified two dimensional array of co-ordinates
+              this.connection.onmessage = (event) => {
+                  moves = JSON.parse(event.data);
+                  if(allowed_moves_validation(moves)){
+                      return moves;
+                  } else {
+                  moves=[];
+                  }
+              };
 
-        return moves; // an array of possibly [x,y] positions that this piece can more to
+        }
     }
 }
 
