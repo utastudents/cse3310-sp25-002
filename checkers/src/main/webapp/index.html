@@ -75,6 +75,7 @@
     connection.onmessage = function (evt) {
         var msg;
         msg = evt.data;
+        const data = JSON.parse(evt.data);
 
         console.log("Message received: " + msg);
         document.getElementById("tbox").innerHTML = msg + '\n' + document.getElementById("tbox").innerHTML;
@@ -83,7 +84,18 @@
         if(checkerBoard.allowed_moves_validation(obj)){
                       checkerBoard.valid_moves = obj;
                   } 
+
+        if(data.type === "resign") {
+            alert(`${data.player} has resigned. The game is now over.`);
+        }
+        else if(data.type === "draw_offer") {
+            if(confirm(`${data.player} offered a draw, would you like to accept?`)) {
+                connection.send(JSON.stringify({type: "draw_accept", game_id: game_id, player: currentPlayer}))
+            }
+        }
     }
+
+    
 
     let gameContainer = document.getElementById("game_display_container");
     let boardInitialization = false;
