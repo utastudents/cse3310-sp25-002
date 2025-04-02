@@ -24,8 +24,6 @@ const add_game_display_user_control_event_listener = () => {
     register_buttons_to_event_listener(offer_draw_button, "click", offer_draw);
 };
 
-
-
 class CheckersBoard {
     /*
         We have put the game display logic under the CheckersBoard class to handle all logic related to displaying the board. This will help in creating as many instances of checker board as needed.
@@ -42,16 +40,18 @@ class CheckersBoard {
         this.currentPlayer = starting_player;
         // this is used to keep track of the last clicked coordinate to 1) prevent user from clicking on the same square twice 2) to keep track of from and to coordinates when a piece is moved
         this.last_clicked_coordinate = null;
+        this.received_coords = [];
     }
 
+    
     update_current_player(player) {
-        // TODO: The game manager will call this method from the class to change the current player after each move
+        // Update the UI to show whose turn it is
         this.currentPlayer = player;
         currentPlayer = player;
         document.getElementById("current-player").innerText = `Current Player: ${player}`;
     }
 
-
+    
     /*
         handle_checkers_piece_click()
         Rules referenced from: https://en.wikipedia.org/wiki/English_draughts
@@ -93,6 +93,7 @@ class CheckersBoard {
                     this.show_possible_moves(x, y);
                 }
             }
+            
         }
     }
 
@@ -135,6 +136,7 @@ class CheckersBoard {
             // relay the move to the backend through the ws connection
             console.log({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
             this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
+            
         }
     }
 
@@ -207,6 +209,7 @@ class CheckersBoard {
         Simple function that simply removes a class from the squares to hide the best possible moves for a clicked checkers piece. This function is custom implemented.
     */
     hide_possible_moves() {
+
         this.checkers_board.forEach(square => {
             if (square.el.dataset.highlighted === "true") {
                 square.el.style.background = square.el.dataset.originalBackground;
@@ -295,7 +298,23 @@ class CheckersBoard {
         this.update_board_style();
     }
 
-
+    //This function checks an array to make sure that it is a valid set of co-ordinates for the board
+    allowed_moves_validation(moves){
+        for(let i=0;i<moves.length;i++){
+              if(moves[i].length!=2){
+                  return false;
+              }
+              for(let j=0;j<2;i++){
+                  if(!Number.isInteger(moves[i][j])){
+                    return false;
+                  }
+                  if(!(0<=moves[i]<8)){
+                    return false;
+                  }
+              }
+          }
+        return true;
+    }
     /*
         return_allowed_moves relies on the backend to provide the allowed moves for a piece at a given position.
         This function is custom implemented.
@@ -305,12 +324,19 @@ class CheckersBoard {
         if (!square) return [];
 
         const checkers_piece_type = square.el.getAttribute("data-piece");
-        const moves = [];
+        let moves = [];
         // checkers_piece_type = "b" or "w"
         // TODO: This needs to be handled by the java backend since this involves making game logic
         this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, player: this.currentPlayer, square: [x, y]}));
-        // later we will implement an event listener that listen to the allowed moves and update the moves array
-        return []; // an array of possibly [x,y] positions that this piece can more to
+        
+        while(!allowed_moves_validation(this.received_coords)){
+            //This loop waits for this.received_coords to be filled with data
+              };
+              //Returns an array of possible moves and resets the class-level variable in preparation for the next call.
+              moves = this.received_coords;
+              this.received_coords = [];
+              return moves;
+        }
     }
-}
+
 
