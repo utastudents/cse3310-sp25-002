@@ -42,8 +42,18 @@ class CheckersBoard {
         this.currentPlayer = starting_player;
         // this is used to keep track of the last clicked coordinate to 1) prevent user from clicking on the same square twice 2) to keep track of from and to coordinates when a piece is moved
         this.last_clicked_coordinate = null;
+        this.valid_moves = [];
     }
 
+    
+    this.connection.onmessage = function (event) => {
+                  var moves = JSON.parse(event.data);
+                    //This if statement checks if the message is a set of co-ordinates
+                  if(allowed_moves_validation(moves)){
+                      this.valid_moves = moves;
+                  } 
+              };
+    
     update_current_player(player) {
         // TODO: The game manager will call this method from the class to change the current player after each move
         this.currentPlayer = player;
@@ -135,6 +145,8 @@ class CheckersBoard {
             // relay the move to the backend through the ws connection
             console.log({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
             this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
+            //This resets this.valid_moves in preparation for the next return_allowed_moves call
+            this.valid_moves = [];
         }
     }
 
@@ -325,16 +337,9 @@ class CheckersBoard {
         // checkers_piece_type = "b" or "w"
         // TODO: This needs to be handled by the java backend since this involves making game logic
         this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, player: this.currentPlayer, square: [x, y]}));
-        // later we will implement an event listener that listen to the allowed moves and update the moves array
-        while(true){
-            //This loop waits for a message containing a stringified two dimensional array of co-ordinates
-              this.connection.onmessage = (event) => {
-                  moves = JSON.parse(event.data);
-                  if(allowed_moves_validation(moves)){
-                      return moves;
-                  } else {
-                  moves=[];
-                  }
+        
+        while(!allowed_moves_validation(this.valid_moves)){
+            //This loop waits for this.valid_moves to be filled with data
               };
 
         }
