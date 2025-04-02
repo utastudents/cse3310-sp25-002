@@ -67,21 +67,13 @@ class CheckersBoard {
 
     
     update_current_player(player) {
-        // TODO: The game manager will call this method from the class to change the current player after each move
+        // Update the UI to show whose turn it is
         this.currentPlayer = player;
         currentPlayer = player;
         document.getElementById("current-player").innerText = `Current Player: ${player}`;
     }
 
-    update_current_player_name(player_name) {
-        this.currentPlayer = player_name;
-        currentPlayer = player_name;
-        
-        // Update the UI to show whose turn it is
-        document.getElementById("current-player").innerText = `Current Player: ${player_name}`;
-    }
-
-
+    
     /*
         handle_checkers_piece_click()
         Rules referenced from: https://en.wikipedia.org/wiki/English_draughts
