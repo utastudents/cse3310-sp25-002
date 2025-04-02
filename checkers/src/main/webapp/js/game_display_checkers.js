@@ -24,6 +24,23 @@ const add_game_display_user_control_event_listener = () => {
     register_buttons_to_event_listener(offer_draw_button, "click", offer_draw);
 };
 
+connection.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    if(data.type === "resign") {
+        alert(`${data.player} has resigned. The Game is over`)
+    }
+    else if(data.type === "draw_offer") {
+        if(confirm(`${data.player} offered a draw. Would you want to accept?`)) {
+            connection.send(JSON.stringify({type: "draw_accept", game_id: game_id, player: currentPlayer}))
+        }
+    }
+
+    else if(data.type === 'draw_accept'){
+        alert({"The draw has been accepted. The game is now over."})
+    }
+};
+
 
 
 class CheckersBoard {
