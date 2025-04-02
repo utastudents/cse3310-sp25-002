@@ -8,6 +8,6 @@ public class SQliteConnector
 	public static void main(String[] args)
 	{
 		String url; // will be used to create a connection to Database
-		Var Database; //will be used to access the database
+		var Database; //will be used to access the database
 	}
 }

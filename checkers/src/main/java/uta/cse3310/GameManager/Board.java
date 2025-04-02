@@ -11,11 +11,7 @@ public class Board {
                }
           }
      }
-
-     public Square getSquare(int row, int col) {
-          return board[row][col];
-     }
-
+     
      public void initializeBoard() {
           for (int i = 0; i < 3; i++) {
                for (int j = (i % 2 == 0) ? 1 : 0; j < 8; j += 2) {
@@ -31,6 +27,7 @@ public class Board {
           }
      }
 
+     public Square getSquare(int row, int col){return board[row][col];}
      public void setSquare(Square square){board[square.getRow()][square.getCol()] = square;}
 
 }

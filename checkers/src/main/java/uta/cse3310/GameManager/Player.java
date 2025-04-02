@@ -1,10 +1,11 @@
 package uta.cse3310.GameManager;
+
 public class Player {
      private int playerId;
      private int score;
      private int pieceCount;
 
-     public Player(int playerId) {
+     public Player(int playerId){
           this.playerId = playerId;
           this.score = 0;
           this.pieceCount = 12;

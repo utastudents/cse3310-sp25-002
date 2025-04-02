@@ -24,8 +24,6 @@ const add_game_display_user_control_event_listener = () => {
     register_buttons_to_event_listener(offer_draw_button, "click", offer_draw);
 };
 
-
-
 class CheckersBoard {
     /*
         We have put the game display logic under the CheckersBoard class to handle all logic related to displaying the board. This will help in creating as many instances of checker board as needed.
@@ -47,13 +45,13 @@ class CheckersBoard {
 
     
     update_current_player(player) {
-        // TODO: The game manager will call this method from the class to change the current player after each move
+        // Update the UI to show whose turn it is
         this.currentPlayer = player;
         currentPlayer = player;
         document.getElementById("current-player").innerText = `Current Player: ${player}`;
     }
 
-
+    
     /*
         handle_checkers_piece_click()
         Rules referenced from: https://en.wikipedia.org/wiki/English_draughts

@@ -23,8 +23,8 @@ public class Square{
      public void placeBlackKing(){this.place(false, true);}
      public void placeWhite(){this.place(true, false);}
      public void placeWhiteKing(){this.place(true, true);}
-     public void makeKing(Square square){square.king = true;}
-     public void remove(boolean color, boolean isKing){
+     public void makeKing(){this.king = true;}
+     public void remove(){
           this.piece = false;
           this.color = null;
           this.king = false;
