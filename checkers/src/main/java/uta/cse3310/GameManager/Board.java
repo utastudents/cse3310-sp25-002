@@ -27,23 +27,15 @@ public class Board {
 
      public Square getSquare(int row, int col){return board[row][col];}
      public void setSquare(Square square){board[square.getRow()][square.getCol()] = square;}
-     public void execute(Move move){
+
+     public void execute(Move move, boolean promote){
           Square start = board[move.getStart().getRow()][move.getStart().getCol()];
           boolean pieceColor = start.getColor();
           boolean isKing = start.isKing();
 
           Square end = board[move.getDest().getRow()][move.getDest().getCol()];
           end.place(pieceColor, isKing);
-          start.remove();
-     }
-     public void executePromote(Move move){
-          Square start = board[move.getStart().getRow()][move.getStart().getCol()];
-          boolean pieceColor = start.getColor();
-          boolean isKing = start.isKing();
-
-          Square end = board[move.getDest().getRow()][move.getDest().getCol()];
-          end.place(pieceColor, isKing);
-          end.makeKing();
+          if(promote){end.makeKing();}
           start.remove();
      }
 

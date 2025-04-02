@@ -8,7 +8,7 @@ public class Test{
           board.initializeBoard();
           System.out.print(board.toString());
           Move move = new Move(start, dest);
-          board.execute(move);
+          board.execute(move, false);
           System.out.print(board.toString());
      }
 }
