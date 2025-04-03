@@ -2,12 +2,13 @@ package uta.cse3310.GameManager;
 
 public class Game
 {
-
     private Board board;
     private Player player1;
     private Player player2;
     private int gameNumber;
     private boolean player1Turn = true;
+    private boolean gameIsActive = true;
+    private boolean draw = false;
 
     public Game(int player1id, int player2id, boolean player1color, boolean player2color, int gameNumber){
         board = new Board();
@@ -19,6 +20,9 @@ public class Game
     public Player getWinner(){
         int playerOnePieces = player1.getPieces();
         int playerTwoPieces = player2.getPieces();
+        //will set gameIsActive to false if theres a winner and if its a draw or maybe
+        //gameIsActive will be false when game is declared a draw in the method
+        if(draw){return null;}
         if(playerOnePieces == 0){return player2;}
         if(playerTwoPieces == 0){return player1;}
         return null;
@@ -32,4 +36,6 @@ public class Game
     public boolean getPlayer2Color(){return player2.getColor();}
     public Board getBoard(){return board;}
     public int gameNumber(){return gameNumber;}
+    public boolean gameActive(){return gameIsActive;}
+    public void GameDeclareDraw(){draw = true;}
 }
