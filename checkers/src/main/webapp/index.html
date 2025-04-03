@@ -21,13 +21,11 @@
         game display
         <div style="width: 336px; max-width:auto; margin: 10px auto;" class="hidden" id="game_display_container">
             <div style="text-align: center; font-size: 16px; margin-top: 10px; font-weight: bold; color: #333;">
-                <!-- TODO: New Account / Login Team responsible for displatying the current player. This information will be received via websockets -->
                 <p id="current-player">Current Player: Player 1</p>
             </div>
             <br/>
             <div class="game" style="display: inline-block; border: 4px solid #333; background: #333; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.3); width: 328px; height: 328px; padding: 0; box-sizing: content-box;"></div>
             <div style="margin-top: 15px; text-align: center;">
-                <!-- TODO: Page Manager Team responsible to handling the sequencing between pages. The button press events will be sent to java via websockets -->
                 <button id="resign_buttom" class="button" style="background-color: #ff4f4f; color: white; padding: 8px 16px; font-size: 14px; border: none; cursor: pointer; margin: 5px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: all 0.2s ease;">Resign</button>
                 <button id="offer_draw_button" class="button" style="background-color: #ffcb45; color: #333; padding: 8px 16px; font-size: 14px; border: none; cursor: pointer; margin: 5px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: all 0.2s ease;">Offer Draw</button>
             </div>
@@ -42,8 +40,8 @@
       <textarea id="tbox" name="tbox" rows="4" cols="50">
      </textarea>
     </div>
-    <!-- This javascript code contains logic for the game display. It is currently incomplete. -->
-    <script src="js/game_display_checkers.js" defer></script>
+    <!-- This javascript code contains logic for the game display. Imports the CheckersBoard class which contains methods to create and add functionality to the checkers board. -->
+    <script src="js/game_display_checkers.js"></script>
     </body>
 </html>
 <script>
@@ -57,7 +55,12 @@
     // or until the user decides to go to another page.
     // this requires everything to load from this page.
 
-   
+    // this element is used to display the game board
+    let gameContainer = document.getElementById("game_display_container");
+    // this variable is used to check if the game board has been initialized
+    let game_display_checkers_board_initialized = false;
+    let checkerBoard = null;
+
     var connection = null;
 
     var serverUrl;
@@ -75,36 +78,24 @@
     connection.onmessage = function (evt) {
         var msg;
         msg = evt.data;
-        const data = JSON.parse(evt.data);
+
 
         console.log("Message received: " + msg);
         document.getElementById("tbox").innerHTML = msg + '\n' + document.getElementById("tbox").innerHTML;
         const obj = JSON.parse(msg);
-        //If the message data is a stringified 2d array, it will assign the values to checkerBoard.received_coords
-        if(checkerBoard.allowed_moves_validation(obj)){
-                      checkerBoard.received_coords = obj;
-                  } 
 
-        if(data.type === "resign") {
-            alert(`${data.player} has resigned. The game is now over.`);
-        }
-        else if(data.type === "draw_offer") {
-            if(confirm(`${data.player} offered a draw, would you like to accept?`)) {
-                connection.send(JSON.stringify({type: "draw_accept", game_id: game_id, player: currentPlayer}))
-            }
-        }
-        else if(data.type === 'draw_accept'){
-            alert("The draw has been accepted. The game is now over.")
-        }
-        else if(data.type === 'player_name_update'){
-            checkerBoard.update_player_name(data.current_move);
-        }
+        let data = JSON.parse(msg);
+
+        // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
+        if (game_display_checkers_board_initialized){
+            game_display_handle_websocket_received_data(checkerBoard, data);
+        };
+
     }
 
-    
 
-    let gameContainer = document.getElementById("game_display_container");
-    let boardInitialization = false;
+    // uncomment the line below to test rendering the game board
+    setTimeout(showGameDisplay("134242424", "Player 1"),3000);
 
     //showing the game board
     function showGameDisplay(gameid, startingPlayer){
@@ -115,13 +106,17 @@
         gameContainer.classList.remove("hidden");
         gameContainer.classList.add("visible");
 
-        if(!boardInitialization){
-            window.checkerBoard = new CheckersBoard(conn = connection, g_id = gameid, starting_player = startingPlayer);
+        if(!game_display_checkers_board_initialized){
+            // use the CheckersBoard class to create the game board and attach the class to the DOM
+            checkerBoard = new CheckersBoard(conn = connection, g_id = gameid, starting_player = startingPlayer);
+            // call the create_checkers_board method to create the game board
             checkerBoard.create_checkers_board();
+            // attach all the event listeners to the game board. Note: this function is defined in the game_display_checkers.js file
             add_game_display_user_control_event_listener();
-            boardInitialization = true;
+            // set the flag to true to indicate that the game board has been initialized. Note: this is used to prevent the game board from being initialized multiple times
+            game_display_checkers_board_initialized = true;
         }
-        document.getElementById("current-player").textContent = 'Current Player: ${startingPlayer}';
+        document.getElementById("current-player").textContent = `Current Player: ${startingPlayer}`;
     }
 
     //function to hide the board
@@ -130,7 +125,7 @@
             console.log("game display container not found");
             return;
         }
-        if(!boardInitialization){
+        if(!game_display_checkers_board_initialized){
             return;
         }
         gameContainer.classList.add("hidden");
