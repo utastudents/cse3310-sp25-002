@@ -15,7 +15,7 @@ public class GameTermination {
 
     //sends a final termination message to gameplay once a match is over
     public String sendResults(){
-        
+        return "results";
     }
 
 
