@@ -6,7 +6,7 @@ public class Game
     private Board board;
     private Player player1;
     private Player player2;
-    private static int gameNumber;
+    private int gameNumber;
 
     public Game(int player1id, int player2id, boolean player1color, boolean player2color, int gameNumber){
         board = new Board();
