@@ -16,7 +16,7 @@ public class GameManager {
         gt = new GameTermination();
         b1 = new BotI();
         b2 = new BotII();
-
+        
         //list<Game> Games = new List<>
 
     }
