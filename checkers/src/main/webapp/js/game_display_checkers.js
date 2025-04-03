@@ -22,7 +22,7 @@ const handle_resign = () => {
         connection.send(JSON.stringify({type: "resign", game_id: game_id, player: game_display_current_player_name}));
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
-        game_display_popup_messages(`(gd) handle_resign: An error occurred while handling the game display.`);
+        game_display_popup_messages(`(gd) handle_resign: An error occurred while handling the game display. Please check the console.`);
     }
 };
 
@@ -31,7 +31,7 @@ const offer_draw = () => {
         connection.send(JSON.stringify({type: "draw", game_id: game_id, player: game_display_current_player_name}));
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
-        game_display_popup_messages(`(gd) offer_draw: An error occurred while handling the game display.`);
+        game_display_popup_messages(`(gd) offer_draw: An error occurred while handling the game display. Please check the console.`);
     }
 };
 
@@ -42,7 +42,7 @@ const register_buttons_to_event_listener = (element, event_type, handler) => {
         element.addEventListener(event_type, handler);
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
-        game_display_popup_messages(`(gd) register_buttons_to_event_listener: An error occurred while handling the game display.`);
+        game_display_popup_messages(`(gd) register_buttons_to_event_listener: An error occurred while handling the game display. Please check the console.`);
     }
 
 };
@@ -55,7 +55,7 @@ const add_game_display_user_control_event_listener = () => {
         register_buttons_to_event_listener(offer_draw_button, "click", offer_draw);
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
-        game_display_popup_messages(`(gd) add_game_display_user_control_event_listener: An error occurred while handling the game display.`);
+        game_display_popup_messages(`(gd) add_game_display_user_control_event_listener: An error occurred while handling the game display. Please check the console.`);
     }
 
 };
@@ -88,10 +88,13 @@ const game_display_handle_websocket_received_data = (checkerBoard, data) => {
         } else if(data.type === 'player_name_update'){
             // assuming that websocket sends the json string {"type":"player_name_update", "current_move":"NAME OF PLAYER THAT WILL MAKE NEXT MOVE (STRING)"}
             checkerBoard.update_player_name(data.current_move);
+        } else if(data.type === 'notify_players'){
+            // assuming that websocket sends the json string {"type":"notify_players", "message":"Game won/ Game Draw/ Connection issue/ Error message"}
+            game_display_popup_messages(data.message);
         }
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
-        game_display_popup_messages(`(gd) game_display_handle_websocket_received_data: An error occurred while handling the game display.`);
+        game_display_popup_messages(`(gd) game_display_handle_websocket_received_data: An error occurred while handling the game display. Please check the console.`);
     }
 
 }
@@ -126,7 +129,7 @@ class CheckersBoard {
             document.getElementById("current-player").innerText = `Current Player: ${player}`;
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) update_current_player: An error occurred while handling the game display.`);
+            game_display_popup_messages(`(gd) update_current_player: An error occurred while handling the game display. Please check the console.`);
         }
 
     }
@@ -179,7 +182,7 @@ class CheckersBoard {
             }
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) handle_checkers_piece_click: An error occurred while handling the game display.`);
+            game_display_popup_messages(`(gd) handle_checkers_piece_click: An error occurred while handling the game display. Please check the console.`);
         }
     }
 
@@ -229,7 +232,7 @@ class CheckersBoard {
 
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) move_checkers_piece: An error occurred while handling the game display.`);
+            game_display_popup_messages(`(gd) move_checkers_piece: An error occurred while handling the game display. Please check the console.`);
         }
     }
 
@@ -286,7 +289,7 @@ class CheckersBoard {
             });
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) update_board_style: An error occurred while handling the game display.`);
+            game_display_popup_messages(`(gd) update_board_style: An error occurred while handling the game display. Please check the console.`);
         }
     }
 
@@ -308,7 +311,7 @@ class CheckersBoard {
             });
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) show_possible_moves: An error occurred while handling the game display.`);
+            game_display_popup_messages(`(gd) show_possible_moves: An error occurred while handling the game display. Please check the console.`);
         }
     }
 
@@ -327,7 +330,7 @@ class CheckersBoard {
             });
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) hide_possible_moves: An error occurred while handling the game display.`);
+            game_display_popup_messages(`(gd) hide_possible_moves: An error occurred while handling the game display. Please check the console.`);
         }
     }
 
@@ -344,7 +347,7 @@ class CheckersBoard {
             return valid_moves.some(move => move.x === move_to_x && move.y === move_to_y);
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) is_valid_move: An error occurred while handling the game display.`);
+            game_display_popup_messages(`(gd) is_valid_move: An error occurred while handling the game display. Please check the console.`);
         }
     }
 
@@ -422,7 +425,7 @@ class CheckersBoard {
             this.update_board_style();
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) create_checkers_board: An error occurred while handling the game display.`);
+            game_display_popup_messages(`(gd) create_checkers_board: An error occurred while handling the game display. Please check the console.`);
         }
     }
 
@@ -450,7 +453,7 @@ class CheckersBoard {
             return true;
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) allowed_moves_validation: An error occurred while handling the game display.`);
+            game_display_popup_messages(`(gd) allowed_moves_validation: An error occurred while handling the game display. Please check the console.`);
         }
 
     }
@@ -483,7 +486,7 @@ class CheckersBoard {
 
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) return_allowed_moves: An error occurred while handling the game display.`);
+            game_display_popup_messages(`(gd) return_allowed_moves: An error occurred while handling the game display. Please check the console.`);
         }
     };
 }
