@@ -7,6 +7,9 @@ public class GameResult {
     //stores scores for each player
     Map<String, Integer> playerScores;
 
+    //Stores results in history
+    List<GameResult> gameHistory;
+
     //constructor to initialize scores
     public GameResult( Map<String, Integer> playerScores)
     {
