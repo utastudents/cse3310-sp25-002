@@ -45,8 +45,8 @@ public class Board {
           for(int i = 0; i<8; i++){
                builder.append("|");
                for(int j=0;j<8;j++){
-                    int piece = getSquare(i, j).hasPiece() ? 1 : 0;
-                    builder.append(piece + " ");
+                    String piece = getSquare(i, j).hasPiece() ? "██" : "  ";
+                    builder.append(piece);
                }
                builder.append("|\n");
           }
