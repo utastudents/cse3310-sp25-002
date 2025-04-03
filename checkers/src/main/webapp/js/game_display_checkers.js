@@ -76,7 +76,7 @@ const game_display_handle_websocket_received_data = (checkerBoard, data) => {
             alert(`${data.player} has resigned. The game is now over.`);
 
         } else if(data.type === "draw_offer") {
-            // assuming that websocket sends the json string {"type":"draw_offer", "player":"NAME OF PLAYER THAT RESIGNED (STRING)"}
+            // assuming that websocket sends the json string {"type":"draw_offer", "player":"NAME OF PLAYER THAT OFFERED THE DRAW (STRING)"}
             if(confirm(`${data.player} offered a draw, would you like to accept?`)) {
                 connection.send(JSON.stringify({type: "draw_accept", game_id: game_id, player: game_display_current_player_name}));
             };
@@ -88,6 +88,7 @@ const game_display_handle_websocket_received_data = (checkerBoard, data) => {
         } else if(data.type === 'player_name_update'){
             // assuming that websocket sends the json string {"type":"player_name_update", "current_move":"NAME OF PLAYER THAT WILL MAKE NEXT MOVE (STRING)"}
             checkerBoard.update_player_name(data.current_move);
+
         } else if(data.type === 'notify_players'){
             // assuming that websocket sends the json string {"type":"notify_players", "message":"Game won/ Game Draw/ Connection issue/ Error message"}
             game_display_popup_messages(data.message);
@@ -120,7 +121,7 @@ class CheckersBoard {
         this.received_coords = [];
     }
 
-    
+
     update_current_player(player) {
         // Update the UI to show whose turn it is
         try{
