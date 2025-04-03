@@ -5,10 +5,10 @@ import java.sql.SQLException;
 
 public class Validate
 {
-    public static void User()
+    public static void ValidateUser()
     {
 
-        
+
     }
 
 
