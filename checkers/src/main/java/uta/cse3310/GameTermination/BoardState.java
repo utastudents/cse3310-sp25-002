@@ -28,8 +28,9 @@ public class BoardState {
     //will decide if the game has winner
     public boolean hasAWinner(Board boardState){
         //this method will return either true or false depending if there is a winner or not.
+        
         //this will depend on having no legal moves or capturing all of the opponet pieces.
-	    return true;
+	    return remainingPieces.get("Player1") == 0 || remainingPieces.get("Player2") == 0;
     }
     
 	
