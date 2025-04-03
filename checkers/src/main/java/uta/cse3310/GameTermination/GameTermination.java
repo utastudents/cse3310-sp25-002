@@ -1,8 +1,18 @@
 package uta.cse3310.GameTermination;
 import uta.cse3310.GameManager.Player;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class GameTermination {
 
+    //Queue to rotate players
+    Queue<Player> playerQueue;
+
+    public GameTermination() {
+        playerQueue = new LinkedList<>();
+
+    }
+    
     //sends a request for game restart and players wait in queue.
     public void gameRestartReq(){
 
