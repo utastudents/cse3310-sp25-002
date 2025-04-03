@@ -3,7 +3,7 @@ package uta.cse3310.DB;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SQliteConnector
+public class SQLiteConnector
 {
 	public static void main(String[] args)
 	{
