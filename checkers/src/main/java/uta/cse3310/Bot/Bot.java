@@ -10,11 +10,11 @@ public abstract class Bot {
     
     // The moves object is a LinkedList of Moves, which is used to store the moves
     // the bot will make.
-    private Moves moves;
+    protected Moves moves;
 
     // The current game board is the Board object that represents the current state
     // of the game, provided by the GameManager.
-    private Board currentGameBoard;
+    protected Board currentGameBoard;
 
     /**
      * 

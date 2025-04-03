@@ -1,11 +1,16 @@
 package uta.cse3310.GameTermination;
 import uta.cse3310.GameManager.Player;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public class GameResult {
 
     //stores scores for each player
     Map<String, Integer> playerScores;
+
+    //Stores results in history
+    List<GameResult> gameHistory;
 
     //constructor to initialize scores
     public GameResult( Map<String, Integer> playerScores)
