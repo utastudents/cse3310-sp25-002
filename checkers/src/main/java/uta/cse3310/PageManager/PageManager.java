@@ -1,15 +1,9 @@
 package uta.cse3310.PageManager;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import uta.cse3310.PageManager.Match_PairUP;
-import uta.cse3310.PageManager.JSONconverter_PairUP;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
-import uta.cse3310.PageManager.UserEvent;
-import uta.cse3310.PageManager.UserEventReply;
 
 public class PageManager {
     DB db;
@@ -30,10 +24,10 @@ public class PageManager {
         /*
         try {
          
-            List<PlayerEntry_PairUP> PlayersWaiting = JSONconverter_PairUP.parsePlayersFromJson(json_UI);
-            List<Match_PairUP> PlayersActive = pu.pairPlayers(PlayersWaiting);
+            List<pairup_subsys.PlayerEntry> PlayersWaiting = pairup_subsys.JSONconverter.parsePlayersFromJson(json_UI);
+            List<pairup_subsys.Reply> PlayersActive = pu.pairPlayers(PlayersWaiting);
 
-            return JSONconverter_PairUP.convertMatchesToJson(PlayersActive);
+            return pairup_subsys.JSONconverter.convertRepliesToJson(PlayersActive);
 
         } catch (Exception e) {
             e.printStackTrace();
