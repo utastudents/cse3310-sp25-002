@@ -1,6 +1,6 @@
 ## Join Game Design
 
-This design will include all methods, arguments, and return values.
+This document outlines the design of the Join Game component, including class structures, methods, and data flow. It specifies core functionality without implementation details, covering methods, arguments, and return values as needed. Implementation will occur in the next phase.
 
 Five Classes:
 1) Data 
