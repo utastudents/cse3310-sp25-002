@@ -1,6 +1,8 @@
 package uta.cse3310.GameTermination;
 import uta.cse3310.GameManager.Player;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public class GameResult {
 
