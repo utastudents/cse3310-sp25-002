@@ -20,7 +20,6 @@ public class GameManager {
         //list<Game> Games = new List<>
 
     }
-
 }
 
 // public String boardtoJSON(Board board){

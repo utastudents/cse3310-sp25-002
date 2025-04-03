@@ -8,10 +8,10 @@ public class Game
     private Player player2;
     private static int gameNumber;
 
-
     public Game(int player1id, int player2id, boolean player1color, boolean player2color, int gameNumber)
     {
         board = new Board();
+        board.initializeBoard();
         player1 = new Player(player1id, player1color);
         player2 = new Player(player2id, player2color);
         this.gameNumber = gameNumber;
@@ -36,5 +36,8 @@ public class Game
     {
         return board;
     }
-    
+    public static int getGameNumber()
+    {
+        return gameNumber;
+    }
 }
