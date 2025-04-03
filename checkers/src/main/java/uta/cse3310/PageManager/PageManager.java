@@ -1,9 +1,15 @@
 package uta.cse3310.PageManager;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import uta.cse3310.PageManager.pairup_subsys;
+  
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
+import uta.cse3310.PageManager.UserEvent;
+import uta.cse3310.PageManager.UserEventReply;
 
 public class PageManager {
     DB db;
