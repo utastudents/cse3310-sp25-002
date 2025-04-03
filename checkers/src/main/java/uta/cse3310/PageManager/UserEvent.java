@@ -16,9 +16,10 @@ public class UserEvent {
     String msg;     
 
 
-    public static UserEvent fromJSON(Sting jsonStr){
+    public static UserEvent fromJSON(String jsonStr){
         // TODO: implement this method
         // This method should parse the JSON string and create a UserEvent object
+        return null;
     }
 
 }
