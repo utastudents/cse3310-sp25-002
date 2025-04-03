@@ -1,6 +1,6 @@
 package uta.cse3310.GameTermination;
 import uta.cse3310.GameManager.Player;
-import java.util.*;
+import java.util.LinkedList;
 
 public class GameTermination {
 
