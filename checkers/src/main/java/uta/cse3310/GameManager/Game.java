@@ -6,7 +6,7 @@ public class Game
     private Board board;
     private Player player1;
     private Player player2;
-    private static int gameNumber;
+    private int gameNumber;
 
     public Game(int player1id, int player2id, boolean player1color, boolean player2color, int gameNumber)
     {
@@ -15,6 +15,10 @@ public class Game
         player1 = new Player(player1id, player1color);
         player2 = new Player(player2id, player2color);
         this.gameNumber = gameNumber;
+    }
+    public void setBoard(Board board)
+    {   
+        //board.
     }
     public int getPlayer1ID()
     {
@@ -36,8 +40,9 @@ public class Game
     {
         return board;
     }
-    public static int getGameNumber()
+    public int getGameNumber()
     {
         return gameNumber;
     }
+
 }
