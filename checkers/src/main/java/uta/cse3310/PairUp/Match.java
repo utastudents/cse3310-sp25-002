@@ -6,6 +6,17 @@ package uta.cse3310.PairUp;
     then be sent to GameManager
 */
 public class Match {
+
+    private String playerId;
+    private String player2Id;
+    private String player1Name; 
+    private String player2Name;
+    private Boolean isBot;
+    private String gameId;
+    private Boolean player1Color;
+    private Boolean player2Color;
+
+
     public Match(String player1Id, String player2Id, String player1Name, String player2Name,
      Boolean isBot, String gameId, Boolean player1Color, Boolean player2Color) {
         
