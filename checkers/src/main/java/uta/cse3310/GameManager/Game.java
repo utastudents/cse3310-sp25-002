@@ -1,11 +1,16 @@
 package uta.cse3310.GameManager;
 
+import uta.cse3310.Bot.BotI.BotI;
+import uta.cse3310.Bot.BotII.BotII;
+
 public class Game
 {
     private Board board;
     private Player player1;
     private Player player2;
     private int gameNumber;
+    private BotI bot1;
+    private BotII bot2;
     private boolean player1Turn = true;
     private boolean gameIsActive = true;
     private boolean draw = false;
@@ -15,6 +20,8 @@ public class Game
     public Game(int player1id, int player2id, boolean player1color, boolean player2color, int gameNumber){
         board = new Board();
         board.initializeBoard();
+        bot1 = new BotI(player1color);
+        bot2 = new BotII(player2color);
         player1 = new Player(player1id, player1color);
         player2 = new Player(player2id, player2color);
         this.gameNumber = gameNumber;
