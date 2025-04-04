@@ -7,5 +7,11 @@ import uta.cse3310.GameManager.Moves;
 import java.util.LinkedList;
 
 public class BotI extends Bot {
-    
+
+    /* Sending Moves from Bot 1 to the GameManager */
+    @Override
+    protected Moves sendMove() {
+        return this.moves;
+    }
+
 }
