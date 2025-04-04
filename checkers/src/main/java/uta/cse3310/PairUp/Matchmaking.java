@@ -2,6 +2,7 @@ package uta.cse3310.PairUp;
 
 import uta.cse3310.GameManager.GamePairController;
 import java.util.ArrayList;
+import java.util.Random;
 
 /*
     The Matchmaking class will deal with all things
@@ -23,12 +24,15 @@ public class Matchmaking implements Runnable {
         thread.start();
     }
 
-    // TO-DO: implement addPlayer()
+    // TO-DO: implement public void addPlayer(PlayerInMatchmaking newPlayer)
 
-    // TO-TDO: implement removePlayer()
+    // TO-TDO: implement public void removePlayer(String playerId)
 
     public void pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2, boolean isBotGame) {
-        // Match match = new Match(gameId, p1.getPlayerId, p2.getPlayerId, p1.getPlayerName, p2.getPlayerName, isBotGame);
+        Random coinflip = new Random();
+        boolean p1Color = coinflip.nextBoolean();
+        boolean p2Color = !p1Color;
+        // Match match = new Match(gameId, p1.getPlayerId, p2.getPlayerId, p1.getPlayerName, p2.getPlayerName, p1Color, p2Color, isBotGame);
         // gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
     }
 
