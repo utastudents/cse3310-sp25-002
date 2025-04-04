@@ -41,7 +41,7 @@ jobs:
           ssh production "rm -rf  ${{ github.event.repository.name }}"
           echo "cloning  ${{ github.server_url }}/${{ github.repository }}"
           ssh production "git clone ${{ github.server_url }}/${{ github.repository }}"
-          ssh production "cd  ${{ github.event.repository.name }};mvn clean compile package"
+          ssh production "cd  ${{ github.event.repository.name }};cd checkers;mvn clean compile package"
         
       - name: create systemd unit file
         run: |
@@ -59,7 +59,7 @@ jobs:
            ssh production 'echo "Environment=WEBSOCKET_PORT=${{ vars.websocket_port }}" >>.config/systemd/user/${{ vars.service_name }}.service'
            ssh production 'echo "Environment=HTTP_PORT=${{ vars.http_port }}" >>.config/systemd/user/${{ vars.service_name }}.service'
            ssh production 'echo "ExecStart=mvn exec:java -Dexec.mainClass=uta.cse3310.App" >> .config/systemd/user/${{ vars.service_name }}.service'
-           ssh production 'echo "WorkingDirectory=$PWD/${{ github.event.repository.name }}" >> .config/systemd/user/${{ vars.service_name }}.service'
+           ssh production 'echo "WorkingDirectory=$PWD/${{ github.event.repository.name }}/checkers" >> .config/systemd/user/${{ vars.service_name }}.service'
            ssh production 'echo "[Install]" >>.config/systemd/user/${{ vars.service_name }}.service'
            ssh production 'echo "WantedBy=default.target" >>.config/systemd/user/${{ vars.service_name }}.service'
       - name: systemd reload

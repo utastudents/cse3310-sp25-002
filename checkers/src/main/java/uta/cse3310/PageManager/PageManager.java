@@ -1,20 +1,50 @@
 package uta.cse3310.PageManager;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import uta.cse3310.PageManager.Match_PairUP;
-import uta.cse3310.PageManager.JSONconverter_PairUP;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
-import uta.cse3310.PageManager.UserEvent;
-import uta.cse3310.PageManager.UserEventReply;
 
 public class PageManager {
     DB db;
     PairUp pu;
     Integer turn = 0; // just here for a demo. note: it is a global, effectively and is not unique per client (or game)
+
+    // ------------------------------------------------------------------------
+    // Web Socket connection
+    // ------------------------------------------------------------------------
+
+    /**
+     * establish a channel between front end and back end
+     *
+     * @param  JSON string from frontend 
+     * @return JSON response from back end
+     */
+
+     public class WebSocketServer {
+
+        // TO DO: write a code to link WebSocket once the API call has been made
+
+    
+    public void OnOpen() {
+        // print connection established
+    }
+
+    
+    public void OnMessage() {
+
+        // receive message in JSON format from HTML
+        // send message in JSON format HTML
+    }
+
+    public void onClose() {
+        // print connection breaked
+    }
+
+    public void onError(){
+        // print error while setting up connection
+    }
+}
 
     // ------------------------------------------------------------------------
     // PAIR UP SUBSYSTEM
@@ -27,13 +57,15 @@ public class PageManager {
      * @return JSON response with match info or error
      */
     public String handleUserReq(String json_UI) {
-        /*
+
+        //TO DO: PairUp interface should create a method to link data
+        /* 
         try {
          
-            List<PlayerEntry_PairUP> PlayersWaiting = JSONconverter_PairUP.parsePlayersFromJson(json_UI);
-            List<Match_PairUP> PlayersActive = pu.pairPlayers(PlayersWaiting);
+            List<pairup_subsys.PlayerEntry> PlayersWaiting = pairup_subsys.JSONconverter.parsePlayersFromJson(json_UI);
+            List<pairup_subsys.reply_m> PlayersActive = pu.pairPlayers(PlayersWaiting);
 
-            return JSONconverter_PairUP.convertMatchesToJson(PlayersActive);
+            return pairup_subsys.JSONconverter.convertRepliesToJson(PlayersActive);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -42,7 +74,6 @@ public class PageManager {
         */
        return "{\"status\": \"PairUp not implemented yet.\"}";
     }
-
     // ------------------------------------------------------------------------
     // GAME EVENT HANDLING
     // ------------------------------------------------------------------------
@@ -95,21 +126,21 @@ public class PageManager {
         return reply;
     }
 
-    /**
-     * Handles requests for allowed moves from frontend.
-     *
-     * @param event The allowed-moves request from a player
-     * @return A reply with placeholder move data
-     */
-    public UserEventReply handleGetAllowedMoves(UserEvent event) {
-        System.out.println("[DEBUG] Requesting allowed moves for piece by player " + event.id);
+    // /**
+    //  * Handles requests for allowed moves from frontend.
+    //  *
+    //  * @param event The allowed-moves request from a player
+    //  * @return A reply with placeholder move data
+    //  */
+    // public UserEventReply handleGetAllowedMoves(UserEvent event) {
+    //     System.out.println("[DEBUG] Requesting allowed moves for piece by player " + event.id);
 
-        UserEventReply reply = new UserEventReply();
-        reply.status = new game_status(); 
-        reply.recipients = new ArrayList<>();
-        reply.recipients.add(event.id);
-        return reply;
-    }
+    //     UserEventReply reply = new UserEventReply();
+    //     reply.status = new game_status(); 
+    //     reply.recipients = new ArrayList<>();
+    //     reply.recipients.add(event.id);
+    //     return reply;
+    // }
 
     
     // ------------------------------------------------------------------------
