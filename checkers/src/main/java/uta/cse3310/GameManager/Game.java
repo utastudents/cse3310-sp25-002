@@ -38,4 +38,6 @@ public class Game
     public int gameNumber(){return gameNumber;}
     public boolean gameActive(){return gameIsActive;}
     public void GameDeclareDraw(){draw = true;}
+    public int getPlayer1Score(){return player1.getScore();}
+    public int getPlayer2Score(){return player1.getScore();}
 }
