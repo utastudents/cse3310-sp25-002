@@ -37,4 +37,18 @@ public class Match {
     public String getPlayer2Name(){
         return "";
     }
+
+    /* Method to check if the player is playing against a bot or another player
+       Returns an boolean value to be used in Match class to create JSON
+    */
+    public Boolean isBotGame(){
+        return true;
+    }
+
+    /* Method to get the gameId from MatchMaking class
+       Returns an string to be used in Match class to create JSON
+    */
+    public String getGameId(){
+        return "";
+    }
 }
