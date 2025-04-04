@@ -25,6 +25,10 @@ public class BotI extends Bot {
         super(color); // Call the constructor of the parent class (Bot)
     }
     */
+
+    public BotI() {
+        super(); // call constructor of Bot parent class
+    }
    
     /* Sending Moves from Bot 1 to the GameManager */
     @Override
