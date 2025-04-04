@@ -3,6 +3,7 @@ package uta.cse3310.Bot.BotI;
 import uta.cse3310.Bot.Bot;
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.Moves;
+import uta.cse3310.GameManager.GameManager;
 
 import java.util.LinkedList;
 
