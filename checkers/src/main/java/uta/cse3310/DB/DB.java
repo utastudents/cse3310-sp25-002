@@ -40,5 +40,11 @@ public class DB
 	{
 		//   string updateStatement;
 	}
+	public static void deletePlayer()
+	{
+		//   delete player after certain time
+	}
+
+
 }
 

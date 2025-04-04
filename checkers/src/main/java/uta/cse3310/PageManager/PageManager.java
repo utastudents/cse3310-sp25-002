@@ -3,8 +3,8 @@ package uta.cse3310.PageManager;
 import java.util.ArrayList;
 import java.util.List;
 
-import uta.cse3310.PageManager.Match_PairUP;
-import uta.cse3310.PageManager.JSONconverter_PairUP;
+import uta.cse3310.PageManager.pairup_subsys;
+  
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
@@ -14,19 +14,26 @@ import uta.cse3310.PageManager.UserEventReply;
 public class PageManager {
     DB db;
     PairUp pu;
-    Integer turn = 0; // just here for a demo. note it is a global, effectively and
-                      // is not unique per client (or game)
+    Integer turn = 0; // just here for a demo. note: it is a global, effectively and is not unique per client (or game)
 
+    // ------------------------------------------------------------------------
+    // PAIR UP SUBSYSTEM
+    // ------------------------------------------------------------------------
 
-    // CODE FOR PAIR UP subsystem
+    /**
+     * Handles initial user requests for matchmaking.
+     *
+     * @param json_UI JSON string from frontend containing user info
+     * @return JSON response with match info or error
+     */
     public String handleUserReq(String json_UI) {
         /*
         try {
          
-            List<PlayerEntry_PairUP> PlayersWaiting = JSONconverter_PairUP.parsePlayersFromJson(json_UI);
-            List<Match_PairUP> PlayersActive = pu.pairPlayers(PlayersWaiting);
+            List<pairup_subsys.PlayerEntry> PlayersWaiting = pairup_subsys.JSONconverter.parsePlayersFromJson(json_UI);
+            List<pairup_subsys.Reply> PlayersActive = pu.pairPlayers(PlayersWaiting);
 
-            return JSONconverter_PairUP.convertMatchesToJson(PlayersActive);
+            return pairup_subsys.JSONconverter.convertRepliesToJson(PlayersActive);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -36,12 +43,86 @@ public class PageManager {
        return "{\"status\": \"PairUp not implemented yet.\"}";
     }
 
-    // CODE FOR PAIR UP SUB system
+    // ------------------------------------------------------------------------
+    // GAME EVENT HANDLING
+    // ------------------------------------------------------------------------
 
+    /**
+     * Handles move requests from frontend.
+     *
+     * @param event The move event from a player
+     * @return A reply containing status and recipient info
+     */
+    public UserEventReply handleMoveRequest(UserEvent event) {
+        System.out.println("[DEBUG] Received move request from player " + event.id);
+        
+        UserEventReply reply = new UserEventReply();
+        reply.status = new game_status();
+        reply.recipients = new ArrayList<>();
+        reply.recipients.add(event.id); 
+        return reply;
+    }
 
+    /**
+     * Handles resign events sent from frontend.
+     *
+     * @param event The resign event from a player
+     * @return A reply confirming the resignation
+     */
+    public UserEventReply handleResign(UserEvent event) {
+        System.out.println("[DEBUG] Player " + event.id + " resigned.");
+
+        UserEventReply reply = new UserEventReply();
+        reply.status = new game_status();
+        reply.recipients = new ArrayList<>();
+        reply.recipients.add(event.id);
+        return reply;
+    }
+
+    /**
+     * Handles draw offer events sent from frontend.
+     *
+     * @param event The draw offer event from a player
+     * @return A reply confirming the draw offer
+     */    
+    public UserEventReply handleDrawOffer(UserEvent event) {
+        System.out.println("[DEBUG] Player " + event.id + " offered a draw.");
+
+        UserEventReply reply = new UserEventReply();
+        reply.status = new game_status(); 
+        reply.recipients = new ArrayList<>();
+        reply.recipients.add(event.id);
+        return reply;
+    }
+
+    /**
+     * Handles requests for allowed moves from frontend.
+     *
+     * @param event The allowed-moves request from a player
+     * @return A reply with placeholder move data
+     */
+    public UserEventReply handleGetAllowedMoves(UserEvent event) {
+        System.out.println("[DEBUG] Requesting allowed moves for piece by player " + event.id);
+
+        UserEventReply reply = new UserEventReply();
+        reply.status = new game_status(); 
+        reply.recipients = new ArrayList<>();
+        reply.recipients.add(event.id);
+        return reply;
+    }
 
     
+    // ------------------------------------------------------------------------
+    // DEMO TEST METHOD (can be removed/replaced later)
+    // ------------------------------------------------------------------------
 
+    /**
+     * Placeholder method for testing input/output with the frontend.
+     * Simulates switching turns on each call.
+     *
+     * @param U The user event received
+     * @return A test reply with toggled turn
+     */
     public UserEventReply ProcessInput(UserEvent U) {
         UserEventReply ret = new UserEventReply();
         ret.status = new game_status();
