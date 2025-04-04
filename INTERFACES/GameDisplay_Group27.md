@@ -1,6 +1,6 @@
 # GameDisplay Interface
 
-The Game Display webpackage will use HTML components to communicate mainly with the Page Manager. The game display will produce a game board that shows the current state of the player moves and their inputs/outputs.
+The Game Display webpackage will use websocket components to communicate mainly with the Page Manager. The game display will produce a game board that shows the current state of the player moves and their inputs/outputs.
 
 # Data Received:
 The Game Display Module receives the following information from the page manager:
@@ -15,6 +15,13 @@ The Game Display Module receives the following information from the page manager
 - Movement:
     - Confirms if the move is valid and accepted by the backend
     - Triggers a pop-up/UI message if the move is invalid
+- Player Actions:
+    - Notifies if a player resigns
+    - Notifies is a player offers or accepts a draw
+    - Update to indicate whose turn is next
+- Basic Notifications:
+    - Any end-of-game messsages, errors, or system alerts that are meant for players
+        - E.g., Game over, Draw, Conneection Lost, etc.
 
 # Data Sent to Page Manager
 
@@ -23,8 +30,12 @@ The Game Display Module communicates the following actions to the Page Manager:
 - Player Move Request: The selected move from the active player
 - Resignation Signal: A notification that the current player has chosen to resign.
 - Draw Offer Signal: A request from the player to propose a draw. 
+- Draw Signal: If a player accepts a draw, this is sent to back end to finalize the result
+- Valid Move Request: Request asking for all legal moves that can be made from that position
 
 # Side information
 
 - Game Display only handles the rendering and user input captures of the player movements.
+- All communication will be done through WebSocket and formatted as JSON.
+- Game Display will wait for specific messages and wil respond back according by updating the UI or sending information (show_game_display, resign, draw_offer, etc.).
 - The final game display will be revised during the design stages.
