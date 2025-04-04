@@ -20,10 +20,12 @@ public class BotI extends Bot {
     }
 
 
-    //waiting to complete to uncomment
+    /*waiting to complete to uncomment
     public BotI(boolean color){
         super(color); // Call the constructor of the parent class (Bot)
     }
+    */
+   
     /* Sending Moves from Bot 1 to the GameManager */
     @Override
     protected Moves sendMove() {
