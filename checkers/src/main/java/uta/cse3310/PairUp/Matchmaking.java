@@ -10,13 +10,26 @@ import java.util.ArrayList;
     up, and removes them from matchmaking once they
     find a match, or if they quit matchmaking.
 */
-public class Matchmaking {
+public class Matchmaking implements Runnable {
     private ArrayList<PlayerInMatchmaking> players;
     // gamePairController gameManagerCommunication;
 
     public Matchmaking() {
         players = new ArrayList<>();
         // gameManagerCommunication = new gamePairController;
+        Thread thread = new Thread(this)
+        thread.start();
+    }
+
+    @Override
+    public void run() {
+        matching();
+    }
+
+    public void matching() {
+        while (true) {
+            // TO-DO: implement pairing algorithm
+        }
     }
 
 }
