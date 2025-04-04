@@ -126,21 +126,21 @@ public class PageManager {
         return reply;
     }
 
-    /**
-     * Handles requests for allowed moves from frontend.
-     *
-     * @param event The allowed-moves request from a player
-     * @return A reply with placeholder move data
-     */
-    public UserEventReply handleGetAllowedMoves(UserEvent event) {
-        System.out.println("[DEBUG] Requesting allowed moves for piece by player " + event.id);
+    // /**
+    //  * Handles requests for allowed moves from frontend.
+    //  *
+    //  * @param event The allowed-moves request from a player
+    //  * @return A reply with placeholder move data
+    //  */
+    // public UserEventReply handleGetAllowedMoves(UserEvent event) {
+    //     System.out.println("[DEBUG] Requesting allowed moves for piece by player " + event.id);
 
-        UserEventReply reply = new UserEventReply();
-        reply.status = new game_status(); 
-        reply.recipients = new ArrayList<>();
-        reply.recipients.add(event.id);
-        return reply;
-    }
+    //     UserEventReply reply = new UserEventReply();
+    //     reply.status = new game_status(); 
+    //     reply.recipients = new ArrayList<>();
+    //     reply.recipients.add(event.id);
+    //     return reply;
+    // }
 
     
     // ------------------------------------------------------------------------
