@@ -12,13 +12,19 @@ import java.util.ArrayList;
 */
 public class Matchmaking implements Runnable {
     private ArrayList<PlayerInMatchmaking> players;
+    private int gameId;
     // gamePairController gameManagerCommunication;
 
     public Matchmaking() {
         players = new ArrayList<>();
+        gameId = 0;
         // gameManagerCommunication = new gamePairController;
-        Thread thread = new Thread(this)
+        Thread thread = new Thread(this);
         thread.start();
+    }
+
+    public pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2, boolean isBotGame) {
+        // Match match = new Match(gameId, p1.getPlayerId, p2.getPlayerId, p1.getPlayerName, p2.getPlayerName, isBotGame)
     }
 
     @Override
@@ -31,5 +37,4 @@ public class Matchmaking implements Runnable {
             // TO-DO: implement pairing algorithm
         }
     }
-
 }
