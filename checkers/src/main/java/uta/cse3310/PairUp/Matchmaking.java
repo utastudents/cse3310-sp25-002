@@ -23,8 +23,13 @@ public class Matchmaking implements Runnable {
         thread.start();
     }
 
+    // TO-DO: implement addPlayer()
+
+    // TO-TDO: implement removePlayer()
+
     public void pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2, boolean isBotGame) {
-        // Match match = new Match(gameId, p1.getPlayerId, p2.getPlayerId, p1.getPlayerName, p2.getPlayerName, isBotGame)
+        // Match match = new Match(gameId, p1.getPlayerId, p2.getPlayerId, p1.getPlayerName, p2.getPlayerName, isBotGame);
+        // gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
     }
 
     @Override
