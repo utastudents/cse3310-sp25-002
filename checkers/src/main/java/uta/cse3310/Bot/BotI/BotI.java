@@ -14,4 +14,8 @@ public class BotI extends Bot {
         return this.moves;
     }
 
+    private void implementStrategy() {
+        //add strategy here
+    }
+
 }
