@@ -16,8 +16,9 @@ public abstract class Bot {
     // of the game, provided by the GameManager.
     protected Board currentGameBoard;
 
-    // The color of the bot (true for black, false for white), cant't uncomment this until BotI is done
-    // protected boolean color;
+    // The color of the bot (true for black, false for white), cant't uncomment this
+    // until BotI is done
+    protected boolean color;
 
     /**
      * 
@@ -28,23 +29,23 @@ public abstract class Bot {
      * 
      * @param None
      */
-    public Bot() {
+    private Bot() {
         this.moves = new Moves();
     }
 
     /**
      * Constructor for the Bot class with a color parameter.
      * 
-     * This constructor initializes the moves object to a new instance of the Moves
-     * (LinkedList of Moves), which is initially empty.
+     * This constructor will call the default constructor and set the color of what
+     * it is playing as.
      * 
      * @param color - the color the bot will be playing as (true for black, false
      *              for white)
      */
-    // Commented this out until botI is done so system can compile for now
-    // public Bot(boolean color) {
-    //     this.color = color;
-    // }
+    public Bot(boolean color) {
+        this();
+        this.color = color;
+    }
 
     /**
      * 
@@ -59,7 +60,7 @@ public abstract class Bot {
      * @see Board
      * @see GameManager
      */
-    // bd9659 public abstract Moves requestMove(Board board);
+    public abstract Moves requestMove(Board board);
 
     /**
      * 
