@@ -1,6 +1,6 @@
 package uta.cse3310.GamePlay;
 
-class GamePlay
+public class GamePlay
 {
     
 }
