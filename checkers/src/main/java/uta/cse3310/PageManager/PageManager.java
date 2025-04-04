@@ -3,6 +3,7 @@ package uta.cse3310.PageManager;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.List;
+import java.util.HashMap;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
