@@ -8,24 +8,19 @@ import uta.cse3310.GameManager.Moves;
 import java.util.LinkedList;
 
 public class BotII extends Bot {
+    
     /**
      * Constructor for the BotII class. This constructor initializes the moves
      * object to a new instance of the Moves (LinkedList of Moves), which is
      * initially empty.
      * 
-     * @param None
+     * @param color - the color the bot will be playing as (true for black, false
+     *              for white)
      */
-    public BotII() {
-        super(); // Call the constructor of the parent class (Bot)
-    }
-
-    /*
-     * Will add constructor for BotII here once BotI is done. The constructor will include a boolean for the color the bot will be playing as
-     * 
-     * public BotII(boolean color) {
-     *   super(color); // Call the constructor of the parent class (Bot)
-     * }
-     */
+      public BotII(boolean color) {
+       super(color); // Call the constructor of the parent class (Bot)
+     }
+     
 
     /**
      * Implementation of requestMove method for BotII.
