@@ -16,6 +16,10 @@ class Waitlist{
 	}
 	
 	updateWaitlist(playerInfo){	//Update waitlist and placement's of players each time another player is added/removed
+		this.playerInfo = new playerInfo;
+	}
+
+	displayWaitlist(){	//Displays the updated waitlist
 
 	}
 }
