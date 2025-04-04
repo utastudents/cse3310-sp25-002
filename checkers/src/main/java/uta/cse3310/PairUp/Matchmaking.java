@@ -23,7 +23,7 @@ public class Matchmaking implements Runnable {
         thread.start();
     }
 
-    public pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2, boolean isBotGame) {
+    public void pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2, boolean isBotGame) {
         // Match match = new Match(gameId, p1.getPlayerId, p2.getPlayerId, p1.getPlayerName, p2.getPlayerName, isBotGame)
     }
 
