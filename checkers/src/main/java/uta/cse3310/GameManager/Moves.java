@@ -24,6 +24,16 @@ public class Moves{
      public Moves(LinkedList<Move> moves){this.moves = moves;}
      public Moves(){this.moves = new LinkedList<>();}
 
+     public Move makeMove(Board board, Square start, boolean color, boolean direction, boolean take){
+          int colSign = direction ? -1 : 1;
+          int rowSign = color ? -1 : 1;
+          int step = take ? 2 : 1;
+
+          Square dest = board.getSquare(start.getRow() + (rowSign * step), start.getCol() + (colSign * step));
+          Move move = new Move(start, dest);
+          return move;
+     }
+
      public void addNext(Square start, Square end){this.moves.add(new Move(start, end));}
      public void addNext(int startRow, int startCol, int destRow, int destCol){this.moves.add(new Move(startRow, startCol, destRow, destCol));}
 
