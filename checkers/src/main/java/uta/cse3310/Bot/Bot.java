@@ -117,6 +117,14 @@ public abstract class Bot {
         this.moves = moves;
     }
 
+    /**
+     * 
+     * Gets the current game board for the bot.
+     * 
+     * @param None
+     * 
+     * @return Board - the current game board object
+     */
     protected Board getCurrentGameBoard() {
         return currentGameBoard;
     }
