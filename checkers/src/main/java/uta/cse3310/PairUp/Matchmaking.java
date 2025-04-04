@@ -1,5 +1,8 @@
 package uta.cse3310.PairUp;
 
+import uta.cse3310.GameManager.GamePairController;
+import java.util.ArrayList;
+
 /*
     The Matchmaking class will deal with all things
     matchmaking. It holds all the players that are
@@ -8,8 +11,12 @@ package uta.cse3310.PairUp;
     find a match, or if they quit matchmaking.
 */
 public class Matchmaking {
-    public Matchmaking() {
+    private ArrayList<PlayerInQueue> players;
+    // gamePairController gameManagerCommunication;
 
+    public Matchmaking() {
+        players = new ArrayList<>();
+        // gameManagerCommunication = new gamePairController;
     }
 
 }
