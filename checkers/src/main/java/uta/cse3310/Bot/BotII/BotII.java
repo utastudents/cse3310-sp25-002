@@ -19,6 +19,14 @@ public class BotII extends Bot {
         super(); // Call the constructor of the parent class (Bot)
     }
 
+    /*
+     * Will add constructor for BotII here once BotI is done. The constructor will include a boolean for the color the bot will be playing as
+     * 
+     * public BotII(boolean color) {
+     *   super(color); // Call the constructor of the parent class (Bot)
+     * }
+     */
+
     /**
      * Implementation of requestMove method for BotII.
      * This method is called by the GameManager and BotII will return a move(s)
@@ -36,6 +44,7 @@ public class BotII extends Bot {
      * @see Bot
      */
     // @Override, commented this out until botI writes theirs so system can compile for now
+    // It is an abstract method in the parent class Bot, so it must be implemented here, but can't be until BotI is done
     public Moves requestMove(Board board) {
         return null; // Placeholder so it compiles
     }
