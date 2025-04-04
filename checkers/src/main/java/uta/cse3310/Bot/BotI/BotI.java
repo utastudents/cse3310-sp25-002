@@ -6,6 +6,6 @@ import uta.cse3310.GameManager.Moves;
 
 import java.util.LinkedList;
 
-public class BotI {
+public class BotI extends Bot {
     
 }
