@@ -9,6 +9,8 @@ public class Game
     private boolean player1Turn = true;
     private boolean gameIsActive = true;
     private boolean draw = false;
+    private boolean player1quit = false;
+    private boolean player2quit = false;
 
     public Game(int player1id, int player2id, boolean player1color, boolean player2color, int gameNumber){
         board = new Board();
@@ -20,11 +22,18 @@ public class Game
     public Player getWinner(){
         int playerOnePieces = player1.getPieces();
         int playerTwoPieces = player2.getPieces();
-        //will set gameIsActive to false if theres a winner and if its a draw or maybe
-        //gameIsActive will be false when game is declared a draw in the method
-        if(draw){return null;}
-        if(playerOnePieces == 0){return player2;}
-        if(playerTwoPieces == 0){return player1;}
+        if(draw){
+            gameIsActive = false;
+            return null;
+        }
+        else if(playerOnePieces == 0 || player1quit){
+            gameIsActive = false;
+            return player2;
+        }
+        else if(playerTwoPieces == 0 || player2quit){
+            gameIsActive = false;
+            return player1;
+        }
         return null;
     }
     public Player getCurrentTurn(){return player1Turn ? player1 : player2;}
@@ -38,4 +47,8 @@ public class Game
     public int gameNumber(){return gameNumber;}
     public boolean gameActive(){return gameIsActive;}
     public void GameDeclareDraw(){draw = true;}
+    public int getPlayer1Score(){return player1.getScore();}
+    public int getPlayer2Score(){return player2.getScore();}
+    public void Player1Quit(){player1quit = true;}
+    public void Player2Quit(){player2quit = true;}
 }
