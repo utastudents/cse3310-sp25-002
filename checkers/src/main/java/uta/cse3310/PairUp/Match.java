@@ -6,7 +6,8 @@ package uta.cse3310.PairUp;
     then be sent to GameManager
 */
 public class Match {
-    public Match() {
+    public Match(String player1Id, String player2Id, String player1Name, String player2Name,
+     Boolean isBot, String gameId, Boolean player1Color, Boolean player2Color) {
         
     }
 
@@ -50,5 +51,19 @@ public class Match {
     */
     public String getGameId(){
         return "";
+    }
+
+    /* Method to get the piece color of player1
+       Returns an boolean to be used in Match class to create JSON
+    */
+    public Boolean getPlayer1Color(){
+        return true;
+    }
+
+    /* Method to get the piece color of player2
+       Returns an boolean to be used in Match class to create JSON
+    */
+    public Boolean getPlayer2Color(){
+        return false;
     }
 }
