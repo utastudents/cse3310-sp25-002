@@ -1,24 +1,21 @@
 class Waitlist{
-	constructor(id, username, place){
-	this.id = id;
-	this.username = username;
-	}
+	constructor(){
+        this.playerInfo = new Data();
+        this.waitlist = [];
+    }
 
-	const player = [id, username];
-
-	//Change above to whatever data gotten from Data.js or Communication.js
-	//
+	//Data gotten from Data.js
 	
-	add(player){	//Add a player's username, id onto the waitlist
+	add(playerInfo){	//Add a player's info onto the waitlist
 		
-		return player;
+		return playerInfo;
 	}
 	
-	remove(player){	//Remove a player's info from the waitlist when leaving the game
+	remove(playerInfo){	//Remove a player's info from the waitlist when leaving the game
 		
 	}
 	
-	updateWaitlist(player){	//Update waitlist and placement's of players each time another player is added/removed
+	updateWaitlist(playerInfo){	//Update waitlist and placement's of players each time another player is added/removed
 
 	}
 }
