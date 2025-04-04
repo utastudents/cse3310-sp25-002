@@ -11,7 +11,7 @@ import java.util.ArrayList;
     find a match, or if they quit matchmaking.
 */
 public class Matchmaking {
-    private ArrayList<PlayerInQueue> players;
+    private ArrayList<PlayerInMatchmaking> players;
     // gamePairController gameManagerCommunication;
 
     public Matchmaking() {
