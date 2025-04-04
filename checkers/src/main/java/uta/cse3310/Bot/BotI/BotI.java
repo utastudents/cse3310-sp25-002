@@ -8,6 +8,17 @@ import java.util.LinkedList;
 
 public class BotI extends Bot {
 
+    @Override
+    public Moves requestMove(Board board){
+        setCurrentGameBoard(board);
+        flushMoves();
+
+        LinkedList<Move> possibleMoves = determineMoves();
+        implementBotStrategy(possibleMoves);
+
+        return sendMove();
+    }
+
     /* Sending Moves from Bot 1 to the GameManager */
     @Override
     protected Moves sendMove() {
