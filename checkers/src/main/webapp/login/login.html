@@ -15,6 +15,7 @@
       <input type="text" placeholder="Enter Username" id="username" />
     </div>
     <button onclick="joinGame()">Join Game</button>
+    <button class="button" onclick="loginUser()">Login</button> 
   </div>
 
           <script>
@@ -44,7 +45,29 @@
                 errorDiv.innerText = "Connection to server not available.";
                 errorDiv.style.display = "block";
             }
+function loginUser() {
+  const username = document.getElementById("username").value.trim();
+  const errorDiv = document.getElementById("username_error");
 
+  if (!username) {
+    errorDiv.innerText = "Please enter a username.";
+    errorDiv.style.display = "block";
+    return;
+  }
+
+  const loginData = {
+    type: "login",
+    username: username
+  };
+
+  if (connection.readyState === WebSocket.OPEN) {
+    connection.send(JSON.stringify(loginData));
+    alert("Login successful!"); // Placeholder for real login handling
+  } else {
+    errorDiv.innerText = "Connection to server not available.";
+    errorDiv.style.display = "block";
+  }
+}
         </script>
 
 </body>
