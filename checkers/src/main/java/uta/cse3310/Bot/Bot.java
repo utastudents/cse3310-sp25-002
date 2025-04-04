@@ -42,7 +42,7 @@ public abstract class Bot {
      * @see Board
      * @see GameManager
      */
-    public abstract Moves requestMove(Board board);
+    // bd9659     public abstract Moves requestMove(Board board);
 
     /**
      * 

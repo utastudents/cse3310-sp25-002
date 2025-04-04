@@ -5,13 +5,13 @@ import uta.cse3310.PairUp.Match;
 import java.io.IOException;
 
 public class GamePairController{
-    private PairUp pairUpSys;
+    /*private PairUp pairUpSys;
     //private ObjectMapper objectMapper; (JSON conversion)
 
     public GamePairController(PairUp pairUpSys){
         /*this.pairUpSys = pairUpSys;
-        this.objectMapper = new ObjectMapper();*/
-    }
+        this.objectMapper = new ObjectMapper();
+    }*/
 
     public Game initializeGame(String pairUpJson){
         /*try{
@@ -20,7 +20,7 @@ public class GamePairController{
             int player1ID = Integer.parseInt(match.getPlayer1Id());
             int player2ID = Integer.parseInt(match.getPlayer2Id());
 
-	    boolean player1color = true;
+	        boolean player1color = true;
             boolean player2color = false;
 
             int gameNumber;
@@ -39,4 +39,4 @@ public class GamePairController{
             return null;
         }
     }
-}
+    

@@ -27,7 +27,8 @@ public class NewAcctLogin
         if(UsernameExists(username))
         {
             return false;//user exists so no need to add
-        }       
+        }
+        return true; // bd9659       
     }
 
     //check if user already in database

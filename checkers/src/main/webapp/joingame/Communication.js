@@ -1,48 +1,31 @@
 class CheckersCommunication {
     constructor() {
-      this.roomId = null;
-   
-      // Communication from PageManager
+      //Communication for join the game events from PageManager
       document.addEventListener('join-game', (e) => {
-        this.joinGame(e.detail.roomId);
-      });
-   
-      document.addEventListener('make-move', (e) => {
-        this.sendMove(e.detail.from, e.detail.to);
+        this.handlePlayerJoin(e.detail.playerInfo);
       });
     }
-   
-    // Method to join a game
-    joinGame(roomId) {
-      this.roomId = roomId;
-   
-      // Simulate server response for joining a game
-      console.log(`Joining game room: ${roomId}`);
-      this.sendToManager('connected', { roomId: this.roomId });
-    }
-   
-    // Send a move
-    sendMove(from, to) {
-      if (!this.roomId) {
-        console.error('Cannot send move. No room joined.');
-        return;
-      }
-   
-      const moveData = {
-        roomId: this.roomId,
-        from,
-        to,
+  
+    // Handle player joining the game
+    handlePlayerJoin(playerInfo) {
+      console.log('Player joining the game:', playerInfo);
+  
+      // Simulate server response or processing logic
+      const joinResponse = {
+        success: true,
+        message: `Player ${playerInfo.UserName} has joined the game.`,
+        playerInfo,
       };
-   
-      // Simulate server response for sending a move
-      console.log(`Sending move:`, moveData);
-      this.sendToManager('move-sent', { success: true, move: moveData });
+  
+      // Notify PageManager that the player has successfully joined
+      this.sendToPageManager('player-joined', joinResponse);
     }
-   
-    // Send messages to the PageManager
-    sendToManager(eventType, data) {
+  
+    // Send messages to PageManager
+    sendToPageManager(eventType, data) {
       document.dispatchEvent(new CustomEvent(eventType, { detail: data }));
     }
   }
-   
+
   const comm = new CheckersCommunication();
+  
