@@ -7,7 +7,34 @@ package uta.cse3310.PairUp;
 */
 public class Match {
     public Match() {
-
+        
     }
 
+    /* Method to get the player1 ID from MatchMaking class
+       Returns an string to be used in Match class to create JSON
+    */
+    public String getPlayer1Id(){
+        return "";
+    }
+
+    /* Method to get the player2 ID from MatchMaking class
+       Returns an string to be used in Match class to create JSON 
+    */
+    public String getPlayer2Id(){
+        return "";
+    }
+
+    /* Method to get the player1 Name from MatchMaking class
+       Returns an string to be used in Match class to create JSON
+    */
+    public String getPlayer1Name(){
+        return "";
+    }    
+
+    /* Method to get the player2 Name from MatchMaking class
+       Returns an string to be used in Match class to create JSON
+    */
+    public String getPlayer2Name(){
+        return "";
+    }
 }
