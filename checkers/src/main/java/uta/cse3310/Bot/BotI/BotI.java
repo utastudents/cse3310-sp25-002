@@ -23,7 +23,6 @@ public class BotI extends Bot {
         return null;
     }
 
-    @Override
     private LinkedList<Moves> movesLogic() {
         // This method should implement the logic to determine the moves.
         // based on the current state of the game board.
