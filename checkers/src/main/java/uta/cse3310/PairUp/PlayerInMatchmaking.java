@@ -26,7 +26,6 @@ public class PlayerInMatchmaking {
         this.wins = wins;
     }
     
-    
     //  getters
     public long getTimeOfEntry() {
         return timeOfEntry;
