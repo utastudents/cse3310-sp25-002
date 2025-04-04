@@ -34,6 +34,7 @@ public class Moves{
           return move;
      }
 
+     public void addNext(Move move){this.moves.add(move);}
      public void addNext(Square start, Square end){this.moves.add(new Move(start, end));}
      public void addNext(int startRow, int startCol, int destRow, int destCol){this.moves.add(new Move(startRow, startCol, destRow, destCol));}
 
