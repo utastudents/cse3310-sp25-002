@@ -5,13 +5,15 @@ import uta.cse3310.PairUp.Match;
 import java.io.IOException;
 
 public class GamePairController{
-    private PairUp pairUpSys;
+    // bd9659 private PairUp pairUpSys;
+
     //private ObjectMapper objectMapper; (JSON conversion)
 
-    public GamePairController(PairUp pairUpSys){
+    //bd96959 public GamePairController(PairUp pairUpSys){
         /*this.pairUpSys = pairUpSys;
-        this.objectMapper = new ObjectMapper();*/
-    }
+    // bd9659  this.objectMapper = new ObjectMapper();*/
+
+    // bd9659 }
 
     public Game initializeGame(String pairUpJson){
         /*try{
@@ -34,9 +36,10 @@ public class GamePairController{
             Game newGame = new Game(player1ID, player2ID, player1color, player2color, gameNumber);
 
             return newGame;
-        } catch (IOException e) {
-            System.err.println("Error initializing game from JSON: " + e.getMessage());*/
-            return null;
-        }
+        // bd9659 } catch (IOException e) {
+        // bd9659    System.err.println("Error initializing game from JSON: " + e.getMessage());*/
+        // bd9650    return null;
+        // bd9659 }
+        return null;
     }
 }

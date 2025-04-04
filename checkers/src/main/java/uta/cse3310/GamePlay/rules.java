@@ -14,8 +14,8 @@ public class rules
     static protected boolean inBounds(LinkedList moves)
     {
         int rowSize = 8, colSize = 8;
-        if((moves <=0 || moves> rowSize)||(moves<=0 || moves>colSize))
-        return false; //Default
+       // bd9659   if((moves <=0 || moves> rowSize)||(moves<=0 || moves>colSize))
+       return false; //Default
     }
 
     //checks if the piece moves diagonally up-right and up-left
