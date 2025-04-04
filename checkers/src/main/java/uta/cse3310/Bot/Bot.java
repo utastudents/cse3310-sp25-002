@@ -7,7 +7,7 @@ import uta.cse3310.Bot.BotI.BotI;
 import uta.cse3310.Bot.BotII.BotII;
 
 public abstract class Bot {
-    
+
     // The moves object is a LinkedList of Moves, which is used to store the moves
     // the bot will make.
     protected Moves moves;
@@ -15,6 +15,10 @@ public abstract class Bot {
     // The current game board is the Board object that represents the current state
     // of the game, provided by the GameManager.
     protected Board currentGameBoard;
+
+    // The color of the bot (true for black, false for white), cant't uncomment this
+    // until BotI is done
+    protected boolean color;
 
     /**
      * 
@@ -25,8 +29,22 @@ public abstract class Bot {
      * 
      * @param None
      */
-    public Bot() {
+    private Bot() {
         this.moves = new Moves();
+    }
+
+    /**
+     * Constructor for the Bot class with a color parameter.
+     * 
+     * This constructor will call the default constructor and set the color of what
+     * it is playing as.
+     * 
+     * @param color - the color the bot will be playing as (true for black, false
+     *              for white)
+     */
+    public Bot(boolean color) {
+        this();
+        this.color = color;
     }
 
     /**
@@ -100,6 +118,14 @@ public abstract class Bot {
         this.moves = moves;
     }
 
+    /**
+     * 
+     * Gets the current game board for the bot.
+     * 
+     * @param None
+     * 
+     * @return Board - the current game board object
+     */
     protected Board getCurrentGameBoard() {
         return currentGameBoard;
     }
