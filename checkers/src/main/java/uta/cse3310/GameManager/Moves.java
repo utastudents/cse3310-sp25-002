@@ -29,7 +29,7 @@ public class Moves{
           int rowSign = color ? -1 : 1;
           int step = take ? 2 : 1;
 
-          Square dest = board.getSquare(start.getRow() + (rowSign * step), start.getCol() + (colSign * step));
+          Square dest = board.getSquare(start.getRow() + (rowSign * step), start.getCol() + (colSign * step * rowSign));
           Move move = new Move(start, dest);
           return move;
      }
@@ -40,8 +40,9 @@ public class Moves{
 
      public LinkedList<Move> getMoves(){return moves;}
      public Move getFirst(){return moves.getFirst();}
-     public Square getStart(Move move){return move.getStart();}
-     public Square getDest(Move move){return move.getDest();}
+     public Move get(int idx){return moves.get(idx);}
+     public Square getStart(int idx){return moves.get(idx).getStart();}
+     public Square getDest(int idx){return moves.get(idx).getDest();}
      public int size(){return moves.size();}
      public Move getNext(int n){return moves.get(n + 1);}
      public Move getNext(Move move){return moves.get(moves.indexOf(move) + 1);}
