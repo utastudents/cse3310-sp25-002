@@ -17,6 +17,7 @@ public class Game
     private boolean player1quit = false;
     private boolean player2quit = false;
 
+    //
     public Game(int player1id, int player2id, boolean player1color, boolean player2color, int gameNumber){
         board = new Board();
         board.initializeBoard();
@@ -43,6 +44,7 @@ public class Game
         }
         return null;
     }
+    // will probably modify player winning, quitting
     public Player getCurrentTurn(){return player1Turn ? player1 : player2;}
     public void switchTurn(){player1Turn = !player1Turn;}
     public void updateBoard(Board board){this.board = board;}
