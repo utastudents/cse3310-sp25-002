@@ -26,4 +26,7 @@ public class GameResult {
     //to confirm that storing data to the database was a success
     public void confirmDataStored(){
     }
+    // Saves the result to the database
+    public void saveResults() {
+    }
 }

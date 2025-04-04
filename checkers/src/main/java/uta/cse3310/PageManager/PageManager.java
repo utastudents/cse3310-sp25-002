@@ -1,6 +1,9 @@
 package uta.cse3310.PageManager;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.List;
+import java.util.HashMap;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
@@ -10,6 +13,7 @@ public class PageManager {
     PairUp pu;
     Integer turn = 0; // just here for a demo. note: it is a global, effectively and is not unique per client (or game)
 
+    Map<String, List<Integer>> gamePlayers = new HashMap<>(); // this will store the game players for each game session, key is the game id, value is a list of player ids
     // ------------------------------------------------------------------------
     // Web Socket connection
     // ------------------------------------------------------------------------
@@ -126,21 +130,21 @@ public class PageManager {
         return reply;
     }
 
-    /**
-     * Handles requests for allowed moves from frontend.
-     *
-     * @param event The allowed-moves request from a player
-     * @return A reply with placeholder move data
-     */
-    public UserEventReply handleGetAllowedMoves(UserEvent event) {
-        System.out.println("[DEBUG] Requesting allowed moves for piece by player " + event.id);
+    // /**
+    //  * Handles requests for allowed moves from frontend.
+    //  *
+    //  * @param event The allowed-moves request from a player
+    //  * @return A reply with placeholder move data
+    //  */
+    // public UserEventReply handleGetAllowedMoves(UserEvent event) {
+    //     System.out.println("[DEBUG] Requesting allowed moves for piece by player " + event.id);
 
-        UserEventReply reply = new UserEventReply();
-        reply.status = new game_status(); 
-        reply.recipients = new ArrayList<>();
-        reply.recipients.add(event.id);
-        return reply;
-    }
+    //     UserEventReply reply = new UserEventReply();
+    //     reply.status = new game_status(); 
+    //     reply.recipients = new ArrayList<>();
+    //     reply.recipients.add(event.id);
+    //     return reply;
+    // }
 
     
     // ------------------------------------------------------------------------

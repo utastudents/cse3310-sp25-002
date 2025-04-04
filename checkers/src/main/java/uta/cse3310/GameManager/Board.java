@@ -41,11 +41,13 @@ public class Board {
 
      public String toString(){
           StringBuilder builder = new StringBuilder();
+
           builder.append("\n------------------\n");
           for(int i = 0; i<8; i++){
                builder.append("|");
                for(int j=0;j<8;j++){
-                    String piece = getSquare(i, j).hasPiece() ? "██" : "  ";
+                    Boolean color = getSquare(i, j).getColor();
+                    String piece = (color == null) ? "  " : (color ? "██" : "▒▒");
                     builder.append(piece);
                }
                builder.append("|\n");
