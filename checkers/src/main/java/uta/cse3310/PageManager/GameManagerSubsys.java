@@ -3,7 +3,7 @@ import uta.cse3310.GameManager.GameManager;
 
 public class GameManagerSubsys {
 
-    private final GameManager gameManager;
+    private GameManager gameManager;
 
     public GameManagerSubsys(GameManager gameManager) {
         this.gameManager = gameManager;

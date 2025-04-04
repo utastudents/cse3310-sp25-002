@@ -14,16 +14,26 @@ public class rules
     static protected boolean inBounds(LinkedList moves)
     {
         int rowSize = 8, colSize = 8;
-        return false; //Default
+       // bd9659   if((moves <=0 || moves> rowSize)||(moves<=0 || moves>colSize))
+       return false; //Default
     }
 
     //checks if the piece moves diagonally up-right and up-left
     //for king: moves diagonally down-right and down-left in addition to above
     static protected boolean isDiagonal(boolean isKing, LinkedList moves, Board board)
     {
+        /*if(isKing = true)
+        {
+            allow the king to move forward/backwards along the diagonal
+        }
+        else{
+            the piece should not be allowed to move down-left or down-right
+        }*/
         return false; //Default
     }
 
+    //it may also be helpful to include something in this method to let the player know if
+    //they can capture the piece occupieing the square
     //checks if the square being moved to is occupied by a piece
     static protected boolean occupied(LinkedList moves, Board board)
     {

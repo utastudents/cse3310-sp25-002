@@ -11,10 +11,18 @@
         </style>
     </head>
     <body>
-    <div id="new_account">
-    new account
+    <div id="new_account" class = "hidden">
+    New Account/Login 
+        <div id="login_container" style="background: rgba(255, 255, 255, 0.8); padding: 100px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); text-align: center; z-index: 1;">
+          <h2>Login</h2>
+          <div class="form-group">
+            <input type="text" placeholder="Enter Username" id="username" />
+          </div>
+          <button onclick="joinGame()" style="padding: 10px 20px; font-size: 16px; background-color: black; color: white; border: none; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">Join Game</button>
+        </div>
     </div>
     <div id="join_game">
+        
     join game
     </div>
     <div id="game_display">

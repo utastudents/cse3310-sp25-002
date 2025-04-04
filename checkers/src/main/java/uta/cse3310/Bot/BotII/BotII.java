@@ -1,16 +1,17 @@
 package uta.cse3310.Bot.BotII;
 
-public class BotII {
+import uta.cse3310.Bot.Bot;
+import uta.cse3310.GameManager.Board;
+import uta.cse3310.GameManager.Moves;
 
-    /**
-     * Implementation of requestMove method for BotII.
-     * This method is called by the GameManager and BotII will return a move(s) object to the GameManager.
-     * It will receive the game board and then set the appropriate field.
-     */
+import java.util.LinkedList;
 
+public class BotII extends Bot {
+
+    /* Sending Moves from Bot 1 to the GameManager */
     @Override
-    public Moves requestMove(Board board) {
-        return null;  // Placeholder so it compiles
+    protected Moves sendMove() {
+        return this.moves;
     }
 
 }
