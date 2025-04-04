@@ -20,7 +20,7 @@ public class GamePairController{
             int player1ID = Integer.parseInt(match.getPlayer1Id());
             int player2ID = Integer.parseInt(match.getPlayer2Id());
 
-	        boolean player1color = true;
+	    boolean player1color = true;
             boolean player2color = false;
 
             int gameNumber;
