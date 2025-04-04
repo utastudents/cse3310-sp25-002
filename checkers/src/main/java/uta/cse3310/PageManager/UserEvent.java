@@ -13,6 +13,14 @@ public class UserEvent {
     public int TotalGames;           //total games played
     public String rank;              // dont know the ranking system yet
 
+    // Event info
+    public String msg;          // text messages 
+    public String type;         // move, resign, draw, draw_accept, etc.
+    public String gameId;       // identifies the game session
+    public int[] from;          // for move: starting position
+    public int[] to;            // for move: target position
+    public int[] square;        // for get_allowed_moves requests
+
     String msg;     
 
 

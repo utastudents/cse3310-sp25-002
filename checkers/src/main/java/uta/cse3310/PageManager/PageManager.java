@@ -1,6 +1,8 @@
 package uta.cse3310.PageManager;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.List;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
@@ -10,6 +12,7 @@ public class PageManager {
     PairUp pu;
     Integer turn = 0; // just here for a demo. note: it is a global, effectively and is not unique per client (or game)
 
+    Map<String, List<Integer>> gamePlayers = new HashMap<>(); // this will store the game players for each game session, key is the game id, value is a list of player ids
     // ------------------------------------------------------------------------
     // Web Socket connection
     // ------------------------------------------------------------------------
