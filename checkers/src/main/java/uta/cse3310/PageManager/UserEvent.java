@@ -14,7 +14,6 @@ public class UserEvent {
     public String rank;              // dont know the ranking system yet
 
     // Event info
-    public String msg;          // text messages 
     public String type;         // move, resign, draw, draw_accept, etc.
     public String gameId;       // identifies the game session
     public int[] from;          // for move: starting position
