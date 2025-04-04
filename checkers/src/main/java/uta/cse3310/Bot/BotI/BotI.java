@@ -16,7 +16,7 @@ public class BotI extends Bot {
         LinkedList<Move> possibleMoves = determineMoves();
         implementBotStrategy(possibleMoves);
 
-        return sendMove();
+        return null//sendMove();
     }
 
 
