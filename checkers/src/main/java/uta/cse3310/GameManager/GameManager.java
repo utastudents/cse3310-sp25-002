@@ -23,8 +23,8 @@ public class GameManager {
     public GameManager() {
         gp = new GamePlay();
         gt = new GameTermination(); // Handles game ending logic
-        b1 = new BotI();
-        b2 = new BotII();
+        /*b1 = new BotI();
+        b2 = new BotII(); */ //Already defined on Game.java class (may be we will modify it to have in this class later)
 
         // Initialize the list of games
         games = new ArrayList<>(Maximum_GAMES);
