@@ -1,4 +1,12 @@
+
+package uta.cse3310.GamePlay;
+import java.util.LinkedList;
+import uta.cse3310.GameManager.Board;
+import uta.cse3310.GameManager.Game;
+import uta.cse3310.GameManager.Moves;
+import uta.cse3310.GameManager.Square;
 import java.util.ArrayList;
+
 
 class Checkpieces 
 {
