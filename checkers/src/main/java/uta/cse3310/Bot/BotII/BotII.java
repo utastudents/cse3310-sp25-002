@@ -62,7 +62,24 @@ public class BotII extends Bot {
         // implementation of move determining will go here
         return null;
     }
-
+    /**
+     * Implements BotII's strategy (predetermined) based on the moves it can make,
+     * as determined by {@link BotII#determineMoves()}. Once determined, this method
+     * will set the moves object to the list of moves that BotII will make.
+     *
+     * @param none
+     *
+     * @return Nothing – the moves object is set to the list of moves that BotII
+     *         will make
+     *
+     * @see BotII#determineMoves()
+     * @see Moves
+     * @see Board
+     */
+    private void implementBotStrategy() {
+        return null;
+    }
+    
     /**
      * Implementation of {@link Bot#sendMove()} for the BotII class. This method
      * will
