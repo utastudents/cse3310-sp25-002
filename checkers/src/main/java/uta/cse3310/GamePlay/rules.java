@@ -46,4 +46,41 @@ public class rules
     {
         return false; //Default
     }
+    // Inner class to represent checker pieces (used by getAllPieces)
+static class Checkpieces {
+    // Define properties like isKing, color, etc., as needed
 }
+
+// Class to simulate the actual board (only used here for scanning)
+static class BoardSimulator {
+    private Checkpieces[][] grid = new Checkpieces[8][8];
+
+    public BoardSimulator()
+    {
+        // Initialize the board if needed
+    }
+
+    public Checkpieces getCheckerAt(int row, int col) {
+        return grid[row][col];
+    }
+
+}
+
+    // Method to scan the board and get a list of the pieces that were found
+    public static ArrayList<Checkpieces> getAllPieces(BoardSimulator board) {
+        ArrayList<Checkpieces> pieces = new ArrayList<>();
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Checkpieces item = board.getCheckerAt(i, j);
+                if (item != null) {
+                    pieces.add(item);
+                }
+            }
+        }
+
+        return pieces;
+    }
+}
+
+
