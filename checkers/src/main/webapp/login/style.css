@@ -1,53 +1,57 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Garamond, serif;
+}
 
 
-  .body
-{
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      height: 100vh;
-      background-size: cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
-    .container
- {
-
-      background-color: rgba(255, 255, 255, 1.0);
-      padding: 100px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-      text-align: center;
-      z-index: 1;
+body{
+  min-height: 100vh;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: burlywood;
+ /* background: url('CheckersImage-2.jpg');*/
     }
 
-     .button 
-{
-      padding: 10px 20px;
-      font-size: 16px;
-      background-color: black;
-      color: white;
-      border: none;
-      border-radius: 5px;
-    }
-.input[type="text"] 
-{
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 2px solid #ccc;
-      border-radius: 5px;
-    }
-.background-image{
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url('');
-      background-size: cover;
-      filter: blur(8px) opacity(0.4);
-      z-index: -2;
-    }
+.wrapper{
+  background-color: rgba(255, 250, 240, 0.95);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.wrapper h1{
+  font-size: 22px;
+  color: rgb(67,0,134);
+}
+
+.input-box input {
+  width: 250px;
+  padding: 12px;
+  margin-top: 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px; 
+  font-size: 14px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #333;
+}
+

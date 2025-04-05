@@ -8,7 +8,7 @@ import uta.cse3310.GameManager.Moves;
 import java.util.LinkedList;
 
 public class BotII extends Bot {
-    
+
     /**
      * Constructor for the BotII class. This constructor initializes the moves
      * object to a new instance of the Moves (LinkedList of Moves), which is
@@ -17,10 +17,9 @@ public class BotII extends Bot {
      * @param color - the color the bot will be playing as (true for black, false
      *              for white)
      */
-      public BotII(boolean color) {
-       super(color); // Call the constructor of the parent class (Bot)
-     }
-     
+    public BotII(boolean color) {
+        super(color); // Call the constructor of the parent class (Bot)
+    }
 
     /**
      * Implementation of requestMove method for BotII.
@@ -38,8 +37,10 @@ public class BotII extends Bot {
      * @see GameManager
      * @see Bot
      */
-    // @Override, commented this out until botI writes theirs so system can compile for now
-    // It is an abstract method in the parent class Bot, so it must be implemented here, but can't be until BotI is done
+    // @Override, commented this out until botI writes theirs so system can compile
+    // for now
+    // It is an abstract method in the parent class Bot, so it must be implemented
+    // here, but can't be until BotI is done
     public Moves requestMove(Board board) {
         return null; // Placeholder so it compiles
     }
@@ -64,6 +65,24 @@ public class BotII extends Bot {
     }
 
     /**
+     * Implements BotII's strategy (predetermined) based on the moves it can make,
+     * as determined by {@link BotII#determineMoves()}. Once determined, this method
+     * will set the moves object to the list of moves that BotII will make.
+     *
+     * @param none
+     *
+     * @return Nothing – the moves object is set to the list of moves that BotII
+     *         will make
+     *
+     * @see BotII#determineMoves()
+     * @see Moves
+     * @see Board
+     */
+    private void implementBotStrategy() {
+
+    }
+
+    /**
      * Implementation of {@link Bot#sendMove()} for the BotII class. This method
      * will
      * be called within the {@link BotII#requestMove(Board)} method to send the
@@ -83,6 +102,5 @@ public class BotII extends Bot {
     protected Moves sendMove() {
         return this.moves;
     }
-
 
 }
