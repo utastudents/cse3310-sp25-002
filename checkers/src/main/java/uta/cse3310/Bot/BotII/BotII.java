@@ -77,7 +77,7 @@ public class BotII extends Bot {
      * @see Board
      */
     private void implementBotStrategy() {
-        return null;
+        
     }
     
     /**
