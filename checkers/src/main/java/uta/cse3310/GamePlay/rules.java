@@ -84,4 +84,11 @@ public class rules
 
         return pieces;
     }
+
+    // removes captured pieces from the board 
+    // find out if this needs to report a piece as 'being captured'
+    static protected boolean removeCaptured(LinkedList<Moves> moves, Board board)
+    {
+        return false;
+    }
 }

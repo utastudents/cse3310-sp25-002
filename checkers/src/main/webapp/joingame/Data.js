@@ -1,7 +1,7 @@
 // Data handling for Join Game component
 
 // Players will have the following data:
-// ID, Username, flag to indicate waitlist status, timer indicating time spent on waitlist
+// ID, Username, flag to indicate waitlist status
 // Has methods to obtain player information
 class Player
 {
@@ -34,7 +34,6 @@ class Player
         this.username = username;
         this.id = id;
         this.waitlistStatus = false; 
-        this.timer = Date.now(); 
     }
 
     // Needs methods to access player information
