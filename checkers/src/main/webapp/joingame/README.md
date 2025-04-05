@@ -19,7 +19,7 @@ Five Classes:
     - Methods: Set and get methods for the game mode.
         
 
-2) Matchmaking: Provides methods to facilitate match requests between players or against bots. Also responsible for communicating these details to the Page Manager.
+2) Matchmaking: Provides methods to facilitate match requests between players or against bots. Also responsible for starting the communication of these details to the Page Manager.
 
 
 3) Communication: Handles data transmission between the Join Game component and the Page Manager, including sending player attributes and receiving updates.

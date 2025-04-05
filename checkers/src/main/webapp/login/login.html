@@ -25,12 +25,12 @@
       const username = document.getElementById('username').value;
       const pattern = /^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
       if (!username) {
-      alert('Please enter a username.');
-    } else if (!pattern.test(username)) {
-      alert('Username must be atleast: 8 characters long, contain one digit and one special character.');
-    } else {
-      alert('Joining Game');
-    }
+        alert('Please enter a username.');
+      } else if (!pattern.test(username)) {
+        alert('Username must be atleast: 8 characters long, contain one digit and one special character.');
+      } else {
+        alert('Joining Game');
+      }
     }
             
            /* function sendUsername()
@@ -49,7 +49,7 @@
                 type: "join",
                 username: username
             }
-            // Sending data through websocket
+            // Sending data through WebSocket
             if(connection === WebSocket.OPEN)
             {
                 connection.send(JSON.stringify(userData));
@@ -58,31 +58,7 @@
             {
                 errorDiv.innerText = "Connection to server not available.";
                 errorDiv.style.display = "block";
-            }
-  
-function loginUser() {
-  const username = document.getElementById("username").value.trim();
-  const errorDiv = document.getElementById("username_error");
-
-  if (!username) {
-    errorDiv.innerText = "Please enter a username.";
-    errorDiv.style.display = "block";
-    return;
-  }
-
-  const loginData = {
-    type: "login",
-    username: username
-  };
-
-  if (connection.readyState === WebSocket.OPEN) {
-    connection.send(JSON.stringify(loginData));
-    alert("Login successful!"); // Placeholder for real login handling
-  } else {
-    errorDiv.innerText = "Connection to server not available.";
-    errorDiv.style.display = "block";
-  }
-} */
+            }*/
  </script>
         
 
