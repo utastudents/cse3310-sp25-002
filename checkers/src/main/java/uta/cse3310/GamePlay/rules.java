@@ -1,9 +1,11 @@
 package uta.cse3310.GamePlay;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameManager.Moves;
+import uta.cse3310.GameManager.Square;
 
 //class rules checks if the move is legal
 public class rules
@@ -62,5 +64,24 @@ public class rules
     static protected boolean canMovePiece(Game game)
     {
         return true; //Default value
+    }
+
+    public static ArrayList<Square> getAllPieces(Board board)
+    {
+        ArrayList<Square> pieces = new ArrayList<>();
+
+        for (int i = 0; i < 8; i++) 
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                Square boardSquare = board.getSquare(i, j); 
+                if (boardSquare != null) 
+                {
+                    pieces.add(boardSquare);
+                }
+            }
+        }
+
+        return pieces;
     }
 }
