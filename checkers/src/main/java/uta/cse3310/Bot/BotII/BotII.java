@@ -62,6 +62,7 @@ public class BotII extends Bot {
         // implementation of move determining will go here
         return null;
     }
+    
     /**
      * Implements BotII's strategy (predetermined) based on the moves it can make,
      * as determined by {@link BotII#determineMoves()}. Once determined, this method
@@ -77,7 +78,7 @@ public class BotII extends Bot {
      * @see Board
      */
     private void implementBotStrategy() {
-        
+
     }
     
     /**
