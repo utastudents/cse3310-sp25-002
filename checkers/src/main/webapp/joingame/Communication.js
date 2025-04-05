@@ -1,49 +1,53 @@
-const EventEmitter = require('events');
-
 class Communication {
   constructor() {
-    this.channel = new EventEmitter();
-    this.setupCoreListeners();
+    this.pageManagerCallback = null;
+    this.updateCallback = null;
   }
-
-  setupCoreListeners() {
-    // Receive updates from Page Manager
-    this.channel.on('from_page', (message) => {
-      this.handleIncoming(message);
-    });
-  }
-
   // Send player attributes to Page Manager
   sendPlayerAttributes(playerData) {
     const validated = this.validatePlayerData(playerData);
-    this.channel.emit('to_page', {
-      type: 'PLAYER_ATTRIBUTES',
-      data: validated
-    });
-  }
-
-  // Receive updates from Page Manager
-  onUpdateFromPageManager(callback) {
-    this.channel.on('update', (update) => {
-      callback(update);
-    });
-  }
-
-  // Handle incoming messages
-  handleIncoming(message) {
-    switch(message.type) {
-      case 'STATUS_UPDATE':
-        this.channel.emit('update', message.data);
-        break;
-      case 'MATCH_READY':
-        this.channel.emit('update', message.data);
-        break;
-      default:
-        this.channel.emit('error', new Error('Unknown message type'));
+    
+    // Direct method call simulation
+    if (this.pageManagerCallback) {
+      this.pageManagerCallback({
+        type: 'PLAYER_ATTRIBUTES',
+        data: validated
+      });
     }
   }
 
-  // Validation for player attributes
+  // Receive updates from Page Manager
+  receiveFromPageManager(message) {
+    switch(message.type) {
+      case 'STATUS_UPDATE':
+      case 'MATCH_READY':
+        this.handleUpdate(message.data);
+        break;
+      default:
+        this.handleError(new Error('Unknown message type'));
+    }
+  }
+
+  // Set Page Manager communication endpoint
+  setPageManagerEndpoint(callback) {
+    this.pageManagerCallback = callback;
+  }
+
+  // Set update handler
+  setUpdateHandler(callback) {
+    this.updateCallback = callback;
+  }
+
+  handleUpdate(data) {
+    if (this.updateCallback) {
+      this.updateCallback(data);
+    }
+  }
+
+  handleError(error) {
+    console.error('Communication Error:', error.message);
+    // Could add error callback registration similarly
+  }
   validatePlayerData(data) {
     if (!data.id || !data.username) {
       throw new Error('Invalid player data - missing required fields');
