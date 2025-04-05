@@ -1,6 +1,5 @@
 // -- Import Dependencies --
 package uta.cse3310.PairUp;
-import java.util.LinkedHashMap;
 
 
 
@@ -14,12 +13,12 @@ import java.util.LinkedHashMap;
 
 public class PairUp {
     //
-    private LinkedHashMap<String, PlayerInMatchmaking> MatchMap;
+    private Matchmaking Mmaker;
 
   
     public PairUp() 
     {
-        this.MatchMap = new LinkedHashMap<>();
+        
     }
 
 
@@ -29,15 +28,16 @@ public class PairUp {
         // Create a new instance of a player from the player in match making class
         PlayerInMatchmaking player = new PlayerInMatchmaking(timeOfEntry, playerID, playerName, playAgainstBot, wins);
         
-        // Add said player to LinkedHashMap
-        MatchMap.put(playerID, player); 
+        // Pass player to Matchmaking
+        Mmaker.addPlayer(playerID, player);
 
     }
 
+    
     public void removePlayer(String PlayerID)
     {
-
-        MatchMap.remove(PlayerID);
+        // Request a removal from Matchmaking
+        Mmaker.removePlayer(PlayerID);
 
     }
 

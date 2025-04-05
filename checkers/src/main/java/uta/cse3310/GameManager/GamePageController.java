@@ -1,12 +1,22 @@
 package uta.cse3310.GameManager;
 
 public class GamePageController {
-    public void convertBoardToJSON(){
-        
+
+
+    public Board sendBoard(){
+        Board board = new Board();
+
+        return board;
     }
-    public Moves receiveJSONMoves(){
+
+    public Game sendID(){
+        //return gameID;
+        return null;
+    }
+
+    public Moves receiveMoves(){
         Moves moves = new Moves();
-        
+
         return moves; 
     }
 }

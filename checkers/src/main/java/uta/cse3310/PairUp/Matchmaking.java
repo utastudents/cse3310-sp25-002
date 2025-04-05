@@ -1,7 +1,7 @@
 package uta.cse3310.PairUp;
 
 import uta.cse3310.GameManager.GamePairController;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Random;
 
 /*
@@ -12,12 +12,12 @@ import java.util.Random;
     find a match, or if they quit matchmaking.
 */
 public class Matchmaking implements Runnable {
-    private ArrayList<PlayerInMatchmaking> players;
+    private LinkedHashMap<String,PlayerInMatchmaking> players;
     private int gameId;
     // gamePairController gameManagerCommunication;
 
     public Matchmaking() {
-        players = new ArrayList<>();
+        players = new LinkedHashMap<>();
         gameId = 0;
         // gameManagerCommunication = new gamePairController;
         Thread thread = new Thread(this);
@@ -53,5 +53,13 @@ public class Matchmaking implements Runnable {
         while (true) {
             // TO-DO: implement pairing algorithm
         }
+    }
+
+    public void addPlayer(String PlayerID, PlayerInMatchmaking newPlayer) {
+        players.put(PlayerID, newPlayer);
+    }
+
+    public void removePlayer(String playerId) {
+        players.remove(playerId);
     }
 }
