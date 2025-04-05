@@ -30,8 +30,7 @@ public class rules
         return false; //Default
     }
 
-    //it may also be helpful to include something in this method to let the player know if
-    //they can capture the piece occupieing the square
+
     //checks if the square being moved to is occupied by a piece
     static protected boolean occupied(LinkedList<Moves> moves, Board board)
     {
@@ -43,6 +42,19 @@ public class rules
     static protected boolean pieceToMoves(LinkedList<Moves> moves, Board board)
     {
         return false; //Default
+    }
+
+    //will call occupied to check if a square is occupied by another piece, then check 
+    //if the user can check that piece
+    static protected boolean canCapture(LinkedList<Moves> moves, Board board)
+    {
+     
+
+        //call occupied, check if the square is occupied
+        //if the space is occupied and the following square is free you can capture that piece and move to the next free space
+        //return a map showing were the player can move
+
+        return false;//default
     }
 
     //Check to see if current player can move selected piece
