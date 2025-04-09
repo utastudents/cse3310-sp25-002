@@ -3,7 +3,9 @@ package uta.cse3310.Bot.BotII;
 import uta.cse3310.Bot.Bot;
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.GameManager;
+import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
+import uta.cse3310.GameManager.Square;
 
 import java.util.LinkedList;
 
@@ -46,22 +48,132 @@ public class BotII extends Bot {
     }
 
     /**
-     * This function will be called to determine the all possible moves for BotII
-     * and tentatively all possible routes for each move. It will use the gameboard
-     * given by the game manager to determine the possible moves through the
-     * {@link BotII#determineMoves()} function.
+     * This function will be called to determine the all possible moves per peice
+     * for BotII. Each moves for each piece will be assigned an elo. It will use the
+     * gameboard given by the game manager to determine the possible moves through
+     * the {@link BotII#requestMove()} function.
      * 
      * @param none
      * 
      * @return A list of all possible {@link Moves} for BotII.
      * 
-     * @see BotII#determineMoves()
+     * @see BotII#requestMove()
      * @see Board
      * @see Moves
      */
-    private LinkedList<Moves> determineMoves() {
-        // implementation of move determining will go here
+    private LinkedList<MovesRating> determineMoves() {
+
+        // Gets possible moves per piece
+        LinkedList<MovesRating> possibleMoves = new LinkedList<>();
+
+        // Iterate through the board to find pieces belonging to this bot
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+
+                Square square = this.currentGameBoard.getSquare(row, col);
+
+                // Check if the square contains a piece of this bot's color
+                if (square.getColor() != null && square.getColor() == this.color) {
+                    boolean isKing = square.isKing();
+
+                    // Determine possible directions based on whether the piece is a king
+                    char[] directions = isKing ? new char[] { 'F', 'B' } : new char[] { 'F' };
+
+                    // Create a Moves object for this piece
+                    Moves pieceMoves = new Moves();
+
+                    int elo = 0;
+
+                    // Check moves in each direction
+                    for (char direction : directions) {
+                        // Check for normal moves (non-capturing)
+                        Move normalMove = checkSingleMove(square, direction, false);
+                        if (normalMove != null) {
+                            pieceMoves.addNext(normalMove);
+                        }
+
+                        // Check for capturing moves
+                        Move captureMove = checkSingleMove(square, direction, true);
+                        if (captureMove != null) {
+                            elo += 1; // Increment elo rating for capturing move
+                            pieceMoves.addNext(captureMove);
+                        }
+                    }
+                    MovesRating movesRating = new MovesRating(pieceMoves, elo);
+                    // If the piece has any valid moves, add them to the list of possible moves
+                    if (pieceMoves.size() > 0)
+                        possibleMoves.add(movesRating);
+
+                }
+            }
+        }
+
+        return possibleMoves;
+    }
+
+    /**
+     * Helper method to check if a single move is valid in a given direction.
+     *
+     * @param start     The starting square of the piece.
+     * @param direction The direction of the move ('F' for forward, 'B' for
+     *                  backward).
+     * @param isCapture Whether the move is a capturing move.
+     * @return A Move object if the move is valid, otherwise null.
+     */
+    private Move checkSingleMove(Square start, char direction, boolean isCapture) {
+        int rowSign = (direction == 'F') ? (this.color ? -1 : 1) : (this.color ? 1 : -1);
+        int step = isCapture ? 2 : 1;
+
+        int destRow = start.getRow() + (rowSign * step);
+        int destColLeft = start.getCol() - step;
+        int destColRight = start.getCol() + step;
+
+        // Check left diagonal
+        if (isValidMove(start, destRow, destColLeft, isCapture)) {
+            return new Move(start, this.currentGameBoard.getSquare(destRow, destColLeft));
+        }
+
+        // Check right diagonal
+        if (isValidMove(start, destRow, destColRight, isCapture)) {
+            return new Move(start, this.currentGameBoard.getSquare(destRow, destColRight));
+        }
+
         return null;
+    }
+
+    /**
+     * Helper method to validate a move.
+     *
+     * @param start     The starting square of the piece.
+     * @param destRow   The destination row.
+     * @param destCol   The destination column.
+     * @param isCapture Whether the move is a capturing move.
+     * @return True if the move is valid, otherwise false.
+     */
+    private boolean isValidMove(Square start, int destRow, int destCol, boolean isCapture) {
+        // Ensure the destination is within bounds
+        if (destRow < 0 || destRow >= 8 || destCol < 0 || destCol >= 8) {
+            return false;
+        }
+
+        Square dest = this.currentGameBoard.getSquare(destRow, destCol);
+
+        // For normal moves, the destination must be empty
+        if (!isCapture && dest.getColor() == null) {
+            return true;
+        }
+
+        // For capturing moves, check if the intermediate square contains an opponent's
+        // piece
+        if (isCapture) {
+            int midRow = (start.getRow() + destRow) / 2;
+            int midCol = (start.getCol() + destCol) / 2;
+            Square midSquare = this.currentGameBoard.getSquare(midRow, midCol);
+
+            return dest.getColor() == null && midSquare.getColor() != null && midSquare.getColor() != this.color;
+        }
+
+        return false;
     }
 
     /**
@@ -101,6 +213,34 @@ public class BotII extends Bot {
     @Override
     protected Moves sendMove() {
         return this.moves;
+    }
+
+}
+
+class MovesRating {
+
+    private Moves movesList;
+    private int eloRating;
+
+    public MovesRating(Moves movesList, int eloRating) {
+        this.movesList = movesList;
+        this.eloRating = eloRating;
+    }
+
+    public Moves getMovesList() {
+        return movesList;
+    }
+
+    public int getEloRating() {
+        return eloRating;
+    }
+
+    public void setMovesList(Moves movesList) {
+        this.movesList = movesList;
+    }
+
+    public void setEloRating(int eloRating) {
+        this.eloRating = eloRating;
     }
 
 }
