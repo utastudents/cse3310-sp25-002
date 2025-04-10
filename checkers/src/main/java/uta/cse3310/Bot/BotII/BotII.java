@@ -192,7 +192,7 @@ public class BotII extends Bot {
      * as determined by {@link BotII#determineMoves()}. Once determined, this method
      * will set the moves object to the list of moves that BotII will make.
      *
-     * @param none
+     * @param strategy - a boolean value indicating whether to implement the 
      *
      * @return Nothing – the moves object is set to the list of moves that BotII
      *         will make
@@ -201,7 +201,7 @@ public class BotII extends Bot {
      * @see Moves
      * @see Board
      */
-    private void implementBotStrategy() {
+    private void implementBotStrategy(boolean strategy) {
 
     }
 
