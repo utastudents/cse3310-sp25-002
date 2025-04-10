@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Page</title>
+  <link rel = "stylesheet" href="style.css">
+
+</head>
+<body>
+  <div class ="wrapper">
+    <form action="">
+      <h1>CHECKERS WITH 3310-002</h1>  
+      <div class="input-box">
+        <input type="text" placeholder="Enter Username" id="username" />
+      </div>
+      <button onclick="joinGame()">Join Game</button>
+    </form>
+  </div>
+
+  
+<script>
+    function joinGame() {
+      const username = document.getElementById('username').value;
+      const pattern = /^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+      if (!username) {
+        alert('Please enter a username.');
+      } else if (!pattern.test(username)) {
+        alert('Username must be atleast: 8 characters long, contain one digit and one special character.');
+      } else {
+        alert('Joining Game');
+      }
+    }
+            
+           /* function sendUsername()
+            {
+                const username = document.getElementById("username").value.trim();
+                const errorDiv = document.getElementById("username_error");
+            if(!username)
+                {
+                    errorDiv.innerText = "Please enter a username."
+                    errorDiv.style.display = "block"
+                    return;
+                }
+            }
+            const userData = 
+            {
+                type: "join",
+                username: username
+            }
+            // Sending data through WebSocket
+            if(connection === WebSocket.OPEN)
+            {
+                connection.send(JSON.stringify(userData));
+            }
+            else
+            {
+                errorDiv.innerText = "Connection to server not available.";
+                errorDiv.style.display = "block";
+            }*/
+ </script>
+        
+
+</body>
+</html>

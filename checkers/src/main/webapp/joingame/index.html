@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Game Page</title>
+    <link rel="stylesheet" href="styles.css"/>
+</head>
+
+<body>
+    <div class="container">
+        
+        <!--Notifications-->
+        <div id="notification-area"></div>
+
+        <!--Game Mode Selection-->
+        <div class="form-group">
+            <h2>Select Mode</h2>
+            <button onclick="setMode()">Multiplayer</button>
+            <button onclick="setMode()">Bot</button>
+            <button onclick="setMode()">Bot vs Bot</button>
+                <!--Options loaded from Data.js-->
+        </div>
+
+        <!--Waitlist-->
+        <div class="waitlist_section">
+            <h2>Waitlist</h2>
+            <ul id="waitlist">
+                <!--Waitlist from Waitlist.js-->
+            </ul>
+        </div>
+    </div>
+
+    <script src="Data.js"></script>
+    <script src="Waitlist.js"></script>
+    <script src="DisplayNotification.js"></script>
+    <script src="MatchMaker.js"></script>
+</body>
+</html>

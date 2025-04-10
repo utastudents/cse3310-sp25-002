@@ -1,32 +1,39 @@
 package uta.cse3310.GameTermination;
 import uta.cse3310.GameManager.Player;
-import java.util.LinkedList;
-import java.util.Queue;
+import uta.cse3310.GamePlay.GamePlay;
+import java.util.Map;
 
 public class GameTermination {
 
-    //Queue to rotate players
-    Queue<Player> playerQueue;
+    // Method to handle the end of the game and declare the winner
+    public void endGame(Map<String, Integer> playerScores, String winningPlayer) {
+        // Print the game over message and declare the winner
+        System.out.println("Game Over! " + winningPlayer + " has won!");
 
-    public GameTermination() {
-        playerQueue = new LinkedList<>();
-
-    }
-    
-    //sends a request for game restart and players wait in queue.
-    public void gameRestartReq(){
-
+        // Save final results to the database
+        saveResultsToDatabase(playerScores);
     }
 
-    //saves results to the database after the game ends that will aid in creating the leaderboard.
-    public void saveResults(Player player1, Player player2){
-
+    // This method will save the results to the database
+    public void saveResultsToDatabase(Map<String, Integer> playerScores) {
+        // Placeholder for database logic
+        System.out.println("Saving results to database...");
     }
 
-    //sends a final termination message to gameplay once a match is over
-    public String sendResults(){
+    // This method will confirm if the results were successfully stored in the database
+    public void confirmDataStored() {
+        // Placeholder for confirmation logic
+        System.out.println("Results confirmed as stored in the database.");
+    }
+
+    // Sends a final termination message to gameplay once a match is over
+    public String sendResults() {
         return "results";
     }
 
-
+    // New method to handle game restart requests
+    public void gameRestartReq() {
+        // Logic for handling game restart (this could include resetting states or notifying other components)
+        System.out.println("Game restart requested.");
+    }
 }

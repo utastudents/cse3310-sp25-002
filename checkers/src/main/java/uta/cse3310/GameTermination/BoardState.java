@@ -15,7 +15,7 @@ public class BoardState {
     //keeps track of remaining pieces
     HashMap<String, Integer> remainingPieces;
 
-	public boolean hasLegalMoves(Board boardState, int playerId) //METHOD: checks if player has legal moves left 
+	public boolean hasLegalMoves(Board boardState, int playerId) //METHOD: checks if player has legal moves left
 	{
 	    return true;
 	}
@@ -28,12 +28,12 @@ public class BoardState {
     //will decide if the game has winner
     public boolean hasAWinner(Board boardState){
         //this method will return either true or false depending if there is a winner or not.
-        
+
         //this will depend on having no legal moves or capturing all of the opponet pieces.
 	    return remainingPieces.get("Player1") == 0 || remainingPieces.get("Player2") == 0;
     }
-    
-	
+
+
     public boolean isGameDraw(BoardState boardState){
         //this method will return if game has no winner and is draw
 	    return true;

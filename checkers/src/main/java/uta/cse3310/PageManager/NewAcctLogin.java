@@ -27,7 +27,10 @@ public class NewAcctLogin
         if(UsernameExists(username))
         {
             return false;//user exists so no need to add
-        }       
+        }
+
+        //otherwise, return true to add user
+        return true;
     }
 
     //check if user already in database
