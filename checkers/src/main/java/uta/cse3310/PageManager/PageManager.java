@@ -60,6 +60,22 @@ public class PageManager {
      * @param json_UI JSON string from frontend containing user info
      * @return JSON response with match info or error
      */
+
+
+
+    public static class JSONConverter {
+
+        public static List<PlayerEntry> parsePlayers(String jsonString) {
+            // TODO: Implement parsing logic
+            return List.of(); 
+        }
+
+        public static String convertRepliesToJson(List<reply_m> replies) {
+            // TODO: Implement JSON conversion logic
+            return "{}"; 
+        }
+    }
+    
     public String handleUserReq(String json_UI) {
 
         //TO DO: PairUp interface should create a method to link data
