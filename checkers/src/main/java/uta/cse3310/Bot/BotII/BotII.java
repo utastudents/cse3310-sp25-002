@@ -91,7 +91,7 @@ public class BotII extends Bot {
                         // If there are normal moves diagonally, add them to the pieceMoves object
                         if (!normalMoves.getMoves().isEmpty()) {
                             normalMoves.getMoves().forEach(x -> {
-                                int rowsToKing = movesToBackRow(x.getDest(), this.color);
+                                int rowsToKing = movesToKing(x.getDest(), this.color);
                                 int elo = 1;
 
                                 elo += rowsToKing; // Add the number of moves to the back row to the elo rating
@@ -107,7 +107,7 @@ public class BotII extends Bot {
                         if (!captureMove.getMoves().isEmpty()) {
                             normalMoves.getMoves().forEach(x -> {
 
-                                int rowsToKing = movesToBackRow(x.getDest(), this.color);
+                                int rowsToKing = movesToKing(x.getDest(), this.color);
                                 int elo = 1; // Base elo for capturing move
 
                                 elo += 7 - rowsToKing; // Add the number of moves to the bac
@@ -196,9 +196,13 @@ public class BotII extends Bot {
             return true;
         }
 
-        // For capturing moves, check if the intermediate square contains an opponent's
-        // piece
+        // For capturing moves, check if the intermediate square contains an opponent's piece
         if (isCapture) {
+            // Ensure the destination square is empty and the intermediate square contains an opponent's piece
+            if (dest.getColor() != null) {
+                return false;
+            }
+
             int midRow = (start.getRow() + destRow) / 2;
             int midCol = (start.getCol() + destCol) / 2;
             Square midSquare = this.currentGameBoard.getSquare(midRow, midCol);
@@ -217,7 +221,7 @@ public class BotII extends Bot {
      * @param color The color of the piece (true for black, false for white).
      * @return The number of moves to the back row.
      */
-    private int movesToBackRow(Square dest, boolean color) {
+    private int movesToKing(Square dest, boolean color) {
         int destRow = dest.getRow();
         return color ? destRow : (7 - destRow);
     }
