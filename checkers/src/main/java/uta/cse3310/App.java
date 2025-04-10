@@ -72,7 +72,7 @@ public class App extends WebSocketServer {
   Hashtable<WebSocket, Integer> con2id = new Hashtable<>();
   Hashtable<Integer, WebSocket> id2con = new Hashtable<>();
 
-  int clientId = 2; // start the index at one becuase 0 and 1 are being used by GameManger as Bot I&II
+  int clientId = 1; // start the index at one becuase 0 and 1 are being used by GameManger as Bot I&II
   PageManager PM = new PageManager();
 
   class id {
