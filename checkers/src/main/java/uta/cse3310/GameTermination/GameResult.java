@@ -37,14 +37,5 @@ public class GameResult {
         // update the score of the player in the playerScores map
     }
 
-    // This method will send the final game results to the database
-    public void saveResultsToDatabase() {
-    // Placeholder for database logic
-    }
-
-    // This method will confirm if the results were successfully stored in the database
-    public void confirmDataStored() {
-    // Placeholder for confirmation logic
-    }
 
 }
