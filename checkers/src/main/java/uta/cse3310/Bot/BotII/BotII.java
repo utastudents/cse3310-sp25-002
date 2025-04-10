@@ -55,8 +55,7 @@ public class BotII extends Bot {
      * 
      * @param none
      * 
-     * @return A list of all possible {@link Moves} per piece for BotII, each with
-     *         an elo rating
+     * @return LinkedList<Pair<Square, LinkedList<MoveRating>>> - a list of pairs where each s
      * 
      * @see BotII#requestMove()
      * @see Board
@@ -74,7 +73,7 @@ public class BotII extends Bot {
                 Square square = this.currentGameBoard.getSquare(row, col);
 
                 // Check if the square contains a piece of this bot's color
-                if (square.getColor() != null && square.getColor() == this.color) {
+                if (square.hasPiece() && square.getColor() == this.color) {
                     boolean isKing = square.isKing();
 
                     // Determine possible directions based on whether the piece is a king
@@ -85,7 +84,7 @@ public class BotII extends Bot {
 
                     // Check moves in each direction
                     for (char direction : directions) {
-                        
+
                         // Check for normal moves (non-capturing)
                         Moves normalMoves = checkSingleMove(square, direction, false);
 
@@ -104,6 +103,7 @@ public class BotII extends Bot {
 
                         // Check for capturing moves either diagonal for each direction
                         Moves captureMove = checkSingleMove(square, direction, true);
+                        
                         if (!captureMove.getMoves().isEmpty()) {
                             normalMoves.getMoves().forEach(x -> {
 
