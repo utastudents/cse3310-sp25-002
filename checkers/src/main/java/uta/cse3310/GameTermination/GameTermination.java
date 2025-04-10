@@ -12,7 +12,7 @@ public class GameTermination {
         playerQueue = new LinkedList<>();
 
     }
-    
+
     //sends a request for game restart and players wait in queue.
     public void gameRestartReq(){
 
