@@ -55,16 +55,16 @@ public class BotII extends Bot {
      * 
      * @param none
      * 
-     * @return A list of all possible {@link Moves} for BotII.
+     * @return A list of all possible {@link Moves} per piece for BotII, each with an elo rating
      * 
      * @see BotII#requestMove()
      * @see Board
      * @see Moves
      */
-    private LinkedList<MovesRating> determineMoves() {
+    private LinkedList<Pair<Square, MovesRating>> determineMoves() {
 
         // Gets possible moves per piece
-        LinkedList<MovesRating> possibleMoves = new LinkedList<>();
+        LinkedList<Pair<Square,MovesRating>> possibleMoves = new LinkedList<>();
 
         // Iterate through the board to find pieces belonging to this bot
         for (int row = 0; row < 8; row++) {
@@ -87,22 +87,31 @@ public class BotII extends Bot {
                     // Check moves in each direction
                     for (char direction : directions) {
                         // Check for normal moves (non-capturing)
-                        Move normalMove = checkSingleMove(square, direction, false);
-                        if (normalMove != null) {
-                            pieceMoves.addNext(normalMove);
+                        Moves normalMoves = checkSingleMove(square, direction, false);
+                        
+                        // If there are normal moves diagonally, add them to the pieceMoves object
+                        if (!normalMoves.getMoves().isEmpty()) {
+                            elo += normalMoves.size(); // Increment elo rating based on number of normal moves
+                            normalMoves.getMoves().forEach(x -> {
+                                pieceMoves.addNext(x);
+                            });
                         }
 
-                        // Check for capturing moves
-                        Move captureMove = checkSingleMove(square, direction, true);
-                        if (captureMove != null) {
-                            elo += 1; // Increment elo rating for capturing move
-                            pieceMoves.addNext(captureMove);
+                        // Check for capturing moves either diagonal for each direction
+                        Moves captureMove = checkSingleMove(square, direction, true);
+                        if (!captureMove.getMoves().isEmpty()) {
+                            elo += captureMove.size() * 2 ; // Increment elo rating for capturing move
+                            normalMoves.getMoves().forEach(x -> {
+                                pieceMoves.addNext(x);
+                            });
                         }
                     }
+
                     MovesRating movesRating = new MovesRating(pieceMoves, elo);
+
                     // If the piece has any valid moves, add them to the list of possible moves
                     if (pieceMoves.size() > 0)
-                        possibleMoves.add(movesRating);
+                        possibleMoves.add(new Pair<Square, MovesRating>(square, movesRating));
 
                 }
             }
@@ -120,7 +129,7 @@ public class BotII extends Bot {
      * @param isCapture Whether the move is a capturing move.
      * @return A Move object if the move is valid, otherwise null.
      */
-    private Move checkSingleMove(Square start, char direction, boolean isCapture) {
+    private Moves checkSingleMove(Square start, char direction, boolean isCapture) {
         int rowSign = (direction == 'F') ? (this.color ? -1 : 1) : (this.color ? 1 : -1);
         int step = isCapture ? 2 : 1;
 
@@ -128,17 +137,19 @@ public class BotII extends Bot {
         int destColLeft = start.getCol() - step;
         int destColRight = start.getCol() + step;
 
+        Moves diagonalMoves = new Moves();
+
         // Check left diagonal
         if (isValidMove(start, destRow, destColLeft, isCapture)) {
-            return new Move(start, this.currentGameBoard.getSquare(destRow, destColLeft));
+            diagonalMoves.addNext(new Move(start, this.currentGameBoard.getSquare(destRow, destColLeft)));
         }
 
         // Check right diagonal
         if (isValidMove(start, destRow, destColRight, isCapture)) {
-            return new Move(start, this.currentGameBoard.getSquare(destRow, destColRight));
+            diagonalMoves.addNext(new Move(start, this.currentGameBoard.getSquare(destRow, destColRight)));
         }
 
-        return null;
+        return diagonalMoves;
     }
 
     /**
@@ -235,12 +246,24 @@ class MovesRating {
         return eloRating;
     }
 
-    public void setMovesList(Moves movesList) {
-        this.movesList = movesList;
+
+}
+
+class Pair<K,V> {
+
+    private K key;
+    private V value;
+
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
     }
 
-    public void setEloRating(int eloRating) {
-        this.eloRating = eloRating;
+    public K getKey() {
+        return key;
     }
 
+    public V getValue() {
+        return value;
+    }
 }
