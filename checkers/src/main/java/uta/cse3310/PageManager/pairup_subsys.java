@@ -28,16 +28,5 @@ public class pairup_subsys {
         }
     }
 
-    public static class JSONConverter {
-
-        public static List<PlayerEntry> parsePlayers(String jsonString) {
-            // TODO: Implement parsing logic
-            return List.of(); 
-        }
-
-        public static String convertRepliesToJson(List<reply_m> replies) {
-            // TODO: Implement JSON conversion logic
-            return "{}"; 
-        }
-    }
+    
 }
