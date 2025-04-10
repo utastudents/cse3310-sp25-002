@@ -27,8 +27,9 @@ public class GameResult {
         int capturedPieces = 0; // Placeholder until integration with GamePlay
 
         if (capturedPieces >= 12) {
-            // Final declaration of loss; actual game-end logic should be handled by GameManager or GamePlay
+            // Remember to implement actual game ending logic inside GameTermination
             System.out.println("Player " + player.getPlayerId() + " has lost!");
+      // Remember to implement actual game ending logic inside GameTermination here
         }
     }
 
@@ -40,6 +41,7 @@ public class GameResult {
 
         if (!hasLegalMoves) {
             System.out.println("Player " + player.getPlayerId() + " has lost!");
+            // Remember to implement actual game ending logic inside GameTermination here
         }
     }
 
