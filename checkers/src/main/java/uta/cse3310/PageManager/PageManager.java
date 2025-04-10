@@ -11,44 +11,10 @@ import uta.cse3310.PairUp.PairUp;
 public class PageManager {
     DB db;
     PairUp pu;
-    Integer turn = 0; // just here for a demo. note: it is a global, effectively and is not unique per client (or game)
+    Integer turn = 0; // TODO: need to call this from GameManager
+
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // this will store the game players for each game session, key is the game id, value is a list of player ids
-    // ------------------------------------------------------------------------
-    // Web Socket connection
-    // ------------------------------------------------------------------------
-
-    /**
-     * establish a channel between front end and back end
-     *
-     * @param  JSON string from frontend 
-     * @return JSON response from back end
-     */
-
-     public class WebSocketServer {
-
-        // TO DO: write a code to link WebSocket once the API call has been made
-
-    
-    public void OnOpen() {
-        // print connection established
-    }
-
-    
-    public void OnMessage() {
-
-        // receive message in JSON format from HTML
-        // send message in JSON format HTML
-    }
-
-    public void onClose() {
-        // print connection breaked
-    }
-
-    public void onError(){
-        // print error while setting up connection
-    }
-}
 
     // ------------------------------------------------------------------------
     // PAIR UP SUBSYSTEM
@@ -78,79 +44,11 @@ public class PageManager {
         */
        return "{\"status\": \"PairUp not implemented yet.\"}";
     }
-    // ------------------------------------------------------------------------
-    // GAME EVENT HANDLING
-    // ------------------------------------------------------------------------
 
-    /**
-     * Handles move requests from frontend.
-     *
-     * @param event The move event from a player
-     * @return A reply containing status and recipient info
-     */
-    public UserEventReply handleMoveRequest(UserEvent event) {
-        System.out.println("[DEBUG] Received move request from player " + event.id);
-        
-        UserEventReply reply = new UserEventReply();
-        reply.status = new game_status();
-        reply.recipients = new ArrayList<>();
-        reply.recipients.add(event.id); 
-        return reply;
-    }
-
-    /**
-     * Handles resign events sent from frontend.
-     *
-     * @param event The resign event from a player
-     * @return A reply confirming the resignation
-     */
-    public UserEventReply handleResign(UserEvent event) {
-        System.out.println("[DEBUG] Player " + event.id + " resigned.");
-
-        UserEventReply reply = new UserEventReply();
-        reply.status = new game_status();
-        reply.recipients = new ArrayList<>();
-        reply.recipients.add(event.id);
-        return reply;
-    }
-
-    /**
-     * Handles draw offer events sent from frontend.
-     *
-     * @param event The draw offer event from a player
-     * @return A reply confirming the draw offer
-     */    
-    public UserEventReply handleDrawOffer(UserEvent event) {
-        System.out.println("[DEBUG] Player " + event.id + " offered a draw.");
-
-        UserEventReply reply = new UserEventReply();
-        reply.status = new game_status(); 
-        reply.recipients = new ArrayList<>();
-        reply.recipients.add(event.id);
-        return reply;
-    }
-
-    // /**
-    //  * Handles requests for allowed moves from frontend.
-    //  *
-    //  * @param event The allowed-moves request from a player
-    //  * @return A reply with placeholder move data
-    //  */
-    // public UserEventReply handleGetAllowedMoves(UserEvent event) {
-    //     System.out.println("[DEBUG] Requesting allowed moves for piece by player " + event.id);
-
-    //     UserEventReply reply = new UserEventReply();
-    //     reply.status = new game_status(); 
-    //     reply.recipients = new ArrayList<>();
-    //     reply.recipients.add(event.id);
-    //     return reply;
-    // }
-
-    
     // ------------------------------------------------------------------------
     // DEMO TEST METHOD (can be removed/replaced later)
     // ------------------------------------------------------------------------
-
+    // TODO : add switch statement for controlling types of events
     /**
      * Placeholder method for testing input/output with the frontend.
      * Simulates switching turns on each call.
