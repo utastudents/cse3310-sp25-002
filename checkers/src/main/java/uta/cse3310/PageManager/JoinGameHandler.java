@@ -8,24 +8,25 @@ public class JoinGameHandler {
     }
 
     public void processJoinGame(Map<String, String> joinData) {
-        String username = joinData.get("username");
         int ClientID = Integer.parseInt(joinData.get("ClientID"));
         String gameMode = joinData.get("gameMode");
 
-        if ("Multiplayer".equalsIgnoreCase(gameMode)) {
-            sendAvailabilityToDB(ClientID, username);
-        } else if ("Bot".equalsIgnoreCase(gameMode)) {
-            sendToPairUpForBot(username, ClientID);
+        boolean isBot = "Bot".equalsIgnoreCase(gameMode);
+        
+        if (isBot) {
+            sendToPairUpForBot(ClientID);
+        } else {
+            sendAvailabilityToDB(ClientID);
         }
     }
 
-    private void sendAvailabilityToDB(int ClientID, String username) {
+    private void sendAvailabilityToDB(int ClientID) {
         System.out.println("Flagging user as available in DB...");
-        System.out.println("Username: " + username + ", ClientID: " + ClientID);
+        System.out.println("ClientID: " + ClientID);
     }
 
-    private void sendToPairUpForBot(String username, int ClientID) {
+    private void sendToPairUpForBot(int ClientID) {
         System.out.println("Sending request to PairUp for bot match...");
-        System.out.println("Username: " + username + ", ClientID: " + ClientID);
+        System.out.println("ClientID: " + ClientID);
     }
 }
