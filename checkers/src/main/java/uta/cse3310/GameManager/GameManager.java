@@ -11,8 +11,7 @@ import java.util.ArrayList;
 public class GameManager {
 
     GamePlay gp;
-    GameTermination gt; // Game termination handler instance
-    // Bot instances
+    GameTermination gt;
     BotI b1;
     BotII b2;
     // Maximum number of games that can run concurrently
@@ -23,8 +22,7 @@ public class GameManager {
     public GameManager() {
         gp = new GamePlay();
         gt = new GameTermination(); // Handles game ending logic
-        /*b1 = new BotI();
-        b2 = new BotII(); */ //Already defined on Game.java class (may be we will modify it to have in this class later)
+
 
         // Initialize the list of games
         games = new ArrayList<>(Maximum_GAMES);
@@ -33,16 +31,14 @@ public class GameManager {
         }
     }
 
-    // Checking if there is any slots available to create a new game for two
-    // players.
+    // Checking if there is any slots available to create a new game for two players.
     public boolean createGame(int player1id, int player2id, boolean player1color, boolean player2color) {
         int availableSlot = getAvailableGameSlot();
         if (availableSlot == -1) {
             System.out.println("No available game slots.");
             return false;
         }
-        // Create a new game with two players (IDs and their color), and assign to
-        // available slot
+        // Create a new game with two players (IDs and their color), and assign to available slot
         Game newGame = new Game(player1id, player2id, player1color, player2color, availableSlot);
         games.set(availableSlot, newGame);
 
@@ -65,7 +61,7 @@ public class GameManager {
         if (gameNumber >= 0 && gameNumber < Maximum_GAMES && games.get(gameNumber) != null) {
             // gt.endGame(games.get(gameNumber)); // yet to determine GameTermination logic:
             //They dont have this but I believe having something to directly terminate the game is not a bad idea.
-            games.set(gameNumber, null); // clear the slot
+            games.set(gameNumber, null);
             System.out.println("Game " + gameNumber + " has been terminated.");
         }
     }
