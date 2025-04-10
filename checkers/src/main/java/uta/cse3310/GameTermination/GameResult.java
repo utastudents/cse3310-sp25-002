@@ -3,6 +3,8 @@ import uta.cse3310.GamePlay.GamePlay;
 import uta.cse3310.GameManager.Player;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
+
 
 public class GameResult {
 
@@ -34,4 +36,15 @@ public class GameResult {
     public void updateScores(Player player, int score) {
         // update the score of the player in the playerScores map
     }
+
+    // This method will send the final game results to the database
+    public void saveResultsToDatabase() {
+    // Placeholder for database logic
+    }
+
+    // This method will confirm if the results were successfully stored in the database
+    public void confirmDataStored() {
+    // Placeholder for confirmation logic
+    }
+
 }
