@@ -55,16 +55,17 @@ public class BotII extends Bot {
      * 
      * @param none
      * 
-     * @return A list of all possible {@link Moves} per piece for BotII, each with an elo rating
+     * @return A list of all possible {@link Moves} per piece for BotII, each with
+     *         an elo rating
      * 
      * @see BotII#requestMove()
      * @see Board
      * @see Moves
      */
-    private LinkedList<Pair<Square, MovesRating>> determineMoves() {
+    private LinkedList<Pair<Square, LinkedList<MoveRating>>> determineMoves() {
 
         // Gets possible moves per piece
-        LinkedList<Pair<Square,MovesRating>> possibleMoves = new LinkedList<>();
+        LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = new LinkedList<>();
 
         // Iterate through the board to find pieces belonging to this bot
         for (int row = 0; row < 8; row++) {
@@ -80,38 +81,58 @@ public class BotII extends Bot {
                     char[] directions = isKing ? new char[] { 'F', 'B' } : new char[] { 'F' };
 
                     // Create a Moves object for this piece
-                    Moves pieceMoves = new Moves();
-
-                    int elo = 0;
+                    LinkedList<MoveRating> pieceMoves = new LinkedList<>();
 
                     // Check moves in each direction
                     for (char direction : directions) {
+                        
                         // Check for normal moves (non-capturing)
                         Moves normalMoves = checkSingleMove(square, direction, false);
-                        
+
                         // If there are normal moves diagonally, add them to the pieceMoves object
                         if (!normalMoves.getMoves().isEmpty()) {
-                            elo += normalMoves.size(); // Increment elo rating based on number of normal moves
                             normalMoves.getMoves().forEach(x -> {
-                                pieceMoves.addNext(x);
+                                int rowsToKing = movesToBackRow(x.getDest(), this.color);
+                                int elo = 1;
+
+                                elo += rowsToKing; // Add the number of moves to the back row to the elo rating
+                                MoveRating mr = new MoveRating(x, elo);
+
+                                pieceMoves.add(mr);
                             });
                         }
 
                         // Check for capturing moves either diagonal for each direction
                         Moves captureMove = checkSingleMove(square, direction, true);
                         if (!captureMove.getMoves().isEmpty()) {
-                            elo += captureMove.size() * 2 ; // Increment elo rating for capturing move
                             normalMoves.getMoves().forEach(x -> {
-                                pieceMoves.addNext(x);
+
+                                int rowsToKing = movesToBackRow(x.getDest(), this.color);
+                                int elo = 1; // Base elo for capturing move
+
+                                elo += 7 - rowsToKing; // Add the number of moves to the bac
+
+                                // Get the captured square (the square between start and dest) and check if it
+                                // is a king
+                                Square capturedSquare = this.currentGameBoard.getSquare(
+                                        (x.getStart().getRow() + x.getDest().getRow()) / 2,
+                                        (x.getStart().getCol() + x.getDest().getCol()) / 2);
+
+                                boolean capturedIsKing = capturedSquare.isKing();
+
+                                elo += capturedIsKing ? 5 : 2; // Assign elo based on whether the captured piece is a
+                                                               // king
+                                MoveRating moveRating = new MoveRating(x, elo);
+
+                                pieceMoves.add(moveRating);
                             });
                         }
                     }
 
-                    MovesRating movesRating = new MovesRating(pieceMoves, elo);
-
-                    // If the piece has any valid moves, add them to the list of possible moves
-                    if (pieceMoves.size() > 0)
-                        possibleMoves.add(new Pair<Square, MovesRating>(square, movesRating));
+                    if (!pieceMoves.isEmpty()) {
+                        // Add the piece and its possible moves to the list
+                        possibleMoves.add(new Pair<>(square, pieceMoves));
+                    }
 
                 }
             }
@@ -188,11 +209,24 @@ public class BotII extends Bot {
     }
 
     /**
+     * Determines how many moves a piece is away from the back row (where it can
+     * become a king).
+     *
+     * @param dest  The destination square of the piece.
+     * @param color The color of the piece (true for black, false for white).
+     * @return The number of moves to the back row.
+     */
+    private int movesToBackRow(Square dest, boolean color) {
+        int destRow = dest.getRow();
+        return color ? destRow : (7 - destRow);
+    }
+
+    /**
      * Implements BotII's strategy (predetermined) based on the moves it can make,
      * as determined by {@link BotII#determineMoves()}. Once determined, this method
      * will set the moves object to the list of moves that BotII will make.
      *
-     * @param strategy - a boolean value indicating whether to implement the 
+     * @param strategy - a boolean value indicating whether to implement the
      *
      * @return Nothing – the moves object is set to the list of moves that BotII
      *         will make
@@ -228,28 +262,27 @@ public class BotII extends Bot {
 
 }
 
-class MovesRating {
+class MoveRating {
 
-    private Moves movesList;
+    private Move move;
     private int eloRating;
 
-    public MovesRating(Moves movesList, int eloRating) {
-        this.movesList = movesList;
+    public MoveRating(Move move, int eloRating) {
+        this.move = move;
         this.eloRating = eloRating;
     }
 
-    public Moves getMovesList() {
-        return movesList;
+    public Move getMove() {
+        return move;
     }
 
     public int getEloRating() {
         return eloRating;
     }
 
-
 }
 
-class Pair<K,V> {
+class Pair<K, V> {
 
     private K key;
     private V value;
