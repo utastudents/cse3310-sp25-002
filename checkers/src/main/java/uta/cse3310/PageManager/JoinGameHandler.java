@@ -8,7 +8,7 @@ public class JoinGameHandler {
     }
 
     public void processJoinGame(Map<String, String> joinData) {
-        int ClientID = Integer.parseInt(joinData.get("ClientID"));
+        String ClientID = joinData.get("ClientID");
         String gameMode = joinData.get("gameMode");
 
         boolean isBot = "Bot".equalsIgnoreCase(gameMode);
@@ -20,12 +20,12 @@ public class JoinGameHandler {
         }
     }
 
-    private void sendAvailabilityToDB(int ClientID) {
+    private void sendAvailabilityToDB(String ClientID) {
         System.out.println("Flagging user as available in DB...");
         System.out.println("ClientID: " + ClientID);
     }
 
-    private void sendToPairUpForBot(int ClientID) {
+    private void sendToPairUpForBot(String ClientID) {
         System.out.println("Sending request to PairUp for bot match...");
         System.out.println("ClientID: " + ClientID);
     }
