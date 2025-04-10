@@ -63,7 +63,7 @@ public class BotII extends Bot {
      */
     private LinkedList<Pair<Square, LinkedList<MoveRating>>> determineMoves() {
 
-        // Gets possible moves per piece
+        // Gets possible moves per piece with each move having an elo rating
         LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = new LinkedList<>();
 
         // Iterate through the board to find pieces belonging to this bot
@@ -103,7 +103,7 @@ public class BotII extends Bot {
 
                         // Check for capturing moves either diagonal for each direction
                         Moves captureMove = checkSingleMove(square, direction, true);
-                        
+
                         if (!captureMove.getMoves().isEmpty()) {
                             normalMoves.getMoves().forEach(x -> {
 
@@ -120,8 +120,9 @@ public class BotII extends Bot {
 
                                 boolean capturedIsKing = capturedSquare.isKing();
 
-                                elo += capturedIsKing ? 5 : 2; // Assign elo based on whether the captured piece is a
-                                                               // king
+                                // Add elo based on whether the captured piece is a king, 5 for king, 2 for regular
+                                elo += capturedIsKing ? 5 : 2; 
+                                                               
                                 MoveRating moveRating = new MoveRating(x, elo);
 
                                 pieceMoves.add(moveRating);
