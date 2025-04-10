@@ -9,7 +9,7 @@ public class JoinGameHandler {
 
     public void processJoinGame(Map<String, String> joinData) {
         String username = joinData.get("username");
-        int ClientID = joinData.get("ClientID");
+        int ClientID = Integer.parseInt(joinData.get("ClientID"));
         String gameMode = joinData.get("gameMode");
 
         if ("Multiplayer".equalsIgnoreCase(gameMode)) {
