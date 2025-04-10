@@ -1,11 +1,13 @@
 package uta.cse3310.PageManager;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import uta.cse3310.DB.DB;
+import uta.cse3310.PageManager.pairup_subsys.PlayerEntry;
+import uta.cse3310.PageManager.pairup_subsys.reply_m;
 import uta.cse3310.PairUp.PairUp;
 
 public class PageManager {
@@ -26,6 +28,22 @@ public class PageManager {
      * @param json_UI JSON string from frontend containing user info
      * @return JSON response with match info or error
      */
+
+
+
+    public static class JSONConverter {
+
+        public static List<PlayerEntry> parsePlayers(String jsonString) {
+            // TODO: Implement parsing logic
+            return List.of(); 
+        }
+
+        public static String convertRepliesToJson(List<reply_m> replies) {
+            // TODO: Implement JSON conversion logic
+            return "{}"; 
+        }
+    }
+    
     public String handleUserReq(String json_UI) {
 
         //TO DO: PairUp interface should create a method to link data
