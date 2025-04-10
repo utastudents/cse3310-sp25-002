@@ -55,7 +55,8 @@ public class BotII extends Bot {
      * 
      * @param none
      * 
-     * @return LinkedList<Pair<Square, LinkedList<MoveRating>>> - a list of pairs where each s
+     * @return LinkedList<Pair<Square, LinkedList<MoveRating>>> - a list of pairs
+     *         where each s
      * 
      * @see BotII#requestMove()
      * @see Board
@@ -92,9 +93,12 @@ public class BotII extends Bot {
                         if (!normalMoves.getMoves().isEmpty()) {
                             normalMoves.getMoves().forEach(x -> {
                                 int rowsToKing = movesToKing(x.getDest(), this.color);
-                                int elo = 1;
 
-                                elo += rowsToKing; // Add the number of moves to the back row to the elo rating
+                                // Base elo for normal move
+                                int elo = 1;
+                                
+                                // Add rows to king to elo rating
+                                elo += 7 - rowsToKing;
                                 MoveRating mr = new MoveRating(x, elo);
 
                                 pieceMoves.add(mr);
@@ -108,9 +112,12 @@ public class BotII extends Bot {
                             normalMoves.getMoves().forEach(x -> {
 
                                 int rowsToKing = movesToKing(x.getDest(), this.color);
-                                int elo = 1; // Base elo for capturing move
 
-                                elo += 7 - rowsToKing; // Add the number of moves to the bac
+                                // Base elo for capturing move
+                                int elo = 3;
+                                
+                                // Add rows to king to elo rating
+                                elo += 7 - rowsToKing;
 
                                 // Get the captured square (the square between start and dest) and check if it
                                 // is a king
@@ -120,9 +127,9 @@ public class BotII extends Bot {
 
                                 boolean capturedIsKing = capturedSquare.isKing();
 
-                                // Add elo based on whether the captured piece is a king, 5 for king, 2 for regular
-                                elo += capturedIsKing ? 5 : 2; 
-                                                               
+                                // Add elo based on whether the captured piece is a king, 5 for king
+                                elo += capturedIsKing ? 5 : 0;
+
                                 MoveRating moveRating = new MoveRating(x, elo);
 
                                 pieceMoves.add(moveRating);
@@ -196,9 +203,11 @@ public class BotII extends Bot {
             return true;
         }
 
-        // For capturing moves, check if the intermediate square contains an opponent's piece
+        // For capturing moves, check if the intermediate square contains an opponent's
+        // piece
         if (isCapture) {
-            // Ensure the destination square is empty and the intermediate square contains an opponent's piece
+            // Ensure the destination square is empty and the intermediate square contains
+            // an opponent's piece
             if (dest.getColor() != null) {
                 return false;
             }
