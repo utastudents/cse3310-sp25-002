@@ -36,7 +36,7 @@ public class BotI extends Bot {
         return this.moves;
     }
 
-    private void implementStrategy() {
+    private void implementStrategy(Board board, boolean isAggresive) {
         // add strategy here
     }
 
