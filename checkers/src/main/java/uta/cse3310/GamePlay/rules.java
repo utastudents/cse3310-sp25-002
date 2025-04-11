@@ -13,6 +13,9 @@ public class rules
 {   
     //checks if the move is within the bounds of the board
     //8x8 board
+    //assumption: program starts counting at 0
+    //assumption: gameManager waits until current move is processed
+    //and then processes the next move
     static protected boolean inBounds(Moves moves)
     {
         int index = moves.size() - 1;
@@ -48,8 +51,15 @@ public class rules
 
     //checks how many spots moved up to compared to number of pieces
     //0 pieces = 1, 1 piece = 2, 2 pieces = 4 etc...
-    static protected boolean pieceToMoves(LinkedList<Moves> moves, Board board)
+    static protected boolean pieceToMoves(Moves moves, Board board)
     {
+        int index = moves.size() - 1;
+        Square squareDest = moves.getDest(index);
+        Square squareStart = moves.getStart(index);
+
+        int dist = Math.abs(squareDest.getRow() - squareStart.getRow());
+        
+
         return false; //Default
     }
 
