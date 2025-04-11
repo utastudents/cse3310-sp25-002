@@ -37,7 +37,16 @@ public class BotI extends Bot {
     }
 
     private void implementStrategy(Board board, boolean isAggresive) {
-        // add strategy here
+        
+
+        if (isAggresive) {
+            // aggressive strategy
+        }
+        else {
+            // passive strategy
+        }
+        
+        
     }
 
 }
