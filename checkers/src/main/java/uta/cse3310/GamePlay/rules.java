@@ -2,6 +2,7 @@ package uta.cse3310.GamePlay;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameManager.Moves;
@@ -9,13 +10,19 @@ import uta.cse3310.GameManager.Square;
 
 //class rules checks if the move is legal
 public class rules
-{
+{   
     //checks if the move is within the bounds of the board
     //8x8 board
-    //issue (maybe): class Move needs to be visible to get move set
-    static protected boolean inBounds(LinkedList<Moves> moves)
+    static protected boolean inBounds(Moves moves)
     {
-       return false; //Default
+        int index = moves.size() - 1;
+        Square square = moves.getDest(index);
+
+        //assuming program starts counting at 0
+        if (square.getCol() > 7 || square.getCol() < 0 ||
+            square.getRow() > 7 || square.getRow() < 0)
+            return false;
+        return true;
     }
 
     //checks if the piece moves diagonally up-right and up-left
