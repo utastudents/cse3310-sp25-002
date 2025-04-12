@@ -127,13 +127,6 @@
     // a reminder.  we want to create one websocket connection, and use if, basically forever.
     // or until the user decides to go to another page.
     // this requires everything to load from this page.
-
-    // this element is used to display the game board
-    let gameContainer = document.getElementById("game_display_container");
-    // this variable is used to check if the game board has been initialized
-    let game_display_checkers_board_initialized = false;
-    let checkerBoard = null;
-
     var connection = null;
 
     var serverUrl;
@@ -160,15 +153,12 @@
         let data = JSON.parse(msg);
 
         // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
-        if (game_display_checkers_board_initialized){
-            game_display_handle_websocket_received_data(checkerBoard, data);
-        };
+        game_display_handle_websocket_received_data(connection, data);
 
     }
 
-
-    // uncomment the line below to test rendering the game board
-    // setTimeout(showGameDisplay("134242424", "Player 1"),3000);
+    // Note from Game Display: uncomment the line below to test rendering the game board
+    setTimeout(show_game_display(connection, "134242424", "Player 1", "this is player2", "B"),3000);
 
     class UserEvent {
         msg;
