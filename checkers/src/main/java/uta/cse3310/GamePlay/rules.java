@@ -112,7 +112,7 @@ public class rules
                 throw new RuntimeException("error in pieceToMoves");
             */
 
-            Square currSquare = board.getSquare(x,y);
+            Square currSquare = board.getSquare(squareStart.getCol() + x, squareStart.getRow() + y);
             if (currSquare.hasPiece())
                 ++numPieces;
 
