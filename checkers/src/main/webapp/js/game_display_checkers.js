@@ -130,11 +130,17 @@ const game_display_handle_websocket_received_data = (checkerBoard, data) => {
         } else if(data.type === 'notify_players'){
             // assuming that websocket sends the json string {"type":"notify_players", "message":"Game won/ Game Draw/ Connection issue/ Error message"}
             game_display_popup_messages(data.message);
+        } else if(data.type === 'show_game_display') {
+            showGameDisplay; 
+        } else if(data.type === 'hide_game_display') {
+            hideGameDisplay;
         }
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
         game_display_popup_messages(`(gd) game_display_handle_websocket_received_data: An error occurred while handling the game display. Please check the console.`);
     }
+
+
 
 }
 
