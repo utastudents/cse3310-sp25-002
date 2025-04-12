@@ -102,14 +102,20 @@ public class rules
                 ++x;
             else if (xDirection < 0)
                 --x;
-            else if (yDirection > 0)
+            /*
+            //for exception handling
+            else
+                throw new RuntimeException("piece did not move\n");
+            */
+
+            if (yDirection > 0)
                 ++y;
             else if (yDirection < 0)
                 --y;
             /*
             //for exception handling
             else
-                throw new RuntimeException("error in pieceToMoves");
+                throw new RuntimeException("piece did not move\n");
             */
 
             Square currSquare = board.getSquare(squareStart.getCol() + x, squareStart.getRow() + y);
