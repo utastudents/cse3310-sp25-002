@@ -5,10 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//might need for NewAcctLogin
+//import java.sql.Connection;
+//import java.sql.DriverManager;
+
 import com.google.gson.Gson;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
+
 
 public class PageManager {
     DB db;
