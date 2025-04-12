@@ -27,6 +27,10 @@ public class NewAcctLogin
     //check if user already in database
     public boolean usernameExists(String username)
     {
+        //sql database code here ?
+        //String
+        //try-catch
+
         //does user exist?
         //return true if user is found...otherwise...
         return false;
@@ -39,6 +43,10 @@ public class NewAcctLogin
         {
             return false;//user exists so no need to add
         }
+
+        //sql database code here ?
+        //String
+        //try-catch
 
         //otherwise, return true to add user
         return true;
