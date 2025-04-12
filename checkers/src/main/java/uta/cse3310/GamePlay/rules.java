@@ -84,7 +84,48 @@ public class rules
         Square squareStart = moves.getStart(index);
 
         int dist = Math.abs(squareDest.getRow() - squareStart.getRow());
+
+        //if negative, piece moved left, if positive, piece moved right
+        int xDirection = squareDest.getCol() - squareStart.getCol();
+        //if negative, piece moved down, if positive, piece moved up
+        int yDirection = squareDest.getRow() - squareStart.getRow();
         
+        if (dist == 1)
+            return true;
+
+        int x = 0, y = 0;
+        int numPieces = 0;
+        //find pieces on the way to the destination
+        for (int i = dist; dist > 0; i -= 2) 
+        {
+            if (xDirection > 0 && yDirection > 0)
+            {
+                ++x;
+                ++y;
+                
+            }
+            else if (xDirection < 0 && yDirection > 0)
+            {
+                --x;
+                ++y;
+            }
+            else if (xDirection > 0 && yDirection < 0)
+            {
+                ++x;
+                --y;
+            }
+            else if (xDirection > 0 && yDirection > 0)
+            {
+                --x;
+                --y;
+            }
+            /*
+            //for exception handling
+            else
+                throw new RuntimeException("error in pieceToMoves");
+            */
+
+        }
 
         return false; //Default
     }
