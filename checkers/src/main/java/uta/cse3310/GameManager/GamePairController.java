@@ -1,33 +1,22 @@
 package uta.cse3310.GameManager;
 
-import uta.cse3310.PairUp.PairUp;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
+import uta.cse3310.PairUp.Match;
 
 public class GamePairController{
-    private PairUp pairUpSys;
-    private ObjectMapper objectMapper; //JSON conversion
 
-    public GamePairController(PairUp pairUpSys){
-        this.pairUpSys = pairUpSys;
-        this.objectMapper = new ObjectMapper();
+    public GamePairController(){
     }
 
-    public Game initializeGame(String pairUpJson){
-        try{
-            PairUp.Match match = objectMapper.readValue(pairUpJson, PairUp.Match.class); //Parse JSON input to extract info from pairUp
+    public Game newMatch(Match match){
+        /*int player1ID = match.getPlayer1Id();
+        int player2ID = match.getPlayer2Id();
+        boolean player1Color = match.getPlayer1Color();
+        boolean player2Color = match.getPlayer2Color();
+        int gameNumber = match.getGameId();
 
-            int player1ID = Integer.parseInt(match.getPlayer1Id());
-            int player2ID = Integer.parseInt(match.getPlayer2Id());
+        Game newGame = new Game(player1ID, player2ID, player1Color, player2Color, gameNumber);
 
-            String gameID = match.getGameId();
-            Game newGame = new Game(player1ID, player2ID, gameID);
-
-            return newGame;
-        }
-        catch(IOException e){
-            System.err.println("Error initializing game from JSON: " + e.getMessage());
-            return null;
-        }
+        return newGame;*/
+        return null;
     }
 }
