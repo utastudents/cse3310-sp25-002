@@ -171,7 +171,7 @@
     // setTimeout(showGameDisplay("134242424", "Player 1"),3000);
 
     //showing the game board
-    function showGameDisplay(gameid, startingPlayer){
+    function showGameDisplay(gameid, startingPlayer, player, playercolor){
         if (!gameContainer){
             console.log("game display container not found");
             return;
@@ -181,7 +181,7 @@
 
         if(!game_display_checkers_board_initialized){
             // use the CheckersBoard class to create the game board and attach the class to the DOM
-            checkerBoard = new CheckersBoard(conn = connection, g_id = gameid, starting_player = startingPlayer);
+            checkerBoard = new CheckersBoard(conn = connection, g_id = gameid, starting_player = startingPlayer, player, playercolor);
             // call the create_checkers_board method to create the game board
             checkerBoard.create_checkers_board();
             // attach all the event listeners to the game board. Note: this function is defined in the game_display_checkers.js file
