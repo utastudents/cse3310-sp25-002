@@ -61,6 +61,45 @@ const add_game_display_user_control_event_listener = () => {
 };
 
 
+
+const showGameDisplay = (gameid, stratingPlayer, player, playercolor) => {
+    if (!gameContainer){
+        console.log("game display container not found");
+        return;
+    }
+    gameContainer.classList.remove("hidden");
+    gameContainer.classList.add("visible");
+
+    if(!game_display_checkers_board_initialized){
+        // use the CheckersBoard class to create the game board and attach the class to the DOM
+        checkerBoard = new CheckersBoard(conn = connection, g_id = gameid, starting_player = startingPlayer, player, playercolor);
+        // call the create_checkers_board method to create the game board
+        checkerBoard.create_checkers_board();
+        // attach all the event listeners to the game board. Note: this function is defined in the game_display_checkers.js file
+        add_game_display_user_control_event_listener();
+        // set the flag to true to indicate that the game board has been initialized. Note: this is used to prevent the game board from being initialized multiple times
+        game_display_checkers_board_initialized = true;
+    }
+    document.getElementById("current-player").textContent = `Current Player: ${startingPlayer}`;
+}
+
+const hideGameDisplay = () => {
+    if(!gameContainer){
+        console.log("game display container not found");
+        return;
+    }
+    if(!game_display_checkers_board_initialized){
+        return;
+    }
+    gameContainer.classList.add("hidden");
+    gameContainer.classList.remove("visible");
+}
+
+class UserEvent {
+    msg;
+}
+
+
 const game_display_handle_websocket_received_data = (checkerBoard, data) => {
     try{
         // This function handles the websocket data received from the java backend and updates the checkerboard accordingly.
@@ -99,8 +138,6 @@ const game_display_handle_websocket_received_data = (checkerBoard, data) => {
 
 }
 
-
-
 class CheckersBoard {
     /*
         We have put the game display logic under the CheckersBoard class to handle all logic related to displaying the board. This will help in creating as many instances of checker board as needed.
@@ -118,12 +155,9 @@ class CheckersBoard {
         // this is used to keep track of the last clicked coordinate to 1) prevent user from clicking on the same square twice 2) to keep track of from and to coordinates when a piece is moved
         this.last_clicked_coordinate = null;
         this.received_coords = [];
-<<<<<<< HEAD
         this.player = player;
         this.playercolor = playercolor;
-=======
         this.opponents_turn=false;
->>>>>>> 40c6aba1d037146983e643f2b7ab96db1b30afad
     }
 
     

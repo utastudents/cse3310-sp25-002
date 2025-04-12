@@ -170,41 +170,6 @@
     // uncomment the line below to test rendering the game board
     // setTimeout(showGameDisplay("134242424", "Player 1"),3000);
 
-    //showing the game board
-    function showGameDisplay(gameid, startingPlayer, player, playercolor){
-        if (!gameContainer){
-            console.log("game display container not found");
-            return;
-        }
-        gameContainer.classList.remove("hidden");
-        gameContainer.classList.add("visible");
-
-        if(!game_display_checkers_board_initialized){
-            // use the CheckersBoard class to create the game board and attach the class to the DOM
-            checkerBoard = new CheckersBoard(conn = connection, g_id = gameid, starting_player = startingPlayer, player, playercolor);
-            // call the create_checkers_board method to create the game board
-            checkerBoard.create_checkers_board();
-            // attach all the event listeners to the game board. Note: this function is defined in the game_display_checkers.js file
-            add_game_display_user_control_event_listener();
-            // set the flag to true to indicate that the game board has been initialized. Note: this is used to prevent the game board from being initialized multiple times
-            game_display_checkers_board_initialized = true;
-        }
-        document.getElementById("current-player").textContent = `Current Player: ${startingPlayer}`;
-    }
-
-    //function to hide the board
-    function hideGameDisplay(){
-        if(!gameContainer){
-            console.log("game display container not found");
-            return;
-        }
-        if(!game_display_checkers_board_initialized){
-            return;
-        }
-        gameContainer.classList.add("hidden");
-        gameContainer.classList.remove("visible");
-    }
-
     class UserEvent {
         msg;
     }
