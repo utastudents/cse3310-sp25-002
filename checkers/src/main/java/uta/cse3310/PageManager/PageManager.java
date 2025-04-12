@@ -29,14 +29,8 @@ public class PageManager {
      * @return JSON response with match info or error
      */
 
-    /** To Use this method globally to parse and convert message just include:
-     * 
-     * EXAMPLE USE
-     * 
-     * UserEvent u = JSONConverter.parseJson(message, UserEvent.class);
-     * PlayerEntry p = JSONConverter.parseJson(message2, PlayerEntry.class);
-     * 
-     */
+    // To Use this method globally to parse and convert message please look at the example
+     
 
     public class JSONConverter {
 
@@ -47,10 +41,30 @@ public class PageManager {
         return gson.fromJson(jsonString, target);
     }
 
+    /*
+    * 
+     * EXAMPLE USE
+     * 
+     * UserEvent u = JSONConverter.parseJson(message, UserEvent.class);
+     * PlayerEntry p = JSONConverter.parseJson(message2, PlayerEntry.class);
+     * 
+     */
+
+
     public static String convertObjectToJson(Object obj) 
     {
         return gson.toJson(obj);
     }
+
+        /*
+        *
+        *EXAMPLE USE 
+        *
+        *String json = JSONConverter.convertObjectToJson(reply);
+        *System.out.println(json);
+        *
+        */
+        
 
     }
 
