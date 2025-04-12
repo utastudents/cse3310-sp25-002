@@ -62,7 +62,7 @@ const add_game_display_user_control_event_listener = () => {
 
 
 
-const showGameDisplay = (gameid, stratingPlayer, player, playercolor) => {
+const showGameDisplay = (gameid, startingPlayer, player, playercolor) => {
     if (!gameContainer){
         console.log("game display container not found");
         return;
