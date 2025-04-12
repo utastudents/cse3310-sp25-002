@@ -118,6 +118,7 @@ class CheckersBoard {
         // this is used to keep track of the last clicked coordinate to 1) prevent user from clicking on the same square twice 2) to keep track of from and to coordinates when a piece is moved
         this.last_clicked_coordinate = null;
         this.received_coords = [];
+        this.opponents_turn=false;
     }
 
     
@@ -187,7 +188,10 @@ class CheckersBoard {
     }
 
 
-
+    move_made_by_other_player_or_bot(move_from_x, move_from_y, move_to_x, move_to_y){
+        this.opponents_turn = true;
+        this.move_checkers_piece(move_from_x, move_from_y, move_to_x, move_to_y);
+    }
 
     /*
         move_checkers_piece() simply moves a checkers piece from one square to another. This function is called once the java backend has confirmed that the move is valid.
@@ -226,8 +230,9 @@ class CheckersBoard {
                 this.update_board_style();
                 // relay the move to the backend through the ws connection
                 console.log({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
-                this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
-
+                if(!this.opponents_turn){
+                    this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
+                } else {this.opponents_turn=false;}
             }
 
         } catch (error) {
