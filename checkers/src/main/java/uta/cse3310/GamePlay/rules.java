@@ -96,38 +96,34 @@ public class rules
         int x = 0, y = 0;
         int numPieces = 0;
         //find pieces on the way to the destination
-        for (int i = dist; dist > 0; i -= 2) 
+        for (int i = dist; i > 0; --i) 
         {
-            if (xDirection > 0 && yDirection > 0)
-            {
+            if (xDirection > 0)
                 ++x;
-                ++y;
-                
-            }
-            else if (xDirection < 0 && yDirection > 0)
-            {
+            else if (xDirection < 0)
                 --x;
+            else if (yDirection > 0)
                 ++y;
-            }
-            else if (xDirection > 0 && yDirection < 0)
-            {
-                ++x;
+            else if (yDirection < 0)
                 --y;
-            }
-            else if (xDirection > 0 && yDirection > 0)
-            {
-                --x;
-                --y;
-            }
             /*
             //for exception handling
             else
                 throw new RuntimeException("error in pieceToMoves");
             */
 
-        }
+            Square currSquare = board.getSquare(x,y);
+            if (currSquare.hasPiece())
+                ++numPieces;
 
-        return false; //Default
+        }
+        
+        //if 0 pieces != 1 dist, 1 piece != 2 dist, 2 pieces != 4 dist etc...
+        //return false
+        if (dist / numPieces != 2)
+            return false;
+
+        return true;
     }
 
     //will call occupied to check if a square is occupied by another piece, then check 
