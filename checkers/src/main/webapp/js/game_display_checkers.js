@@ -105,7 +105,7 @@ class CheckersBoard {
     /*
         We have put the game display logic under the CheckersBoard class to handle all logic related to displaying the board. This will help in creating as many instances of checker board as needed.
     */
-    constructor(conn, g_id, starting_player) {
+    constructor(conn, g_id, starting_player, player, playercolor) {
         this.checkers_board = [];
         this.selected_piece = null;
         connection = conn;
@@ -118,6 +118,8 @@ class CheckersBoard {
         // this is used to keep track of the last clicked coordinate to 1) prevent user from clicking on the same square twice 2) to keep track of from and to coordinates when a piece is moved
         this.last_clicked_coordinate = null;
         this.received_coords = [];
+        this.player = player;
+        this.playercolor = playercolor;
     }
 
     
@@ -178,6 +180,8 @@ class CheckersBoard {
                         this.show_possible_moves(x, y);
                     }
                 }
+
+                if(this.player !== this.currentPlayer) return;
 
             }
         } catch (error) {
