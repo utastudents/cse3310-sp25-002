@@ -44,9 +44,35 @@ public class rules
 
 
     //checks if the square being moved to is occupied by a piece
-    static protected boolean occupied(LinkedList<Moves> moves, Board board)
-    {
-        return false; //Default
+    static protected boolean occupied(LinkedList<Moves> moves, Board board) {
+        // Safety check: make sure the moves list isn't empty
+        if (moves == null || moves.isEmpty()) {
+            return false;
+        }
+    
+        // Get the latest Moves object (a group of individual Move steps)
+        Moves lastMoves = moves.getLast();
+    
+        // Get the index of the last move within that Moves group
+        int lastIdx = lastMoves.size() - 1;
+    
+        // Extra safety: make sure there's at least one move in the group
+        if (lastIdx < 0) {
+            return false;
+        }
+    
+        // Get the destination square of the last move
+        Square dest = lastMoves.getDest(lastIdx);
+    
+        // Get the row and column of that square
+        int row = dest.getRow();
+        int col = dest.getCol();
+    
+        // Use the board to check if something exists at that location
+        Square boardSquare = board.getSquare(row, col);
+    
+        // If the board square is not null, it's occupied
+        return boardSquare != null;
     }
 
     //checks how many spots moved up to compared to number of pieces
@@ -58,9 +84,52 @@ public class rules
         Square squareStart = moves.getStart(index);
 
         int dist = Math.abs(squareDest.getRow() - squareStart.getRow());
-        
 
-        return false; //Default
+        //if negative, piece moved left, if positive, piece moved right
+        int xDirection = squareDest.getCol() - squareStart.getCol();
+        //if negative, piece moved down, if positive, piece moved up
+        int yDirection = squareDest.getRow() - squareStart.getRow();
+        
+        if (dist == 1)
+            return true;
+
+        int x = 0, y = 0;
+        int numPieces = 0;
+        //find pieces on the way to the destination
+        for (int i = dist; i > 0; --i) 
+        {
+            if (xDirection > 0)
+                ++x;
+            else if (xDirection < 0)
+                --x;
+            /*
+            //for exception handling
+            else
+                throw new RuntimeException("piece did not move\n");
+            */
+
+            if (yDirection > 0)
+                ++y;
+            else if (yDirection < 0)
+                --y;
+            /*
+            //for exception handling
+            else
+                throw new RuntimeException("piece did not move\n");
+            */
+
+            Square currSquare = board.getSquare(squareStart.getCol() + x, squareStart.getRow() + y);
+            if (currSquare.hasPiece())
+                ++numPieces;
+
+        }
+        
+        //if 0 pieces != 1 dist, 1 piece != 2 dist, 2 pieces != 4 dist etc...
+        //return false
+        if (dist / numPieces != 2)
+            return false;
+
+        return true;
     }
 
     //will call occupied to check if a square is occupied by another piece, then check 

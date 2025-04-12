@@ -61,6 +61,45 @@ const add_game_display_user_control_event_listener = () => {
 };
 
 
+
+const showGameDisplay = (gameid, startingPlayer, player, playercolor) => {
+    if (!gameContainer){
+        console.log("game display container not found");
+        return;
+    }
+    gameContainer.classList.remove("hidden");
+    gameContainer.classList.add("visible");
+
+    if(!game_display_checkers_board_initialized){
+        // use the CheckersBoard class to create the game board and attach the class to the DOM
+        checkerBoard = new CheckersBoard(conn = connection, g_id = gameid, starting_player = startingPlayer, player, playercolor);
+        // call the create_checkers_board method to create the game board
+        checkerBoard.create_checkers_board();
+        // attach all the event listeners to the game board. Note: this function is defined in the game_display_checkers.js file
+        add_game_display_user_control_event_listener();
+        // set the flag to true to indicate that the game board has been initialized. Note: this is used to prevent the game board from being initialized multiple times
+        game_display_checkers_board_initialized = true;
+    }
+    document.getElementById("current-player").textContent = `Current Player: ${startingPlayer}`;
+}
+
+const hideGameDisplay = () => {
+    if(!gameContainer){
+        console.log("game display container not found");
+        return;
+    }
+    if(!game_display_checkers_board_initialized){
+        return;
+    }
+    gameContainer.classList.add("hidden");
+    gameContainer.classList.remove("visible");
+}
+
+class UserEvent {
+    msg;
+}
+
+
 const game_display_handle_websocket_received_data = (checkerBoard, data) => {
     try{
         // This function handles the websocket data received from the java backend and updates the checkerboard accordingly.
@@ -92,21 +131,25 @@ const game_display_handle_websocket_received_data = (checkerBoard, data) => {
         } else if(data.type === 'notify_players'){
             // assuming that websocket sends the json string {"type":"notify_players", "message":"Game won/ Game Draw/ Connection issue/ Error message"}
             game_display_popup_messages(data.message);
+        } else if(data.type === 'show_game_display') {
+            showGameDisplay; 
+        } else if(data.type === 'hide_game_display') {
+            hideGameDisplay;
         }
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
         game_display_popup_messages(`(gd) game_display_handle_websocket_received_data: An error occurred while handling the game display. Please check the console.`);
     }
 
+
+
 }
-
-
 
 class CheckersBoard {
     /*
         We have put the game display logic under the CheckersBoard class to handle all logic related to displaying the board. This will help in creating as many instances of checker board as needed.
     */
-    constructor(conn, g_id, starting_player) {
+    constructor(conn, g_id, starting_player, player, playercolor) {
         this.checkers_board = [];
         this.selected_piece = null;
         connection = conn;
@@ -119,6 +162,9 @@ class CheckersBoard {
         // this is used to keep track of the last clicked coordinate to 1) prevent user from clicking on the same square twice 2) to keep track of from and to coordinates when a piece is moved
         this.last_clicked_coordinate = null;
         this.received_coords = [];
+        this.player = player;
+        this.playercolor = playercolor;
+        this.opponents_turn=false;
     }
 
 
@@ -180,6 +226,8 @@ class CheckersBoard {
                     }
                 }
 
+                if(this.player !== this.currentPlayer) return;
+
             }
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
@@ -188,7 +236,10 @@ class CheckersBoard {
     }
 
 
-
+    move_made_by_other_player_or_bot(move_from_x, move_from_y, move_to_x, move_to_y){
+        this.opponents_turn = true;
+        this.move_checkers_piece(move_from_x, move_from_y, move_to_x, move_to_y);
+    }
 
     /*
         move_checkers_piece() simply moves a checkers piece from one square to another. This function is called once the java backend has confirmed that the move is valid.
@@ -227,8 +278,9 @@ class CheckersBoard {
                 this.update_board_style();
                 // relay the move to the backend through the ws connection
                 console.log({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
-                this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
-
+                if(!this.opponents_turn){
+                    this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
+                } else {this.opponents_turn=false;}
             }
 
         } catch (error) {

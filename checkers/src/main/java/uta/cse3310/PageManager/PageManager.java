@@ -5,10 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//might need for NewAcctLogin
+//import java.sql.Connection;
+//import java.sql.DriverManager;
+
+import com.google.gson.Gson;
+
 import uta.cse3310.DB.DB;
-import uta.cse3310.PageManager.pairup_subsys.PlayerEntry;
-import uta.cse3310.PageManager.pairup_subsys.reply_m;
 import uta.cse3310.PairUp.PairUp;
+
 
 public class PageManager {
     DB db;
@@ -29,20 +34,47 @@ public class PageManager {
      * @return JSON response with match info or error
      */
 
+    // To Use this method globally to parse and convert message please look at the example
+     
 
+    public class JSONConverter {
 
-    public static class JSONConverter {
+    private static final Gson gson = new Gson();
 
-        public static List<PlayerEntry> parsePlayers(String jsonString) {
-            // TODO: Implement parsing logic
-            return List.of(); 
-        }
-
-        public static String convertRepliesToJson(List<reply_m> replies) {
-            // TODO: Implement JSON conversion logic
-            return "{}"; 
-        }
+    public static <T> T parseJson(String jsonString, Class<T> target) 
+    {
+        return gson.fromJson(jsonString, target);
     }
+
+    /*
+    * 
+     * EXAMPLE USE
+     * 
+     * UserEvent u = JSONConverter.parseJson(message, UserEvent.class);
+     * PlayerEntry p = JSONConverter.parseJson(message2, PlayerEntry.class);
+     * 
+     */
+
+
+    public static String convertObjectToJson(Object obj) 
+    {
+        return gson.toJson(obj);
+    }
+
+        /*
+        *
+        *EXAMPLE USE 
+        *
+        *String json = JSONConverter.convertObjectToJson(reply);
+        *System.out.println(json);
+        *
+        */
+        
+
+    }
+
+    
+    
     
     public String handleUserReq(String json_UI) {
 
