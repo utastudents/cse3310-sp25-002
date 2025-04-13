@@ -4,6 +4,8 @@ import uta.cse3310.Bot.Bot;
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.GameManager;
+import uta.cse3310.GameManager.Move;
+import uta.cse3310.GameManager.Square;
 
 import java.util.LinkedList;
 
@@ -27,7 +29,7 @@ public class BotI extends Bot {
     private LinkedList<Moves> movesLogic() {
         // This method should implement the logic to determine the moves.
         // based on the current state of the game board.
-        return null; //Placeholder for now.
+        return null; // Placeholder for now.
     }
 
     /* Sending Moves from Bot 1 to the GameManager */
@@ -37,16 +39,24 @@ public class BotI extends Bot {
     }
 
     private void implementStrategy(Board board, boolean isAggresive) {
-        
 
         if (isAggresive) {
             // aggressive strategy
-        }
-        else {
+        } else {
             // passive strategy
         }
-        
-        
+
     }
+
+    /* Adding the skeleton for Passive and Aggressive Strategy */
+    // private Moves passiveStrategyImplementation(LinkedList<Moves> possibleMoves)
+    // {
+    // return null; /* Placeholder for now */
+    // }
+
+    // private Moves aggressiveStrategyImplementation(LinkedList<Moves>
+    // possibleMoves) {
+    // return null; /* Placeholder for now */
+    // }
 
 }
