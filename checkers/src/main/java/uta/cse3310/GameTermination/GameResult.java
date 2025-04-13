@@ -9,6 +9,8 @@ public class GameResult {
 
     // Stores scores for each player by their ID
     private Map<String, Integer> playerScores;
+    
+    private String winningPlayerId;
 
     // Stores all game results
     private List<GameResult> gameHistory = new ArrayList<>();
@@ -16,6 +18,19 @@ public class GameResult {
     // Constructor to initialize scores
     public GameResult(Map<String, Integer> playerScores) {
         this.playerScores = playerScores;
+        this.winningPlayerId = winningPlayerId;
+    }
+
+    public Map<String, Integer> getPlayerScores() {
+        return playerScores;
+    }
+
+    public String getWinningPlayerId() {
+        return winningPlayerId;
+    }
+
+    public boolean isDraw() {
+        return winningPlayerId == null;
     }
 
     // This method will update the number of pieces captured for each player.
