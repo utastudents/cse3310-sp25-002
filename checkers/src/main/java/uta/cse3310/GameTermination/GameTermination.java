@@ -47,7 +47,8 @@ public class GameTermination {
 
     // New method to handle game restart requests
     public void gameRestartReq() {
-        // Logic for handling game restart (this could include resetting states or notifying other components)
-        System.out.println("Game restart requested.");
+       gameOver = false;
+        finalWinner = null;
+        System.out.println("Game restart requested. Game state has been reset.");
     }
 }
