@@ -137,32 +137,35 @@ public class rules
 
     //Check to see if current player can move selected piece
     //Does the color of the player match the color of the piece
-    static protected boolean canMovePiece(Game game /*, int row, int col*/)
+    static protected boolean canMovePiece(int row, int col, Board board, int playerId, Player player1, Player player2, boolean CurrentPlayerColor)
     {
-       /* 
         Square boardSquare = board.getSquare(row, col); // is there something on the current square
-        boolean CurrentPlayerColor; //what color piece can the player move
+        boolean boardColor = boardSquare.getColor(); //finds the color of the piece trying to be moved
 
-        //is it currently play 1's turn
-        //if(getCurrentTurn(player1) && player1.getPlayerId() == player1id)
-        {   
-             CurrentPlayerColor = player1.getColor() ;//player 1 can only move with its associated color
-                return true;
-        }
-        else if(getCurrentTurn//(player2) && player2.getPlayerId = player2id)
-        {
-            CurrentPlayerColor = player2.getColor//(); //player 2 can only move with its associated color
-                return true;
-        }
-
-        if(boardSquare.hasPiece//() == false)// if there is no piece on the current square there's nothing to move
+        // checks to see if there is no piece on the current square or if the player's id doesn't match up
+        if(!boardSquare.hasPiece()|| player1.getPlayerId() != playerId|| player2.getPlayerId()!= playerId)
         {
             return false;
         }
-        */
-       return false;
-           
+
+        //is it currently player 1's turn or player 2's turn
+        if(player1.getPlayerId() == playerId)
+        {
+            CurrentPlayerColor = player1.getColor() ;//player 1 can only move with its associated color
+        }
+        else if(player2.getPlayerId() == playerId)
+        {
+            CurrentPlayerColor = player2.getColor() ;//player 2 can only move with its associated color
+        }
+
+        if(boardColor != CurrentPlayerColor) //if the piece trying to be moved doesn't belong to the player trying to move it
+        {
+            return false;
+        }
+
+        return true;
     }
+
 
     public static ArrayList<Square> getAllPieces(Board board)
     {
