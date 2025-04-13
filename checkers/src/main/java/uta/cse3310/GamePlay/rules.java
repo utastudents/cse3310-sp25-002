@@ -224,7 +224,7 @@ public class rules
 
                 if(SquareCap.hasPiece())
                 {
-                    SquareCap.removePiece();
+                    SquareCap.remove();
                     capture = true;
                 }
             }
