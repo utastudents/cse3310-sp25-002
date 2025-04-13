@@ -11,8 +11,11 @@ class Waitlist{
 		return player; 
 	}
 	
-	remove(playerInfo){	//Remove a player's info from the waitlist when leaving the game
-		
+	// Changed parameter here to playerID
+	remove(playerID){	//Remove a player's info from the waitlist when leaving the game
+		// Filter the waitlist with the players that do not have this ID
+		this.waitlist = this.waitlist.filter(player => player.getID() !== playerId);
+		this.displayWaitlist(); // Update/display the waitlist again with the new Player
 	}
 	
 	updateWaitlist(playerInfo){	//Update waitlist and placement's of players each time another player is added/removed
