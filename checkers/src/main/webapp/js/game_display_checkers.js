@@ -118,7 +118,7 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             return;
         };
 
-        let game_display_event_types = ["valid_moves", "move", "resign", "draw_offer", "draw_accept", "player_name_update", "notify_players", "show_game_display", "hide_game_display"];
+        let game_display_event_types = ["valid_moves", "move_made_by_other_player_or_bot", "resign", "draw_offer", "draw_accept", "player_name_update", "notify_players", "show_game_display", "hide_game_display"];
 
         // this ignores any data that is not related to the game display.
         if(!game_display_event_types.includes(data.type)){ return; }
@@ -133,10 +133,12 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             // assuming that websocket sends the json string {"type":"valid_moves", "legal_moves":[[x1,y1],[x2,y2],...]}
             checkerBoard.received_coords = data.legal_moves;
 
-        } else if(data.type === "move") {
-            // assuming that websocket sends the json string {"type":"move", "game_id": "GAME_ID_IF_PROVIDED", "player":"NAME OF PLAYER THAT MADE THE MOVE (STRING),"from": [move_from_x, move_from_y],"to": [move_to_x, move_to_y]"}
+        } else if(data.type === "move_made_by_other_player_or_bot") {
+            // assuming that websocket sends the json string {"type":"move_made_by_other_player_or_bot", "game_id": "GAME_ID_IF_PROVIDED", "player":"NAME OF PLAYER THAT MADE THE MOVE (STRING),"from": [move_from_x, move_from_y],"to": [move_to_x, move_to_y]"}
             //checks to make sure that it is a move from the opponent
             if(data.player != checkerBoard.player){
+                // move_from_x, move_from_y, move_to_x, move_to_y = data.from[0], data.from[1], data.to[0], data.to[1];
+                // this function is used to move the checkers piece from one square to another. This function is called when the opponent makes a move.
                 checkerBoard.move_made_by_other_player_or_bot(data.from[0],data.from[1],data.to[0],data.to[1]);
             };
 
