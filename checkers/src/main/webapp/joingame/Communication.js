@@ -6,6 +6,11 @@ class Communication {
    * @param {string} playerData.username - Display name (max 20 chars)
    * @param {string} [playerData.status='pending'] - Initial player status
    */
+
+  constructor() {
+    // TODO: Add initializers here 
+  }
+
   sendPlayerAttributes(playerData) {
     // Validate and forward to Page Manager
   }
