@@ -7,6 +7,7 @@ public class GameTermination {
 
 
     private boolean gameOver = false; // Flag to indicate if the game is over, game state
+    private String finalWinner = null; // Stores the winner's ID or "Draw"
 
     // Method to handle the end of the game and declare the winner
     public void endGame(Map<String, Integer> playerScores, String winningPlayer) {
@@ -18,18 +19,19 @@ public class GameTermination {
         gameOver = true;
 
         // Check if there's a winner or a draw
-        if (winningPlayer != null) {
-            // If a winning player is provided, declare the winner
+       if (winningPlayer != null) {
+            finalWinner = winningPlayer;
             System.out.println("Game Over! " + winningPlayer + " has won!");
         } else {
-            // If no winner, it's a draw
+            finalWinner = "Draw";
             System.out.println("Game Over! It's a draw!");
         }
-}
+    }
     // This method will save the results to the database
     public void saveResultsToDatabase(Map<String, Integer> playerScores) {
-        // Placeholder for database logic
         System.out.println("Saving results to database...");
+        System.out.println("Final winner: " + finalWinner);
+        System.out.println("Scores: " + playerScores);
     }
 
     // This method will confirm if the results were successfully stored in the database
@@ -45,7 +47,12 @@ public class GameTermination {
 
     // New method to handle game restart requests
     public void gameRestartReq() {
-        // Logic for handling game restart (this could include resetting states or notifying other components)
-        System.out.println("Game restart requested.");
+       gameOver = false;
+        finalWinner = null;
+        System.out.println("Game restart requested. Game state has been reset.");
+    }
+    // Returns the winner or draw
+    public String getWinner() {
+        return finalWinner;
     }
 }
