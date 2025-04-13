@@ -57,5 +57,10 @@ public class GameResult {
         String id = String.valueOf(player.getPlayerId());
         playerScores.put(id, score);
     }
+
+    // This is for unit testing support to verify the scores updates.
+    public int getScore(String playerId) {
+        return playerScores.getOrDefault(playerId, -1);
+    }
 }
 
