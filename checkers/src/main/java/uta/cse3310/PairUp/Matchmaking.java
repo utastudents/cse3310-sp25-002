@@ -24,18 +24,6 @@ public class Matchmaking implements Runnable {
         thread.start();
     }
 
-    public void addPlayer(PlayerInMatchmaking newPlayer) {
-        players.add(newPlayer);
-    }
-
-    public void removePlayer(String playerId) {
-        for (PlayerInMatchmaking player : players) {
-            if (player.getPlayerId.equals(playerId)) {
-                players.remove(player);
-            }
-        }
-    }
-
     public void pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2, boolean isBotGame) {
         Random coinflip = new Random();
         boolean p1Color = coinflip.nextBoolean();
