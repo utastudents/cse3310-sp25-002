@@ -36,8 +36,12 @@ public class GameResult {
     public void setWinner(Player player) {
         this.winningPlayerId = String.valueOf(player.getPlayerId());
     }
+    //match is drawn
+    public void setDraw() {
+        this.winningPlayerId = null;
+    }
 
-    // This method will update the number of pieces captured for each player.
+     // This method will update the number of pieces captured for each player.
     // If a player has all 12 pieces captured, they lose.
     public void trackCapturedPieces(Player player) {
         //int capturedPieces = player.getCapturedCount(); // assuming GamePlay provides this
