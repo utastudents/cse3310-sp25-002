@@ -93,46 +93,6 @@ public class rules
     }
 
     // recursive function for moveList
-    // finds all jump chains for a given king piece
-    // this may not work as intended depending on the behavior reguarding the moves obj. 
-    static protected Moves kingJump(Board board, Moves moves, int rowSkip, int colSkip, Square square)
-    {
-        int row = square.getRow();
-        int col = square.getCol();
-        int rowAdd = 1;
-        int colAdd = -1;
-        for(int i = 3; i > -3; i = i-2 ){
-            if(i<0){
-                rowAdd = -1;
-            }
-
-            if(col+colAdd < 0 || col+colAdd > 7 || row+rowAdd < 0 || row+rowAdd > 7 || (row == rowSkip && col == colSkip)){
-                colAdd = colAdd*(-1);
-                continue; // if the square is on any edge, break
-            }
-
-            Square temp = board.getSquare(row+rowAdd, col+colAdd);
-
-            if(temp.hasPiece()){
-                if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7 || (row == rowSkip && col == rowSkip)){
-                    colAdd = colAdd*(-1);
-                    continue;
-                }
-                else{
-                    temp = board.getSquare(row+(rowAdd*2), col+(colAdd*2));
-                    if(!temp.hasPiece()){
-                        moves.addNext(square, temp);
-                        kingJump(board, moves, row+rowAdd, col+colAdd, temp);
-                    }
-                }
-
-            colAdd = colAdd*(-1);
-            }
-        }
-        return moves;
-    }
-
-    // recursive function for moveList
     // finds all jump chains for a given non-king piece
     // this may not work as intended depending on the behavior reguarding the moves obj. 
     static protected Moves pieceJump(Board board, Moves moves, Square square, int colorNum)
