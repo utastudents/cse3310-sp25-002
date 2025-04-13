@@ -3,7 +3,7 @@ package uta.cse3310.GameManager;
 import uta.cse3310.GamePlay.GamePlay;
 import uta.cse3310.GameTermination.GameTermination;
 import uta.cse3310.PairUp.PairUp; // For re-adding players to matchmaking
-import uta.cse3310.Move;
+import uta.cse3310.GameManager.Move;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
