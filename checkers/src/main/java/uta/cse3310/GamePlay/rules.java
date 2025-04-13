@@ -177,4 +177,206 @@ public class rules
     {
         return false;
     }
+        // recursive function for moveList
+    // finds all jump chains for a given king piece
+    // this may not work as intended depending on the behavior reguarding the moves obj. 
+    static protected Moves kingJump(Board board, Moves moves, int rowSkip, int colSkip, Square square)
+    {
+        int row = square.getRow();
+        int col = square.getCol();
+        int rowAdd = 1;
+        int colAdd = -1;
+        for(int i = 3; i > -3; i = i-2 ){
+            if(i<0){
+                rowAdd = -1;
+            }
+
+            if(col+colAdd < 0 || col+colAdd > 7 || row+rowAdd < 0 || row+rowAdd > 7 || (row == rowSkip && col == colSkip)){
+                colAdd = colAdd*(-1);
+                continue; // if the square is on any edge, break
+            }
+
+            Square temp = board.getSquare(row+rowAdd, col+colAdd);
+
+            if(temp.hasPiece()){
+                if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7 || (row == rowSkip && col == rowSkip)){
+                    colAdd = colAdd*(-1);
+                    continue;
+                }
+                else{
+                    temp = board.getSquare(row+(rowAdd*2), col+(colAdd*2));
+                    if(!temp.hasPiece()){
+                        moves.addNext(square, temp);
+                        kingJump(board, moves, row+rowAdd, col+colAdd, temp);
+                    }
+                }
+
+            colAdd = colAdd*(-1);
+            }
+        }
+        return moves;
+    }
+
+    // recursive function for moveList
+    // finds all jump chains for a given non-king piece
+    // this may not work as intended depending on the behavior reguarding the moves obj. 
+    static protected Moves pieceJump(Board board, Moves moves, Square square, int colorNum)
+    {
+        int row = square.getRow();
+        int col = square.getCol();
+        int rowAdd = colorNum;
+        int colAdd = -1;
+
+        for(int i = 0; i < 2; i++){
+            if(i<0){
+                rowAdd = -1;
+            }
+
+            if(col+colAdd < 0 || col+colAdd > 7 || row+rowAdd < 0 || row+rowAdd > 7){
+                colAdd = colAdd*(-1);
+                continue; // if the square is on any edge, break
+            }
+
+            Square temp = board.getSquare(row+rowAdd, col+colAdd);
+
+            if(temp.hasPiece()){
+                if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7){
+                    colAdd = colAdd*(-1);
+                    continue;
+                }
+                else{
+                    temp = board.getSquare(row+(rowAdd*2), col+(colAdd*2));
+                    if(!temp.hasPiece()){
+                        moves.addNext(square, temp);
+                        pieceJump(board, moves, temp, colorNum);
+                    }
+                }
+
+
+            colAdd = colAdd*(-1);
+            }
+        }
+        return moves;
+    }
+
+    // Generates a map of all move opportunities reguardless of color
+    // This should include ALL moves, including jumps for mulipiece capture
+    static protected Map<Square, Moves> moveList(Board board, boolean color)
+    {
+        Map<Square, Moves> moveList = new HashMap<>();
+        int colorNum;
+        if(color){
+            colorNum = 1; // color is white
+        }
+        else{
+            colorNum = -1; // color is black
+        }
+        //black on top; black == false
+        ArrayList<Square> pieces = getAllPieces(board);
+
+        for(int i = 0; i < pieces.size(); i++){
+            Square square = pieces.get(i);
+            Square squareDup = square; // just a duplicate of square for storing it in the map
+
+            if(square.getColor() != color){
+                continue; // if the color of the piece does not match the color we are generating a move list for, skip it
+            }
+
+            if(square.isKing()){ //king = true
+                Moves moves = new Moves();
+
+                for(int j = 3; j > -3; j = j - 2 ){ // this checks all diag moves starting from the upper left and moving clockwise
+                    int rowAdd = 1;
+                    int colAdd = -1;
+
+                    if(j<0){
+                        rowAdd = -1;
+                    }
+                    
+                    int rowSkip = 0;
+                    int colSkip = 0; // rowSkip is redundant here since the var is never updated, remove at a later time
+                    int col = square.getCol();
+                    int row = square.getRow();
+
+                    if(col+colAdd < 0 || col+colAdd > 7 || row+rowAdd < 0 || row+rowAdd > 7 || (row == rowSkip && col == colSkip)){
+                        colAdd = colAdd*(-1);
+                        continue; // if the square is on any edge, break
+                    }
+
+                    Square temp = board.getSquare(row+rowAdd, col+colAdd);
+
+                    if(temp.hasPiece()){
+                        if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7 || (row == rowSkip && col == colSkip)){
+                            colAdd = colAdd*(-1);
+                            continue;
+                        }
+                        else{
+                            temp = board.getSquare(row+(rowAdd*2), col+(colAdd*2));
+                            if(!temp.hasPiece()){
+                                moves.addNext(squareDup, temp);
+                                kingJump(board, moves, row+rowAdd, col+colAdd, temp);
+                                //square = temp;
+                            }
+                        }
+                    }
+                    else{
+                        moves.addNext(squareDup, temp);
+                        colAdd = colAdd*(-1);
+                        continue;
+                    }
+
+                    
+                    colAdd = colAdd*(-1);
+                    square = squareDup; // redundant (maybe)
+                }
+                moveList.put(squareDup, moves);
+            }
+            else{ // king = false
+                Moves moves = new Moves();
+                int rowAdd = colorNum;  // done so the same code can be used
+                int colAdd = -1; // outside the loop so the value doesn't reset
+
+                for(int j = 0; j < 2; j++){ // this checks all diag moves starting from the upper left and moving clockwise
+                    if(j<0){
+                        rowAdd = -1;
+                    }
+                    
+                    int col = square.getCol();
+                    int row = square.getRow();
+
+                    if(col+colAdd < 0 || col+colAdd > 7 || row+rowAdd < 0 || row+rowAdd > 7){
+                        colAdd = colAdd*(-1);
+                        continue; // if the square is on any edge, break
+                    }
+
+                    Square temp = board.getSquare(row+rowAdd, col+colAdd);
+
+                    if(temp.hasPiece()){
+                        if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7){
+                            colAdd = colAdd*(-1);
+                            continue;
+                        }
+                        else{
+                            temp = board.getSquare(row+(rowAdd*2), col+(colAdd*2));
+                            if(!temp.hasPiece()){
+                                moves.addNext(squareDup, temp);
+                                pieceJump(board, moves, temp, colorNum);
+                            }
+                        }
+                    }
+                    else{
+                        moves.addNext(squareDup, temp);
+                        colAdd = colAdd*(-1);
+                        continue;
+                    }
+
+                    
+                    colAdd = colAdd*(-1);
+                    square = squareDup; // redundant (maybe)
+                }
+                moveList.put(squareDup, moves);
+            }
+        }
+        return moveList;
+    }
 }
