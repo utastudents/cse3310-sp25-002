@@ -44,9 +44,21 @@ public class BotI extends Bot {
 
     }
 
-    private void countPiece(Board board, boolean color) {
-        // change void to int
-        
+    private int countallPieces(Board board, boolean color) {
+
+        int count = 0;
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                Square selectsquare = board.getSquare(row, col);
+
+                if (selectsquare.getColor() && selectsquare.hasPiece() == color) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
     }
 
     private void implementStrategy(Board board, boolean isAggresive) {
