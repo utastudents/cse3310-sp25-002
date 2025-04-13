@@ -19,14 +19,14 @@ public class GameTermination {
         gameOver = true;
 
         // Check if there's a winner or a draw
-        if (winningPlayer != null) {
-            // If a winning player is provided, declare the winner
+       if (winningPlayer != null) {
+            finalWinner = winningPlayer;
             System.out.println("Game Over! " + winningPlayer + " has won!");
         } else {
-            // If no winner, it's a draw
+            finalWinner = "Draw";
             System.out.println("Game Over! It's a draw!");
         }
-}
+    }
     // This method will save the results to the database
     public void saveResultsToDatabase(Map<String, Integer> playerScores) {
         // Placeholder for database logic
