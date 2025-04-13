@@ -47,26 +47,23 @@ public class rules
 
     //checks if the square being moved to is occupied by a piece
     static protected boolean occupied(Moves moves, Board board) {
-        // Safety check: make sure the moves object isn't null or empty
         if (moves == null || moves.size() == 0) {
             return false;
         }
     
-        // Get the index of the last move
         int lastIdx = moves.size() - 1;
-    
-        // Get the destination square of the last move
         Square dest = moves.getDest(lastIdx);
     
-        // Get row and column from destination
         int row = dest.getRow();
         int col = dest.getCol();
     
-        // Get the board square at that position
         Square boardSquare = board.getSquare(row, col);
     
-        // Return true if the destination is already occupied
-        return boardSquare != null;
+        if (boardSquare == null) {
+            return false;
+        }
+    
+        return boardSquare.hasPiece(); // returns true only if a piece exists on that square
     }
 
     //checks how many spots moved up to compared to number of pieces
