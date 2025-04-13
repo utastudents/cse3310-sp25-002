@@ -3,7 +3,9 @@ package uta.cse3310.Bot.BotII;
 import uta.cse3310.Bot.Bot;
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.GameManager;
+import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
+import uta.cse3310.GameManager.Square;
 
 import java.util.LinkedList;
 
@@ -46,22 +48,191 @@ public class BotII extends Bot {
     }
 
     /**
-     * This function will be called to determine the all possible moves for BotII
-     * and tentatively all possible routes for each move. It will use the gameboard
-     * given by the game manager to determine the possible moves through the
-     * {@link BotII#determineMoves()} function.
+     * This function will be called to determine the all possible moves per peice
+     * for BotII. Each moves for each piece will be assigned an elo. It will use the
+     * gameboard given by the game manager to determine the possible moves through
+     * the {@link BotII#requestMove()} function.
      * 
      * @param none
      * 
-     * @return A list of all possible {@link Moves} for BotII.
+     * @return LinkedList<Pair<Square, LinkedList<MoveRating>>> - a list of pairs
+     *         where each s
      * 
-     * @see BotII#determineMoves()
+     * @see BotII#requestMove()
      * @see Board
      * @see Moves
      */
-    private LinkedList<Moves> determineMoves() {
-        // implementation of move determining will go here
-        return null;
+    private LinkedList<Pair<Square, LinkedList<MoveRating>>> determineMoves() {
+
+        // Gets possible moves per piece with each move having an elo rating
+        LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = new LinkedList<>();
+
+        // Iterate through the board to find pieces belonging to this bot
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+
+                Square square = this.currentGameBoard.getSquare(row, col);
+
+                // Check if the square contains a piece of this bot's color
+                if (square.hasPiece() && square.getColor() == this.color) {
+                    boolean isKing = square.isKing();
+
+                    // Determine possible directions based on whether the piece is a king
+                    char[] directions = isKing ? new char[] { 'F', 'B' } : new char[] { 'F' };
+
+                    // Create a Moves object for this piece
+                    LinkedList<MoveRating> pieceMoves = new LinkedList<>();
+
+                    // Check moves in each direction
+                    for (char direction : directions) {
+
+                        // Check for normal moves (non-capturing)
+                        Moves normalMoves = checkSingleMove(square, direction, false);
+
+                        // If there are normal moves diagonally, add them to the pieceMoves object
+                        if (!normalMoves.getMoves().isEmpty()) {
+                            normalMoves.getMoves().forEach(x -> {
+                                int rowsToKing = movesToKing(x.getDest(), this.color);
+
+                                // Base elo for normal move
+                                int elo = 1;
+                                
+                                // Add rows to king to elo rating
+                                elo += 7 - rowsToKing;
+                                MoveRating mr = new MoveRating(x, elo);
+
+                                pieceMoves.add(mr);
+                            });
+                        }
+
+                        // Check for capturing moves either diagonal for each direction
+                        Moves captureMove = checkSingleMove(square, direction, true);
+
+                        if (!captureMove.getMoves().isEmpty()) {
+                            normalMoves.getMoves().forEach(x -> {
+
+                                int rowsToKing = movesToKing(x.getDest(), this.color);
+
+                                // Base elo for capturing move
+                                int elo = 3;
+                                
+                                // Add rows to king to elo rating
+                                elo += 7 - rowsToKing;
+
+                                // Get the captured square (the square between start and dest) and check if it
+                                // is a king
+                                Square capturedSquare = this.currentGameBoard.getSquare(
+                                        (x.getStart().getRow() + x.getDest().getRow()) / 2,
+                                        (x.getStart().getCol() + x.getDest().getCol()) / 2);
+
+                                boolean capturedIsKing = capturedSquare.isKing();
+
+                                // Add elo based on whether the captured piece is a king, 5 for king
+                                elo += capturedIsKing ? 5 : 0;
+
+                                MoveRating moveRating = new MoveRating(x, elo);
+
+                                pieceMoves.add(moveRating);
+                            });
+                        }
+                    }
+
+                    if (!pieceMoves.isEmpty()) {
+                        // Add the piece and its possible moves to the list
+                        possibleMoves.add(new Pair<>(square, pieceMoves));
+                    }
+
+                }
+            }
+        }
+
+        return possibleMoves;
+    }
+
+    /**
+     * Helper method to check if a single move is valid in a given direction.
+     *
+     * @param start     The starting square of the piece.
+     * @param direction The direction of the move ('F' for forward, 'B' for
+     *                  backward).
+     * @param isCapture Whether the move is a capturing move.
+     * @return A Move object if the move is valid, otherwise null.
+     */
+    private Moves checkSingleMove(Square start, char direction, boolean isCapture) {
+        int rowSign = (direction == 'F') ? (this.color ? -1 : 1) : (this.color ? 1 : -1);
+        int step = isCapture ? 2 : 1;
+
+        int destRow = start.getRow() + (rowSign * step);
+        int destColLeft = start.getCol() - step;
+        int destColRight = start.getCol() + step;
+
+        Moves diagonalMoves = new Moves();
+
+        // Check left diagonal
+        if (isValidMove(start, destRow, destColLeft, isCapture)) {
+            diagonalMoves.addNext(new Move(start, this.currentGameBoard.getSquare(destRow, destColLeft)));
+        }
+
+        // Check right diagonal
+        if (isValidMove(start, destRow, destColRight, isCapture)) {
+            diagonalMoves.addNext(new Move(start, this.currentGameBoard.getSquare(destRow, destColRight)));
+        }
+
+        return diagonalMoves;
+    }
+
+    /**
+     * Helper method to validate a move.
+     *
+     * @param start     The starting square of the piece.
+     * @param destRow   The destination row.
+     * @param destCol   The destination column.
+     * @param isCapture Whether the move is a capturing move.
+     * @return True if the move is valid, otherwise false.
+     */
+    private boolean isValidMove(Square start, int destRow, int destCol, boolean isCapture) {
+        // Ensure the destination is within bounds
+        if (destRow < 0 || destRow >= 8 || destCol < 0 || destCol >= 8) {
+            return false;
+        }
+
+        Square dest = this.currentGameBoard.getSquare(destRow, destCol);
+
+        // For normal moves, the destination must be empty
+        if (!isCapture && dest.getColor() == null) {
+            return true;
+        }
+
+        // For capturing moves, check if the intermediate square contains an opponent's
+        // piece
+        if (isCapture) {
+            // Ensure the destination square is empty and the intermediate square contains
+            // an opponent's piece
+            if (dest.getColor() != null) {
+                return false;
+            }
+
+            int midRow = (start.getRow() + destRow) / 2;
+            int midCol = (start.getCol() + destCol) / 2;
+            Square midSquare = this.currentGameBoard.getSquare(midRow, midCol);
+
+            return dest.getColor() == null && midSquare.getColor() != null && midSquare.getColor() != this.color;
+        }
+
+        return false;
+    }
+
+    /**
+     * Determines how many moves a piece is away from the back row (where it can
+     * become a king).
+     *
+     * @param dest  The destination square of the piece.
+     * @param color The color of the piece (true for black, false for white).
+     * @return The number of moves to the back row.
+     */
+    private int movesToKing(Square dest, boolean color) {
+        int destRow = dest.getRow();
+        return color ? destRow : (7 - destRow);
     }
 
     /**
@@ -69,7 +240,7 @@ public class BotII extends Bot {
      * as determined by {@link BotII#determineMoves()}. Once determined, this method
      * will set the moves object to the list of moves that BotII will make.
      *
-     * @param none
+     * @param strategy - a boolean value indicating whether to implement the
      *
      * @return Nothing – the moves object is set to the list of moves that BotII
      *         will make
@@ -78,7 +249,7 @@ public class BotII extends Bot {
      * @see Moves
      * @see Board
      */
-    private void implementBotStrategy() {
+    private void implementBotStrategy(boolean strategy) {
 
     }
 
@@ -103,4 +274,43 @@ public class BotII extends Bot {
         return this.moves;
     }
 
+}
+
+class MoveRating {
+
+    private Move move;
+    private int eloRating;
+
+    public MoveRating(Move move, int eloRating) {
+        this.move = move;
+        this.eloRating = eloRating;
+    }
+
+    public Move getMove() {
+        return move;
+    }
+
+    public int getEloRating() {
+        return eloRating;
+    }
+
+}
+
+class Pair<K, V> {
+
+    private K key;
+    private V value;
+
+    public Pair(K key, V value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public K getKey() {
+        return key;
+    }
+
+    public V getValue() {
+        return value;
+    }
 }
