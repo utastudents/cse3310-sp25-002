@@ -118,7 +118,7 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             return;
         };
 
-        let game_display_event_types = ["valid_moves", "resign", "draw_offer", "draw_accept", "player_name_update", "notify_players", "show_game_display", "hide_game_display"];
+        let game_display_event_types = ["valid_moves", "move", "resign", "draw_offer", "draw_accept", "player_name_update", "notify_players", "show_game_display", "hide_game_display"];
 
         // this ignores any data that is not related to the game display.
         if(!game_display_event_types.includes(data.type)){ return; }
@@ -132,6 +132,13 @@ const game_display_handle_websocket_received_data = (connection, data) => {
         if (data.type==="valid_moves" && data.legal_moves.length > 0) {
             // assuming that websocket sends the json string {"type":"valid_moves", "legal_moves":[[x1,y1],[x2,y2],...]}
             checkerBoard.received_coords = data.legal_moves;
+
+        } else if(data.type === "move") {
+            // assuming that websocket sends the json string {"type":"move", "game_id": "GAME_ID_IF_PROVIDED", "player":"NAME OF PLAYER THAT MADE THE MOVE (STRING),"from": [move_from_x, move_from_y],"to": [move_to_x, move_to_y]"}
+            //checks to make sure that it is a move from the opponent
+            if(data.player != checkerBoard.player){
+                checkerBoard.move_made_by_other_player_or_bot(data.from[0],data.from[1],data.to[0],data.to[1]);
+            };
 
         } else if(data.type === "resign") {
             // assuming that websocket sends the json string {"type":"resign", "player":"NAME OF PLAYER THAT RESIGNED (STRING)"}
@@ -263,7 +270,7 @@ class CheckersBoard {
         }
     }
 
-
+    //move_made_by_other_player_or_bot() sets a flag to call move_checkers_piece() without sending a move request to the backend.
     move_made_by_other_player_or_bot(move_from_x, move_from_y, move_to_x, move_to_y){
         this.opponents_turn = true;
         this.move_checkers_piece(move_from_x, move_from_y, move_to_x, move_to_y);
@@ -306,6 +313,7 @@ class CheckersBoard {
                 this.update_board_style();
                 // relay the move to the backend through the ws connection
                 console.log({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
+                //Does not send a move request to the backend if it is the opponent's turn
                 if(!this.opponents_turn){
                     this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
                 } else {this.opponents_turn=false;}
