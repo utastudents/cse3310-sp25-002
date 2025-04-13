@@ -6,6 +6,7 @@ import uta.cse3310.PairUp.PairUp; // For re-adding players to matchmaking
 import uta.cse3310.Move;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,22 +52,29 @@ public class GameManager {
     }
 
     // Process a move from a player
-    public void processMove(int playerId, Move moves) {
+    public void processMove(int playerId, Move move) {
         Game game = findGameByPlayerId(playerId);
         if (game != null && game.gameActive()) {
+            Moves moves = new Moves();
+            moves.addNext(move);
             gp.returnBoard(game, moves); // from GamePlay.java
         } else {
             System.out.println("Invalid move: game not found or inactive.");
         }
     }
-
-    // Terminate a game and notify GameTermination
+    /*Note: The large commented-out code sections are fully implemented. 
+    However, there are data type mismatches with the method signatures. 
+    I have requested my groupmate to update the relevant data types accordingly.
+    Once those changes are made, these sections will be uncommented and used as intended.
+    */
+    
+    /* Terminate a game and notify GameTermination
     public void terminateGame(int gameNumber) {
         if (gameNumber >= 0 && gameNumber < MAXIMUM_GAMES && games.get(gameNumber) != null) {
             gt.endGame(games.get(gameNumber)); // Implement in GameTermination.java
 
-            int player1Id = game.getPlayer1Id();
-            int player2Id = game.getPlayer2Id();
+            int player1Id = game.getPlayer1ID();
+            int player2Id = game.getPlayer2ID();
             int player1Score = game.getPlayer1Score();
             int player2Score = game.getPlayer2Score();
 
@@ -81,8 +89,8 @@ public class GameManager {
             games.set(gameNumber, null);
             System.out.println("Game " + gameNumber + " has been terminated.");
         }
-    }
-
+    } */
+/*
     // Restart a game by requeuing players
     public void restartGame(int gameNumber) {
         if (gameNumber >= 0 && gameNumber < MAXIMUM_GAMES) {
@@ -95,25 +103,25 @@ public class GameManager {
                 Player p2 = game.getPlayer2();
 
                 if (p1 != null) {
-                    PairUp.AddPlayer(System.currentTimeMillis(), p1.getPlayerID(), p1.getPlayerName(),
-                            p1.isPlayAgainstBot(), p1.getWins());
+                    PairUp.AddPlayer(System.currentTimeMillis(), p1.getPlayerID(),p1.isPlayAgainstBot(), p1.getWins());
                 }
 
                 if (p2 != null) {
-                    PairUp.AddPlayer(System.currentTimeMillis(), p2.getPlayerID(), p2.getPlayerName(),
-                            p2.isPlayAgainstBot(), p2.getWins());
+                    PairUp.AddPlayer(System.currentTimeMillis(), p2.getPlayerID(), p2.isPlayAgainstBot(), p2.getWins());
                 }
                 games.set(gameNumber, null);
                 System.out.println("Game " + gameNumber + " restart requested.");
             }
         }
-    }
+    }   */
 
     // Find a game by player ID
     public Game findGameByPlayerId(int playerId) {
         for (Game game : games) {
-            if (game != null && game.containsPlayer(playerId)) { // Add containsPlayer(int) in Game.java
-                return game;
+            if (game != null){
+                if (game.getPlayer1ID()==playerId || game.getPlayer2ID()==playerId){
+                    return game;
+                }
             }
         }
         return null;
@@ -157,7 +165,7 @@ public class GameManager {
         }
     }
 
-    // Player requests to quit and ends game
+    /* Player requests to quit and ends game
     public void playerQuit(int playerId) {
         Game game = findGameByPlayerId(playerId); // Local method
         if (game == null) {
@@ -168,7 +176,8 @@ public class GameManager {
         if (game.getPlayer1ID() == playerId) {
             game.Player1Quit(); // Game.java
 
-            int player2Id = game.getPlayer2Id();
+            int player1Id = game.getPlayer1ID();
+            int player2Id = game.getPlayer2ID();
             int player1Score = game.getPlayer1Score();
             int player2Score = game.getPlayer2Score();
 
@@ -178,6 +187,7 @@ public class GameManager {
             gt.endGame(playerScores, player2Id);
         } else {
             game.Player2Quit(); // Game.java
+            int player2Id = game.getPlayer2ID();
             int player1Id = game.getPlayer2Id();
             int player1Score = game.getPlayer1Score();
             int player2Score = game.getPlayer2Score();
@@ -191,5 +201,5 @@ public class GameManager {
         games.set(game.gameNumber(), null); // gameNumber() in Game.java
         System.out.println("Player " + playerId + " quit. Game " + game.gameNumber() + " ended.");
 
-    }
+    }*/
 }
