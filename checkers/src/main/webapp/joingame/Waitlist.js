@@ -16,7 +16,7 @@ class Waitlist{
 	remove(playerID){	//Remove a player's info from the waitlist when leaving the game
 		  // Find the player before removing them
 		  const player = this.waitlist.find(p => p.getID() === playerID);
-    g
+    
 		  // Check if the player is valid first, then update the waitlist status flag
 		  if (player){
 			  player.waitlistStatus = false; // Set waitlist status to false
