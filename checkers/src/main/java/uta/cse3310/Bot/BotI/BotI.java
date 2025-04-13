@@ -38,6 +38,11 @@ public class BotI extends Bot {
         return this.moves;
     }
 
+    private void isAggressive(Board board) {
+        // change void to boolean
+        
+    }
+
     private void implementStrategy(Board board, boolean isAggresive) {
 
         if (isAggresive) {
