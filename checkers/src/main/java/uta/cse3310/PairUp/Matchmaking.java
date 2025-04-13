@@ -24,9 +24,17 @@ public class Matchmaking implements Runnable {
         thread.start();
     }
 
-    // TO-DO: implement public void addPlayer(PlayerInMatchmaking newPlayer)
+    public void addPlayer(PlayerInMatchmaking newPlayer) {
+        players.add(newPlayer);
+    }
 
-    // TO-TDO: implement public void removePlayer(String playerId)
+    public void removePlayer(String playerId) {
+        for (PlayerInMatchmaking player : players) {
+            if (player.getPlayerId.equals(playerId)) {
+                players.remove(player);
+            }
+        }
+    }
 
     public void pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2, boolean isBotGame) {
         Random coinflip = new Random();
