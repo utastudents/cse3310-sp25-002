@@ -66,6 +66,10 @@ public class Game
     //return player1's color
     public boolean getPlayer1Color(){return player1.getColor();}
     //return player2's color
+    public String getPlayer1Name(){returnplayer1.getName();}
+    //return player1's name
+    public String getPlayer2Name(){return player2.getName();}
+    //return player2's name
     public boolean getPlayer2Color(){return player2.getColor();}
     //return the board
     public Board getBoard(){return board;}
