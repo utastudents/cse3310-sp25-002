@@ -127,20 +127,41 @@ public class rules
     //if the user can check that piece
     static protected boolean canCapture(LinkedList<Moves> moves, Board board)
     {
-     
-
         //call occupied, check if the square is occupied
         //if the space is occupied and the following square is free you can capture that piece and move to the next free space
         //return a map showing were the player can move
-
+        
+        //currently redoing this entire method :/
         return false;//default
     }
 
     //Check to see if current player can move selected piece
     //Does the color of the player match the color of the piece
-    static protected boolean canMovePiece(Game game)
+    static protected boolean canMovePiece(Game game /*, int row, int col*/)
     {
-        return true; //Default value
+       /* 
+        Square boardSquare = board.getSquare(row, col); // is there something on the current square
+        boolean CurrentPlayerColor; //what color piece can the player move
+
+        //is it currently play 1's turn
+        //if(getCurrentTurn(player1) && player1.getPlayerId() == player1id)
+        {   
+             CurrentPlayerColor = player1.getColor() ;//player 1 can only move with its associated color
+                return true;
+        }
+        else if(getCurrentTurn//(player2) && player2.getPlayerId = player2id)
+        {
+            CurrentPlayerColor = player2.getColor//(); //player 2 can only move with its associated color
+                return true;
+        }
+
+        if(boardSquare.hasPiece//() == false)// if there is no piece on the current square there's nothing to move
+        {
+            return false;
+        }
+        */
+       return false;
+           
     }
 
     public static ArrayList<Square> getAllPieces(Board board)
