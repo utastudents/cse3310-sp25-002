@@ -41,6 +41,12 @@ public class BotI extends Bot {
     private void isAggressive(Board board) {
         // change void to boolean
         
+
+    }
+
+    private void countPiece(Board board, boolean color) {
+        // change void to int
+        
     }
 
     private void implementStrategy(Board board, boolean isAggresive) {
