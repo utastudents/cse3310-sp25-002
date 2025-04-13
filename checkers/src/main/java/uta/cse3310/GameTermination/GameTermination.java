@@ -7,6 +7,7 @@ public class GameTermination {
 
 
     private boolean gameOver = false; // Flag to indicate if the game is over, game state
+    private String finalWinner = null; // Stores the winner's ID or "Draw"
 
     // Method to handle the end of the game and declare the winner
     public void endGame(Map<String, Integer> playerScores, String winningPlayer) {
