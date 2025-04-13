@@ -29,8 +29,9 @@ public class GameTermination {
     }
     // This method will save the results to the database
     public void saveResultsToDatabase(Map<String, Integer> playerScores) {
-        // Placeholder for database logic
         System.out.println("Saving results to database...");
+        System.out.println("Final winner: " + finalWinner);
+        System.out.println("Scores: " + playerScores);
     }
 
     // This method will confirm if the results were successfully stored in the database
