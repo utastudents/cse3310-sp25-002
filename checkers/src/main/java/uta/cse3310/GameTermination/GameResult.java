@@ -18,7 +18,7 @@ public class GameResult {
     // Constructor to initialize scores
     public GameResult(Map<String, Integer> playerScores) {
         this.playerScores = playerScores;
-        this.winningPlayerId = winningPlayerId;
+        this.winningPlayerId = null; //no winner yet
     }
 
     public Map<String, Integer> getPlayerScores() {
@@ -31,6 +31,10 @@ public class GameResult {
 
     public boolean isDraw() {
         return winningPlayerId == null;
+    }
+    //to call player's id anywhere later
+    public void setWinner(Player player) {
+        this.winningPlayerId = String.valueOf(player.getPlayerId());
     }
 
     // This method will update the number of pieces captured for each player.
