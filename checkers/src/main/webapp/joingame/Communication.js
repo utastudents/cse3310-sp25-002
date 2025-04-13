@@ -7,7 +7,7 @@ class Communication {
    * @param {string} [playerData.status='pending'] - Initial player status
    */
 
-  constructor() {
+constructor() {
     // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
     this.socket = new WebSocket("url"); // TODO: Change URL here
 
@@ -24,20 +24,21 @@ class Communication {
     });
   }
 
-  sendJoinGameRequest(clientID, gameMode) {
+sendJoinGameRequest(clientID, gameMode) {
     // Create data object matching what Page Manager expects
     const joinData = {
       ClientID: clientID,
       gameMode: gameMode
     };
     
-    // Dispatch event to Page Manager
-    document.dispatchEvent(new CustomEvent('join-game-request', {
-      detail: joinData
-    }));
-    
-    console.log(`Join game request sent: ${gameMode} mode for player ${clientID}`);
-  }
+    if (this.socket.readyState === WebSocket.OPEN) {
+      this.socket.send(JSON.stringify(joinData)); // Send as JSON string
+      console.log("Join game request sent: " + gameMode + " mode for player " + clientID);
+    }
+    else {
+      console.error("WebSocket connection is not open. Cannot send join game request.")
+    }
+}
   
 
   sendPlayerAttributes(playerData) {

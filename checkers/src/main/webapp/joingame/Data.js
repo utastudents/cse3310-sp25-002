@@ -29,15 +29,15 @@ class GameOptions
         this.gameMode = null; // Using gameMode to match Page Manager's convention
     }
 
-    // Set the game mode to either "Bot" or "Human"
-    // Parameter is a string: "Bot" or "Human"
+    // Set the game mode to either "Bot","Human", "Spectate"
+    // Parameter is a string: "Bot", "Human", "Spectate"
     setMode(type)
     {
         this.gameMode = type; 
     }
 
     // Get the current game mode
-    // Returns "Bot", "Human", or null if not selected
+    // Returns "Bot", "Human", "Spectate", or null if not selected
     getMode()
     {
         return this.gameMode;
