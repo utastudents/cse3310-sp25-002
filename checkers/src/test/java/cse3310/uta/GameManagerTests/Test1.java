@@ -1,7 +1,7 @@
 package cse3310.uta.GameManagerTests;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import uta.cse3310.GameManager.GameManager;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.*;
 
 public class Test1 {
 
@@ -15,9 +15,9 @@ public class Test1 {
 
         boolean result = gm.createGame(player1Id, player2Id, player1Color, player2Color);
 
-        assertTrue(result, "Game created successfully");
-        assertTrue(gm.isPlayerInGame(player1Id), "Player1 is in a game");
-        assertTrue(gm.isPlayerInGame(player2Id), "Player2 is in a game");
+        assertTrue("Game created successfully", result);
+        assertTrue("Player1 is in a game",gm.isPlayerInGame(player1Id));
+        assertTrue("Player2 is in a game", gm.isPlayerInGame(player2Id));
 
     }
 }
