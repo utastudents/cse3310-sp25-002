@@ -81,7 +81,7 @@ public class Game
     //return player scores
     public int getPlayer1Score(){return player1.getScore();}
     public int getPlayer2Score(){return player2.getScore();}
-    // if quitting is implemented
+    // if quitting is implemented these set the player to quit
     public void Player1Quit(){
         player1quit = true;
         gameIsActive = false;
