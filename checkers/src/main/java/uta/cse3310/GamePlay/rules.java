@@ -46,34 +46,26 @@ public class rules
 
 
     //checks if the square being moved to is occupied by a piece
-    static protected boolean occupied(LinkedList<Moves> moves, Board board) {
-        // Safety check: make sure the moves list isn't empty
-        if (moves == null || moves.isEmpty()) {
+    static protected boolean occupied(Moves moves, Board board) {
+        // Safety check: make sure the moves object isn't null or empty
+        if (moves == null || moves.size() == 0) {
             return false;
         }
     
-        // Get the latest Moves object (a group of individual Move steps)
-        Moves lastMoves = moves.getLast();
-    
-        // Get the index of the last move within that Moves group
-        int lastIdx = lastMoves.size() - 1;
-    
-        // Extra safety: make sure there's at least one move in the group
-        if (lastIdx < 0) {
-            return false;
-        }
+        // Get the index of the last move
+        int lastIdx = moves.size() - 1;
     
         // Get the destination square of the last move
-        Square dest = lastMoves.getDest(lastIdx);
+        Square dest = moves.getDest(lastIdx);
     
-        // Get the row and column of that square
+        // Get row and column from destination
         int row = dest.getRow();
         int col = dest.getCol();
     
-        // Use the board to check if something exists at that location
+        // Get the board square at that position
         Square boardSquare = board.getSquare(row, col);
     
-        // If the board square is not null, it's occupied
+        // Return true if the destination is already occupied
         return boardSquare != null;
     }
 
