@@ -12,33 +12,30 @@
     </header>
 
     <main>
-        <!---Game UI-->
+        <!-- Game Mode Selection -->
+        <section id="game-options">
+          <h2>Choose Game Mode</h2>
+          <button id="vsPlayer">Play vs Player</button>
+          <button id="vsBot">Play vs Bot</button>
+          <button id="spectate">Spectate Bot vs Bot</button>
+        </section>
+    
+        <!-- Waitlist Section -->
+        <section id="waitlist-section">
+          <h2>Current Waitlist</h2>
+          <ul id="waitlist">
+            <!-- Populated by Waitlist.displayWaitlist() -->
+          </ul>
+        </section>
+    
+        <!-- Notification Section (bottom) -->
+        <section id="notification-section">
+          <h2>Notifications</h2>
+          <div id="notification"></div>
+        </section>
     </main>
-</body>
+    
 
-<body>
-    <div class="container">
-        
-        <!--Notifications-->
-        <div id="notification-area"></div>
-
-        <!--Game Mode Selection-->
-        <div class="form-group">
-            <h2>Select Mode</h2>
-            <button onclick="setMode()">Multiplayer</button>
-            <button onclick="setMode()">Bot</button>
-            <button onclick="setMode()">Bot vs Bot</button>
-                <!--Options loaded from Data.js-->
-        </div>
-
-        <!--Waitlist-->
-        <div class="waitlist_section">
-            <h2>Waitlist</h2>
-            <ul id="waitlist">
-                <!--Waitlist from Waitlist.js-->
-            </ul>
-        </div>
-    </div>
 
     <script src="Data.js"></script>
     <script src="Waitlist.js"></script>
