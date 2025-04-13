@@ -8,8 +8,37 @@ class Communication {
    */
 
   constructor() {
-    // TODO: Add initializers here 
+    // https://developer.mozilla.org/en-US/docs/Web/API/WebSocket
+    this.socket = new WebSocket("url"); // TODO: Change URL here
+
+    this.socket.addEventListener("open", () => {
+      console.log('WebSocket connection established.');
+    });
+
+    this.socket.addEventListener("close", () => {
+      console.log('WebSocket connection closed.');
+    });
+
+    this.socket.addEventListener("message", (event) => {
+      console.log('Received message:', event.data);
+    });
   }
+
+  sendJoinGameRequest(clientID, gameMode) {
+    // Create data object matching what Page Manager expects
+    const joinData = {
+      ClientID: clientID,
+      gameMode: gameMode
+    };
+    
+    // Dispatch event to Page Manager
+    document.dispatchEvent(new CustomEvent('join-game-request', {
+      detail: joinData
+    }));
+    
+    console.log(`Join game request sent: ${gameMode} mode for player ${clientID}`);
+  }
+  
 
   sendPlayerAttributes(playerData) {
     // Validate and forward to Page Manager
