@@ -15,18 +15,29 @@ public class pairup_subsys {
     }
 
     public static class PlayerEntry {
-        public String ClientId;
-        public String UserName;
+        public String playerId;
+        public String playerName;
         public boolean playAgainstBot;
         public LocalDateTime timestamp;
 
-        public PlayerEntry(String ClientId, String UserName, boolean playAgainstBot, LocalDateTime timestamp) {
-            this.ClientId = ClientId;
-            this.UserName = UserName;
+        public PlayerEntry(String playerId, String playerName, boolean playAgainstBot, LocalDateTime timestamp) {
+            this.playerId = playerId;
+            this.playerName = playerName;
             this.playAgainstBot = playAgainstBot;
             this.timestamp = timestamp;
         }
     }
 
-    
+    public static class JSONConverter {
+
+        public static List<PlayerEntry> parsePlayers(String jsonString) {
+            // TODO: Implement parsing logic
+            return List.of(); 
+        }
+
+        public static String convertRepliesToJson(List<reply_m> replies) {
+            // TODO: Implement JSON conversion logic
+            return "{}"; 
+        }
+    }
 }
