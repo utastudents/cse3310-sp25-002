@@ -1,14 +1,14 @@
 class Waitlist{
 	constructor(){
-        this.playerInfo = new Data();
-        this.waitlist = [];
+        this.waitlist = []; // Array to store player objects
     }
 
-	//Data gotten from Data.js
 	
 	add(playerInfo){	//Add a player's info onto the waitlist
-		
-		return playerInfo;
+		player = new Player(playerInfo.username, playerInfo.id); // Create a new Player object with given data
+		this.waitlist.push(player); // Add the Player object to the waitlist
+		this.displayWaitlist(); // Update/display the waitlist again with the new Player
+		return player; 
 	}
 	
 	remove(playerInfo){	//Remove a player's info from the waitlist when leaving the game
