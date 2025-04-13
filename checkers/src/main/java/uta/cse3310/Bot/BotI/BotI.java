@@ -48,4 +48,15 @@ public class BotI extends Bot {
 
     }
 
+    /* Adding the skeleton for Passive and Aggressive Strategy */
+    // private Moves passiveStrategyImplementation(LinkedList<Moves> possibleMoves)
+    // {
+    // return null; /* Placeholder for now */
+    // }
+
+    // private Moves aggressiveStrategyImplementation(LinkedList<Moves>
+    // possibleMoves) {
+    // return null; /* Placeholder for now */
+    // }
+
 }
