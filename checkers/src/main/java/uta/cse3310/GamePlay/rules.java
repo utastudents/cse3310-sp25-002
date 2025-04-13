@@ -236,7 +236,7 @@ public class rules
 
     // recursive function for moveList
     // finds all jump chains for a given king piece
-    // this may not work as intended depending on the behavior reguarding the moves obj. 
+
     static protected Moves kingJump(Board board, Moves moves, int rowSkip, int colSkip, Square square)
     {
         int row = square.getRow();
