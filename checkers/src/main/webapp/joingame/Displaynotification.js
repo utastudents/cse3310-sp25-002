@@ -16,7 +16,15 @@ class Displaynotification {
     // this displays a notification in the console
     displayNotification(notification) {
         console.log(notification);
+    
+        const notifArea = document.getElementById("notification");
+        notifArea.textContent = notification;
+    
+        setTimeout(() => {
+            notifArea.textContent = '';
+        }, 5000);
     }
+    
 
     // return the notifications
     getNotifications() {
