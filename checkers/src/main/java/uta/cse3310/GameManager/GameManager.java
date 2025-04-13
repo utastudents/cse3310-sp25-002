@@ -39,8 +39,8 @@ public class GameManager {
             return false;
         }
         // Create a new game with two players (IDs and their color), and assign to available slot
-        Game newGame = new Game(player1id, player2id, player1color, player2color, availableSlot);
-        games.set(availableSlot, newGame);
+        //Game newGame = new Game(player1id, player2id, player1color, player2color, availableSlot);
+        //games.set(availableSlot, newGame);
 
         System.out.println("Game created in slot " + availableSlot + " between Player " + player1id + " and Player " + player2id);
         return true;

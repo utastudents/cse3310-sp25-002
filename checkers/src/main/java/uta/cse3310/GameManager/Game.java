@@ -21,13 +21,13 @@ public class Game
      * two new players will be created with their designated ID and color 
      * each game will have a unique id 
      */
-    public Game(int player1id, int player2id, boolean player1color, boolean player2color, int gameNumber){
+    public Game(int player1id, int player2id, boolean player1color, boolean player2color, int gameNumber, String player1name, String player2name){
         board = new Board();
         board.initializeBoard();
         bot1 = new BotI(player1color);
         bot2 = new BotII(player2color);
-        player1 = new Player(player1id, player1color);
-        player2 = new Player(player2id, player2color);
+        player1 = new Player(player1id, player1color, player1name);
+        player2 = new Player(player2id, player2color, player2name);
         this.gameNumber = gameNumber;
     }
     /* this method returns the winner of the match, if there's no winner it will return null
@@ -66,11 +66,11 @@ public class Game
     //return player1's color
     public boolean getPlayer1Color(){return player1.getColor();}
     //return player2's color
-    public String getPlayer1Name(){returnplayer1.getName();}
-    //return player1's name
-    public String getPlayer2Name(){return player2.getName();}
-    //return player2's name
     public boolean getPlayer2Color(){return player2.getColor();}
+    //return player1's name
+    public String getPlayer1Name(){return player1.getName();}
+    //return player2's name
+    public String getPlayer2Name(){return player2.getName();}
     //return the board
     public Board getBoard(){return board;}
     //return the number of the game

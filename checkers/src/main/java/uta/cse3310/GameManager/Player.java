@@ -5,12 +5,14 @@ public class Player {
      private int score;
      private int pieceCount;
      private boolean color;
+     private String name;
 
-     public Player(int playerId, boolean color){
+     public Player(int playerId, boolean color, String name){
           this.playerId = playerId;
           this.score = 0;
           this.pieceCount = 12;
           this.color = color;
+          this.name = name;
      }
 
      public int getPlayerId(){return playerId;}
@@ -19,4 +21,5 @@ public class Player {
      public int getPieces(){return pieceCount;}
      public void takePieces(int numPieces){pieceCount -= numPieces;}
      public boolean getColor(){return color;}
+     public String getName(){return name;}
 }
