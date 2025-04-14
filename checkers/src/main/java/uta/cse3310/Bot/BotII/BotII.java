@@ -281,7 +281,7 @@ public class BotII extends Bot {
      * @see Moves
      * @see Board
      */
-    private void implementBotStrategy(boolean strategy) {
+    private void implementBotStrategy(boolean strategy , LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves) {
 
     }
 
