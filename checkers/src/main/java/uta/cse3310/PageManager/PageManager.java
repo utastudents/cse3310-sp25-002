@@ -1,7 +1,5 @@
 package uta.cse3310.PageManager;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -76,12 +74,12 @@ public class PageManager {
     
     private final PairUp pairUp = new PairUp();
 
-    public void handleNewPlayer(long timestamp, String ClientId, String UserName, boolean playAgainstBot, int wins) 
+    public void handleNewPlayer(long timestamp, int ClientId, String UserName, boolean playAgainstBot, int wins) 
     {
         pairUp.AddPlayer(timestamp, ClientId, UserName, playAgainstBot, wins);
     }
     
-    public void handlePlayerRemoval(String ClientId) 
+    public void handlePlayerRemoval(int ClientId) 
     {
         pairUp.removePlayer(ClientId);
     }
@@ -122,22 +120,10 @@ public class PageManager {
 
     }
 
-
     public PageManager() {
         db = new DB();
         // pass over a pointer to the single database object in this system
         pu = new PairUp();
-
-        String url = "";
-        try
-        {
-            Connection pgConnection = DriverManager.getConnection(url);
-            login = new NewAcctLogin(pgConnection);
-        }
-        catch(Exception e)
-        {
-            System.out.println("Could not connect: " + e.getMessage());
-        }
     }
 
 }
