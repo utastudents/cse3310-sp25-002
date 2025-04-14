@@ -167,15 +167,6 @@ public class rules
         return pieces;
     }
 
-    // removes captured pieces from the board 
-    // find out if this needs to report a piece as 'being captured'
-    //static protected void removeCaptured(Square square)
-    //{
-        //square.piece = false;
-       // square.color = null;
-        //square.king = false;
-    }//
-
     // recursive function for moveList
     // finds all jump chains for a given king piece
     // this may not work as intended depending on the behavior reguarding the moves obj. 

@@ -87,14 +87,14 @@ public class BotII extends Bot {
         this.currentGameBoard = board;
 
         // if (isFirstMove()) {
-        //     return startMove(board);
+        // return startMove(board);
         // }
 
         // Future logic can go here for non-starting moves
 
         LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = determineMoves();
 
-        boolean strategy = PlayStyle();
+        boolean strategy = playStyle();
 
         // Implement the bot's strategy based on the possible moves
         implementBotStrategy(strategy, possibleMoves);
@@ -193,7 +193,7 @@ public class BotII extends Bot {
                     }
                     // Sort the pieceMoves based on elo rating in descending order
                     pieceMoves.sort(Comparator.comparingInt(MoveRating::getEloRating).reversed());
-                    
+
                     if (!pieceMoves.isEmpty()) {
                         // Add the piece and its possible moves to the list
                         possibleMoves.add(new Pair<>(square, pieceMoves));
@@ -256,7 +256,7 @@ public class BotII extends Bot {
         Square dest = this.currentGameBoard.getSquare(destRow, destCol);
 
         // For normal moves, the destination must be empty
-        if (!isCapture && dest.getColor() == null) {
+        if (!isCapture && !dest.hasPiece()) {
             return true;
         }
 
@@ -265,7 +265,7 @@ public class BotII extends Bot {
         if (isCapture) {
             // Ensure the destination square is empty and the intermediate square contains
             // an opponent's piece
-            if (dest.getColor() != null) {
+            if (dest.hasPiece()) {
                 return false;
             }
 
@@ -273,7 +273,7 @@ public class BotII extends Bot {
             int midCol = (start.getCol() + destCol) / 2;
             Square midSquare = this.currentGameBoard.getSquare(midRow, midCol);
 
-            return dest.getColor() == null && midSquare.getColor() != null && midSquare.getColor() != this.color;
+            return midSquare.hasPiece() && midSquare.getColor() != this.color;
         }
 
         return false;
@@ -308,16 +308,15 @@ public class BotII extends Bot {
      */
     private void implementBotStrategy(boolean strategy,
             LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves) {
-            //ORDER OF HOW TO WRITE THIS FUNC
-        //determine strategy
-        // if passive , sort by ELo and use lowest 
-        //if aggr , sort by ELO and use highest
+        // ORDER OF HOW TO WRITE THIS FUNC
+        // determine strategy
+        // if passive , sort by ELo and use lowest
+        // if aggr , sort by ELO and use highest
 
-        //after set isMoves , add move to Move obj
+        // after set isMoves , add move to Move obj
 
-
-        //Move m = possibleMoves.getFirst().getValue().getMove()
-        //this.Move.addNext(m) 
+        // Move m = possibleMoves.getFirst().getValue().getMove()
+        // this.Move.addNext(m)
     }
 
     /**
@@ -341,7 +340,23 @@ public class BotII extends Bot {
         return this.moves;
     }
 
-    private boolean PlayStyle() {
+    /**
+     * Determines whether the bot should use an aggressive strategy by counting the
+     * pieces on the board.
+     * For each square that has a piece, it checks the piece’s color (using
+     * Square.getColor()). If the piece belongs to
+     * the bot (using this bot's color stored in this.color), it increments the
+     * bot's count;
+     * otherwise, it increments the opponent's count.*
+     * 
+     * @param None
+     * 
+     * @return true if the bot is at a numerical disadvantage (suggesting an
+     *         aggressive
+     *         strategy), or false if not (suggesting a more passive strategy).
+     * 
+     */
+    private boolean playStyle() {
         int bot_piece_cnt = 0;
         int op_piece_cnt = 0;
 
@@ -402,18 +417,3 @@ class Pair<K, V> {
         return value;
     }
 }
-
-/**
- * Determines whether the bot should use an aggressive strategy by counting the
- * pieces on the board.
- * For each square that has a piece, it checks the piece’s color (using
- * Square.getColor()). If the piece belongs to
- * the bot (using this bot's color stored in this.color), it increments the
- * bot's count;
- * otherwise, it increments the opponent's count.*
- * 
- * @param board the current game board.
- * @return true if the bot is at a numerical disadvantage (suggesting an
- *         aggressive
- *         strategy), or false if not (suggesting a more passive strategy).
- */
