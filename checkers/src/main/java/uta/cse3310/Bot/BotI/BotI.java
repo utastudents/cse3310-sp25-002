@@ -24,6 +24,16 @@ public class BotI extends Bot {
         // int oppCount = countallPieces(board, !this.color);
 
 
+        Move selectedMove;
+        if (isAgressive){
+            selectedMove = aggressiveStrategyImplementation(possibleMoves, board);
+        }
+        else {
+            selectedMove = passiveStrategyImplementation(possibleMoves, board);
+        }
+
+        
+
 
 
         // setCurrentGameBoard(board);
