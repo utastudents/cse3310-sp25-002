@@ -87,7 +87,7 @@
         </script>
     </div>
     <div id="join_game">
-        
+
     join game
     </div>
     <div id="game_display">
@@ -108,13 +108,16 @@
     summary
     </div>
     <div id="stuff">
-     <input type="button" value="Send Something" onclick="msg()">
-      <label for="tbox">Received</label>
-      <textarea id="tbox" name="tbox" rows="4" cols="50">
-     </textarea>
+        <input type="button" value="Send Something" onclick="msg()">
+        <label for="tbox">Received</label>
+        <textarea id="tbox" name="tbox" rows="4" cols="50">
+        </textarea>
     </div>
-    <!-- This javascript code contains logic for the game display. Imports the CheckersBoard class which contains methods to create and add functionality to the checkers board. -->
+
+    <!-- Note from gamedisplay: Our entire component mostly uses javascript to handle the game display. The only thing we use html for is to create the divs that will be used to display the game. The rest of the functionality is handled by javascript. -->
+    <!-- WARNING: Do not remove this javascript file!! This javascript code contains logic for the game display. Imports the CheckersBoard class which contains methods to create and add functionality to the checkers board. -->
     <script src="js/game_display_checkers.js"></script>
+
     </body>
 </html>
 <script>
@@ -153,12 +156,13 @@
         let data = JSON.parse(msg);
 
         // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
+        // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
         game_display_handle_websocket_received_data(connection, data);
 
     }
 
-    // Note from Game Display: uncomment the line below to test rendering the game board
-    setTimeout(show_game_display(connection, "134242424", "Player 1", "this is player2", "B"),3000);
+    // Note from Game Display: comment the line below to hide the game board
+    setTimeout(show_game_display(connection, "134242424", "this is player 1", "this is player2", "B"),3000);
 
     class UserEvent {
         msg;
