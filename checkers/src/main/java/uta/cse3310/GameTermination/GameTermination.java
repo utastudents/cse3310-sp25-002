@@ -10,7 +10,7 @@ public class GameTermination {
     private String finalWinner = null; // Stores the winner's ID or "Draw"
 
     // Method to handle the end of the game and declare the winner
-    public void endGame(Map<String, Integer> playerScores, String winningPlayer) {
+    public void endGame(Map<String, Integer> playerScores, int winningPlayer) {
         if (gameOver) {
             System.out.println("The game has already ended."); //to handle abrupt endings
             return;
