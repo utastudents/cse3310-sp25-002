@@ -20,4 +20,5 @@ public class GetRank
         // This method will be used to get the leaderboard from the database.
         // It will return a list of players and their ranks.
     }
+    
 }
