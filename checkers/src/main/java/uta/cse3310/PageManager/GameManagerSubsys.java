@@ -1,21 +1,20 @@
 package uta.cse3310.PageManager;
-import uta.cse3310.GameManager.GameManager;
+import uta.cse3310.GameManager.GamePageController;
 
 public class GameManagerSubsys {
 
-    private GameManager gameManager;
+    GamePageController gamePageController;
 
-    public GameManagerSubsys(GameManager gameManager) {
-        this.gameManager = gameManager;
+    public GameManagerSubsys(GamePageController gameStatus) {
+        this.gamePageController = gameStatus;
      }
-
 
      public String processMove(String jsonObj) {
         // TODO: implement
         return null;
     }
     
-    public String getGameState(String gameID) {
+    public String getGameState(int gameID) {
         // TODO: implement
         return null;
     }

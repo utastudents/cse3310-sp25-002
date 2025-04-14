@@ -1,97 +1,130 @@
 package uta.cse3310.GameManager;
 
-// Importing necessary classes and packages
 import uta.cse3310.GamePlay.GamePlay;
 import uta.cse3310.GameTermination.GameTermination;
-import uta.cse3310.Bot.BotI.BotI;
-import uta.cse3310.Bot.BotII.BotII;
+import uta.cse3310.PairUp.PairUp; // For re-adding players to matchmaking
+import uta.cse3310.GameManager.Move;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GameManager {
 
-    GamePlay gp;
-    GameTermination gt; // Game termination handler instance
-    // Bot instances
-    BotI b1;
-    BotII b2;
-    // Maximum number of games that can run concurrently
-    private static final int Maximum_GAMES = 15;
+    private static final int MAXIMUM_GAMES = 10;
     private ArrayList<Game> games;
+    private GamePlay gp;
+    private GameTermination gt;
 
     // Constructor to initialize components
     public GameManager() {
-        gp = new GamePlay();
-        gt = new GameTermination(); // Handles game ending logic
-        /*b1 = new BotI();
-        b2 = new BotII(); */ //Already defined on Game.java class (may be we will modify it to have in this class later)
-
-        // Initialize the list of games
-        games = new ArrayList<>(Maximum_GAMES);
-        for (int i = 0; i < Maximum_GAMES; i++) {
-            games.add(null); // initialize slots with null
+        games = new ArrayList<>(MAXIMUM_GAMES);
+        for (int i = 0; i < MAXIMUM_GAMES; i++) {
+            games.add(null);
         }
+        gp = new GamePlay(); // Handles game rules and moves
+        gt = new GameTermination(); // Handles game-ending logic
     }
 
-    // Checking if there is any slots available to create a new game for two
-    // players.
+    // Create a new game with two players
     public boolean createGame(int player1id, int player2id, boolean player1color, boolean player2color) {
         int availableSlot = getAvailableGameSlot();
         if (availableSlot == -1) {
             System.out.println("No available game slots.");
             return false;
         }
-        // Create a new game with two players (IDs and their color), and assign to
-        // available slot
         Game newGame = new Game(player1id, player2id, player1color, player2color, availableSlot);
         games.set(availableSlot, newGame);
-
-        System.out.println("Game created in slot " + availableSlot + " between Player " + player1id + " and Player " + player2id);
+        System.out.println(
+                "Game created in slot " + availableSlot + " between Player " + player1id + " and Player " + player2id);
         return true;
     }
 
-    // Check for first available slot in games list
+    // Find first available game slot
     private int getAvailableGameSlot() {
-        for (int i = 0; i < Maximum_GAMES; i++) {
-            if (games.get(i) == null || !games.get(i).gameActive()) {
+        for (int i = 0; i < MAXIMUM_GAMES; i++) {
+            if (games.get(i) == null || !games.get(i).gameActive()) { // gameActive() is handled by Game.java
                 return i;
             }
         }
         return -1;
     }
 
-    // End a game manually and clear it
-    public void terminateGame(int gameNumber) {
-        if (gameNumber >= 0 && gameNumber < Maximum_GAMES && games.get(gameNumber) != null) {
-            // gt.endGame(games.get(gameNumber)); // yet to determine GameTermination logic:
-            //They dont have this but I believe having something to directly terminate the game is not a bad idea.
-            games.set(gameNumber, null); // clear the slot
-            System.out.println("Game " + gameNumber + " has been terminated.");
+    // Process a move from a player
+    public void processMove(int playerId, Move move) {
+        Game game = findGameByPlayerId(playerId);
+        if (game != null && game.gameActive()) {
+            Moves moves = new Moves();
+            moves.addNext(move);
+            gp.returnBoard(game, moves); // from GamePlay.java
+        } else {
+            System.out.println("Invalid move: game not found or inactive.");
         }
     }
+    /*Note: The large commented-out code sections are fully implemented. 
+    However, there are data type mismatches with the method signatures. 
+    I have requested my groupmate to update the relevant data types accordingly.
+    Once those changes are made, these sections will be uncommented and used as intended.
+    */
+    
+    /* Terminate a game and notify GameTermination
+    public void terminateGame(int gameNumber) {
+        if (gameNumber >= 0 && gameNumber < MAXIMUM_GAMES && games.get(gameNumber) != null) {
+            gt.endGame(games.get(gameNumber)); // Implement in GameTermination.java
 
-    public void restartGame(int gameNumber) {
-        if (gameNumber >= 0 && gameNumber < Maximum_GAMES && games.get(gameNumber) != null) {
+            int player1Id = game.getPlayer1ID();
+            int player2Id = game.getPlayer2ID();
+            int player1Score = game.getPlayer1Score();
+            int player2Score = game.getPlayer2Score();
 
-            Game currentGame = games.get(gameNumber);
+            Map<Integer, Integer> playerScores = new HashMap<>();
+            playerScores.put(player1Id, player1Score);
+            playerScores.put(player2Id, player2Score);
 
-            // Retrieve the players from the current game
-            /*
-            Player player1 = currentGame.getCurrentTurn(); // could also use getPlayer1()
-            Player player2 = (player1 == currentGame.getPlayer1()) ? currentGame.getPlayer2()
-                    : currentGame.getPlayer1(); */
+            int winningPlayerId = (player1Score > player2Score) ? player1Id
+                    : (player2Score > player1Score) ? player2Id : -1;
 
-            // Notify GameTermination about the restart
-            gt.gameRestartReq();
-
-            // Re-add players to the matchmaking queue
-           /* PairUp.addPlayerToQueue(player1);
-            PairUp.addPlayerToQueue(player2); */
-
-            System.out.println("Game " + gameNumber + " restart requested. Players moved back to the queue.");
-        } else {
-            System.out.println("Invalid game number or game is null. Restart request ignored.");
+            gt.endGame(playerScores, winningPlayerId);
+            games.set(gameNumber, null);
+            System.out.println("Game " + gameNumber + " has been terminated.");
         }
+    } */
+/*
+    // Restart a game by requeuing players
+    public void restartGame(int gameNumber) {
+        if (gameNumber >= 0 && gameNumber < MAXIMUM_GAMES) {
+            Game game = games.get(gameNumber);
+            if (game != null) {
+                gt.gameRestartReq(); // from GameTermination.java
+
+                // Extract info from players and requeue them
+                Player p1 = game.getPlayer1();
+                Player p2 = game.getPlayer2();
+
+                if (p1 != null) {
+                    PairUp.AddPlayer(System.currentTimeMillis(), p1.getPlayerID(),p1.isPlayAgainstBot(), p1.getWins());
+                }
+
+                if (p2 != null) {
+                    PairUp.AddPlayer(System.currentTimeMillis(), p2.getPlayerID(), p2.isPlayAgainstBot(), p2.getWins());
+                }
+                games.set(gameNumber, null);
+                System.out.println("Game " + gameNumber + " restart requested.");
+            }
+        }
+    }   */
+
+    // Find a game by player ID
+    public Game findGameByPlayerId(int playerId) {
+        for (Game game : games) {
+            if (game != null){
+                if (game.getPlayer1ID()==playerId || game.getPlayer2ID()==playerId){
+                    return game;
+                }
+            }
+        }
+        return null;
     }
 
     // Check if any slot is free
@@ -99,8 +132,74 @@ public class GameManager {
         return getAvailableGameSlot() != -1;
     }
 
-    // Gets list of current games
+    // Returns all games (used by frontend or controller)
     public ArrayList<Game> getGames() {
         return games;
     }
+
+    // Check if a player is in any active game
+    public boolean isPlayerInGame(int playerId) {
+        return findGameByPlayerId(playerId) != null;
+    }
+
+    // Count active games
+    public int getActiveGameCount() {
+        int count = 0;
+        for (Game game : games) {
+            if (game != null && game.gameActive()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    // Remove a player from a game (e.g., on disconnect)
+    public void removePlayer(int playerId) {
+        Game game = findGameByPlayerId(playerId);
+        if (game != null) {
+            if (game.getPlayer1ID() == playerId) {
+                game.Player1Quit(); // Implemented in Game.java
+            } else {
+                game.Player2Quit();
+            }
+        }
+    }
+
+    /* Player requests to quit and ends game
+    public void playerQuit(int playerId) {
+        Game game = findGameByPlayerId(playerId); // Local method
+        if (game == null) {
+            System.out.println("Player " + playerId + " is not in any active game.");
+            return;
+        }
+
+        if (game.getPlayer1ID() == playerId) {
+            game.Player1Quit(); // Game.java
+
+            int player1Id = game.getPlayer1ID();
+            int player2Id = game.getPlayer2ID();
+            int player1Score = game.getPlayer1Score();
+            int player2Score = game.getPlayer2Score();
+
+            Map<Integer, Integer> playerScores = new HashMap<>();
+            playerScores.put(player1Id, player1Score);
+            playerScores.put(player2Id, player2Score);
+            gt.endGame(playerScores, player2Id);
+        } else {
+            game.Player2Quit(); // Game.java
+            int player2Id = game.getPlayer2ID();
+            int player1Id = game.getPlayer2Id();
+            int player1Score = game.getPlayer1Score();
+            int player2Score = game.getPlayer2Score();
+
+            Map<Integer, Integer> playerScores = new HashMap<>();
+            playerScores.put(player1Id, player1Score);
+            playerScores.put(player2Id, player2Score);
+            gt.endGame(playerScores, player1Id);
+        }
+
+        games.set(game.gameNumber(), null); // gameNumber() in Game.java
+        System.out.println("Player " + playerId + " quit. Game " + game.gameNumber() + " ended.");
+
+    }*/
 }

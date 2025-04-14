@@ -7,25 +7,43 @@ public class JoinGameHandler {
     public JoinGameHandler() {
     }
 
-    public void processJoinGame(Map<String, String> joinData) {
-        String username = joinData.get("username");
-        String userID = joinData.get("userID");
+    public Result processJoinGame(Map<String, String> joinData) {
+        String ClientID = joinData.get("ClientID");
         String gameMode = joinData.get("gameMode");
 
-        if ("Multiplayer".equalsIgnoreCase(gameMode)) {
-            sendAvailabilityToDB(userID, username);
-        } else if ("Bot".equalsIgnoreCase(gameMode)) {
-            sendToPairUpForBot(username, userID);
+        boolean isBot = "Bot".equalsIgnoreCase(gameMode);
+        
+        if (isBot) {
+            sendToPairUpForBot(ClientID);
+        } else {
+            sendAvailabilityToDB(ClientID);
         }
+
+
+        return new Result(ClientID, isBot); // sends data to pairup_subsys
     }
 
-    private void sendAvailabilityToDB(String userID, String username) {
+    private void sendAvailabilityToDB(String ClientID) {
         System.out.println("Flagging user as available in DB...");
-        System.out.println("Username: " + username + ", UserID: " + userID);
+        System.out.println("ClientID: " + ClientID);
     }
 
-    private void sendToPairUpForBot(String username, String userID) {
+    private void sendToPairUpForBot(String ClientID) {
         System.out.println("Sending request to PairUp for bot match...");
-        System.out.println("Username: " + username + ", UserID: " + userID);
+        System.out.println("ClientID: " + ClientID);
+    }
+
+
+    // helper return class to extract data in pairup_subsys
+    public static class Result
+    {
+        public String clientID;
+        public boolean playAgainstBot;
+
+        public Result(String clientID, boolean playAgainstBot)
+        {
+            this.clientID = clientID;
+            this.playAgainstBot = playAgainstBot;
+        }
     }
 }

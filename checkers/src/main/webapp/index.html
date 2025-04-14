@@ -87,7 +87,7 @@
         </script>
     </div>
     <div id="join_game">
-        
+
     join game
     </div>
     <div id="game_display">
@@ -108,13 +108,16 @@
     summary
     </div>
     <div id="stuff">
-     <input type="button" value="Send Something" onclick="msg()">
-      <label for="tbox">Received</label>
-      <textarea id="tbox" name="tbox" rows="4" cols="50">
-     </textarea>
+        <input type="button" value="Send Something" onclick="msg()">
+        <label for="tbox">Received</label>
+        <textarea id="tbox" name="tbox" rows="4" cols="50">
+        </textarea>
     </div>
-    <!-- This javascript code contains logic for the game display. Imports the CheckersBoard class which contains methods to create and add functionality to the checkers board. -->
+
+    <!-- Note from gamedisplay: Our entire component mostly uses javascript to handle the game display. The only thing we use html for is to create the divs that will be used to display the game. The rest of the functionality is handled by javascript. -->
+    <!-- WARNING: Do not remove this javascript file!! This javascript code contains logic for the game display. Imports the CheckersBoard class which contains methods to create and add functionality to the checkers board. -->
     <script src="js/game_display_checkers.js"></script>
+
     </body>
 </html>
 <script>
@@ -127,13 +130,6 @@
     // a reminder.  we want to create one websocket connection, and use if, basically forever.
     // or until the user decides to go to another page.
     // this requires everything to load from this page.
-
-    // this element is used to display the game board
-    let gameContainer = document.getElementById("game_display_container");
-    // this variable is used to check if the game board has been initialized
-    let game_display_checkers_board_initialized = false;
-    let checkerBoard = null;
-
     var connection = null;
 
     var serverUrl;
@@ -160,50 +156,13 @@
         let data = JSON.parse(msg);
 
         // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
-        if (game_display_checkers_board_initialized){
-            game_display_handle_websocket_received_data(checkerBoard, data);
-        };
+        // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
+        game_display_handle_websocket_received_data(connection, data);
 
     }
 
-
-    // uncomment the line below to test rendering the game board
-    // setTimeout(showGameDisplay("134242424", "Player 1"),3000);
-
-    //showing the game board
-    function showGameDisplay(gameid, startingPlayer){
-        if (!gameContainer){
-            console.log("game display container not found");
-            return;
-        }
-        gameContainer.classList.remove("hidden");
-        gameContainer.classList.add("visible");
-
-        if(!game_display_checkers_board_initialized){
-            // use the CheckersBoard class to create the game board and attach the class to the DOM
-            checkerBoard = new CheckersBoard(conn = connection, g_id = gameid, starting_player = startingPlayer);
-            // call the create_checkers_board method to create the game board
-            checkerBoard.create_checkers_board();
-            // attach all the event listeners to the game board. Note: this function is defined in the game_display_checkers.js file
-            add_game_display_user_control_event_listener();
-            // set the flag to true to indicate that the game board has been initialized. Note: this is used to prevent the game board from being initialized multiple times
-            game_display_checkers_board_initialized = true;
-        }
-        document.getElementById("current-player").textContent = `Current Player: ${startingPlayer}`;
-    }
-
-    //function to hide the board
-    function hideGameDisplay(){
-        if(!gameContainer){
-            console.log("game display container not found");
-            return;
-        }
-        if(!game_display_checkers_board_initialized){
-            return;
-        }
-        gameContainer.classList.add("hidden");
-        gameContainer.classList.remove("visible");
-    }
+    // Note from Game Display: comment the line below to hide the game board
+    setTimeout(show_game_display(connection, "134242424", "this is player 1", "this is player2", "B"),3000);
 
     class UserEvent {
         msg;

@@ -4,6 +4,10 @@ var game_id;
 var game_display_current_player_name;
 
 
+// this variable is used to check if the game board has been initialized
+let game_display_checkers_board_initialized = false;
+let checkerBoard = null;
+
 /*
     The logic for handling resign and draw button is extremely simple. Removing the event listener and adding it again prevents event duplication. This is a very common practice in the industry.
 */
@@ -61,26 +65,92 @@ const add_game_display_user_control_event_listener = () => {
 };
 
 
-const game_display_handle_websocket_received_data = (checkerBoard, data) => {
+
+const show_game_display = (connection, gameid, starting_player, player, player_color) => {
+    // this element is used to display the game board
+    let gameContainer = document.getElementById("game_display_container");
+
+    if (!gameContainer){
+        console.log("game display container not found");
+        return;
+    }
+    gameContainer.classList.remove("hidden");
+    gameContainer.classList.add("visible");
+
+    if(!game_display_checkers_board_initialized){
+
+        game_id = gameid;
+        game_display_current_player_name = starting_player;
+
+        // use the CheckersBoard class to create the game board and attach the class to the DOM
+        checkerBoard = new CheckersBoard(connection, gameid, starting_player, player, player_color);
+        // call the create_checkers_board method to create the game board
+        checkerBoard.create_checkers_board();
+        // attach all the event listeners to the game board. Note: this function is defined in the game_display_checkers.js file
+        add_game_display_user_control_event_listener();
+        // set the flag to true to indicate that the game board has been initialized. Note: this is used to prevent the game board from being initialized multiple times
+        game_display_checkers_board_initialized = true;
+    };
+
+    document.getElementById("current-player").textContent = `Current Player: ${starting_player}`;
+}
+
+const hide_game_display = () => {
+    // this element is used to display the game board
+    let gameContainer = document.getElementById("game_display_container");
+
+    if(!gameContainer){
+        console.log("game display container not found");
+        return;
+    }
+    if(!game_display_checkers_board_initialized){
+        return;
+    }
+    gameContainer.classList.add("hidden");
+    gameContainer.classList.remove("visible");
+}
+
+
+const game_display_handle_websocket_received_data = (connection, data) => {
     try{
         // This function handles the websocket data received from the java backend and updates the checkerboard accordingly.
-        if(!data){
+        if(!data || !data?.type){
             return;
-        }
+        };
+
+        let game_display_event_types = ["valid_moves", "move_made_by_other_player_or_bot", "resign", "draw_offer", "draw_accept", "player_name_update", "notify_players", "show_game_display", "hide_game_display"];
+
+        // this ignores any data that is not related to the game display.
+        if(!game_display_event_types.includes(data.type)){ return; }
+
+        if(!game_display_checkers_board_initialized && !(data.type === "show_game_display")){
+            // if the game board is not initialized and the data type is not show_game_display, then return
+            game_display_popup_messages(`(gd) game_display_handle_websocket_received_data: game board not initialized and data type is not show_game_display.`);
+            return;
+        };
+
         if (data.type==="valid_moves" && data.legal_moves.length > 0) {
             // assuming that websocket sends the json string {"type":"valid_moves", "legal_moves":[[x1,y1],[x2,y2],...]}
             checkerBoard.received_coords = data.legal_moves;
+
+        } else if(data.type === "move_made_by_other_player_or_bot") {
+            // assuming that websocket sends the json string {"type":"move_made_by_other_player_or_bot", "game_id": "GAME_ID_IF_PROVIDED", "player":"NAME OF PLAYER THAT MADE THE MOVE (STRING),"from": [move_from_x, move_from_y],"to": [move_to_x, move_to_y]"}
+            //checks to make sure that it is a move from the opponent
+            if(data.player != checkerBoard.player){
+                // move_from_x, move_from_y, move_to_x, move_to_y = data.from[0], data.from[1], data.to[0], data.to[1];
+                // this function is used to move the checkers piece from one square to another. This function is called when the opponent makes a move.
+                checkerBoard.move_made_by_other_player_or_bot(data.from[0],data.from[1],data.to[0],data.to[1]);
+            };
 
         } else if(data.type === "resign") {
             // assuming that websocket sends the json string {"type":"resign", "player":"NAME OF PLAYER THAT RESIGNED (STRING)"}
             alert(`${data.player} has resigned. The game is now over.`);
 
         } else if(data.type === "draw_offer") {
-            // assuming that websocket sends the json string {"type":"draw_offer", "player":"NAME OF PLAYER THAT RESIGNED (STRING)"}
+            // assuming that websocket sends the json string {"type":"draw_offer", "player":"NAME OF PLAYER THAT OFFERED THE DRAW (STRING)"}
             if(confirm(`${data.player} offered a draw, would you like to accept?`)) {
                 connection.send(JSON.stringify({type: "draw_accept", game_id: game_id, player: game_display_current_player_name}));
             };
-
         } else if(data.type === 'draw_accept'){
             // assuming that websocket sends the json string {"type":"draw_accept"}
             alert("The draw has been accepted. The game is now over.");
@@ -88,43 +158,55 @@ const game_display_handle_websocket_received_data = (checkerBoard, data) => {
         } else if(data.type === 'player_name_update'){
             // assuming that websocket sends the json string {"type":"player_name_update", "current_move":"NAME OF PLAYER THAT WILL MAKE NEXT MOVE (STRING)"}
             checkerBoard.update_player_name(data.current_move);
+
         } else if(data.type === 'notify_players'){
             // assuming that websocket sends the json string {"type":"notify_players", "message":"Game won/ Game Draw/ Connection issue/ Error message"}
             game_display_popup_messages(data.message);
+
+        } else if(data.type === 'show_game_display') {
+            // this function is used to show the game display. It is called when the game is started.
+            show_game_display(connection, data.gameid, data.starting_player, data.player, data.player_color);
+
+        } else if(data.type === 'hide_game_display') {
+            hide_game_display();
         }
+
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
         game_display_popup_messages(`(gd) game_display_handle_websocket_received_data: An error occurred while handling the game display. Please check the console.`);
     }
 
+
+
 }
-
-
 
 class CheckersBoard {
     /*
         We have put the game display logic under the CheckersBoard class to handle all logic related to displaying the board. This will help in creating as many instances of checker board as needed.
     */
-    constructor(conn, g_id, starting_player) {
+    constructor(conn, g_id, starting_player, player, player_color) {
         this.checkers_board = [];
         this.selected_piece = null;
-        connection = conn;
-        game_id = g_id;
-        game_display_current_player_name = starting_player;
         // pass the websocket connection instance
         this.connection = conn;
         this.game_id = g_id;
-        this.currentPlayer = starting_player;
+        // the player who will make the next move
+        this.current_player = starting_player;
         // this is used to keep track of the last clicked coordinate to 1) prevent user from clicking on the same square twice 2) to keep track of from and to coordinates when a piece is moved
         this.last_clicked_coordinate = null;
         this.received_coords = [];
+        // the player who is currently playing the game
+        this.player = player;
+        // the color of the player who is currently playing the game
+        this.player_color = player_color;
+        this.opponents_turn=false;
     }
 
-    
+
     update_current_player(player) {
         // Update the UI to show whose turn it is
         try{
-            this.currentPlayer = player;
+            this.current_player = player;
             game_display_current_player_name = player;
             document.getElementById("current-player").innerText = `Current Player: ${player}`;
         } catch (error) {
@@ -142,6 +224,10 @@ class CheckersBoard {
     */
     handle_checkers_piece_click(x, y) {
         try{
+
+            // if it's not the player's turn, do nothing. Note: We added this to prevent the user from clicking on the board when it's not their turn. Or when a bot or opponent makes a move which shouldn't be registered as the user's move.
+            if(this.player !== this.current_player) return;
+
             const square = this.checkers_board.find(sq => sq.x === x && sq.y === y);
             if (!square) return;
             // either "b" or "w" or "." Note: . means an empty square with no piece
@@ -186,8 +272,11 @@ class CheckersBoard {
         }
     }
 
-
-
+    //move_made_by_other_player_or_bot() sets a flag to call move_checkers_piece() without sending a move request to the backend.
+    move_made_by_other_player_or_bot(move_from_x, move_from_y, move_to_x, move_to_y){
+        this.opponents_turn = true;
+        this.move_checkers_piece(move_from_x, move_from_y, move_to_x, move_to_y);
+    }
 
     /*
         move_checkers_piece() simply moves a checkers piece from one square to another. This function is called once the java backend has confirmed that the move is valid.
@@ -225,9 +314,11 @@ class CheckersBoard {
 
                 this.update_board_style();
                 // relay the move to the backend through the ws connection
-                console.log({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
-                this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.currentPlayer, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
-
+                console.log({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
+                //Does not send a move request to the backend if it is the opponent's turn
+                if(!this.opponents_turn){
+                    this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
+                } else {this.opponents_turn=false;}
             }
 
         } catch (error) {
@@ -472,7 +563,7 @@ class CheckersBoard {
             // let moves = [];
             // checkers_piece_type = "b" or "w"
             // TODO: This needs to be handled by the java backend since this involves making game logic
-            this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, player: this.currentPlayer, square: [x, y]}));
+            this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, player: this.current_player, square: [x, y]}));
 
             // this function waits for the ws to provide the allowed moves for a piece at a given position.
             while(!this.allowed_moves_validation(this.received_coords)){
