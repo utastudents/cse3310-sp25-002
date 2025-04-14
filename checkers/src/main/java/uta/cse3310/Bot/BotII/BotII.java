@@ -46,7 +46,7 @@ public class BotII extends Bot {
     private boolean isValid(Board board, int fromRow, int fromCol, int toRow, int toCol) {
         return toRow >= 0 && toRow < 8 &&
             toCol >= 0 && toCol < 8 &&
-            board.getPiece(toRow, toCol) == ' ';
+            board.getSquare(toRow, toCol).getColor() == null;
     }
 
 
