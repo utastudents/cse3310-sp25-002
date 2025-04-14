@@ -7,6 +7,7 @@ import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 
@@ -91,10 +92,9 @@ public class BotII extends Bot {
         // }
 
         // Future logic can go here for non-starting moves
-
-        LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = determineMoves();
-
         boolean strategy = playStyle();
+
+        LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = determineMoves(strategy);
 
         // Implement the bot's strategy based on the possible moves
         implementBotStrategy(strategy, possibleMoves);
@@ -117,7 +117,7 @@ public class BotII extends Bot {
      * @see Board
      * @see Moves
      */
-    private LinkedList<Pair<Square, LinkedList<MoveRating>>> determineMoves() {
+    private LinkedList<Pair<Square, LinkedList<MoveRating>>> determineMoves(boolean strategy) {
 
         // Gets possible moves per piece with each move having an elo rating
         LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = new LinkedList<>();
@@ -191,8 +191,12 @@ public class BotII extends Bot {
                             });
                         }
                     }
-                    // Sort the pieceMoves based on elo rating in descending order
-                    pieceMoves.sort(Comparator.comparingInt(MoveRating::getEloRating).reversed());
+                    // Sort the pieceMoves based on elo rating
+                    pieceMoves.sort(Comparator.comparingInt(MoveRating::getEloRating));
+
+                    // If strategy is aggressive, reverse the order of the  (highest elo first)
+                    if(strategy)
+                        Collections.reverse(pieceMoves);
 
                     if (!pieceMoves.isEmpty()) {
                         // Add the piece and its possible moves to the list
@@ -274,12 +278,12 @@ public class BotII extends Bot {
         // For capturing moves, check if the intermediate square contains an opponent's
         // piece
         if (isCapture) {
-            // Ensure the destination square is empty and the intermediate square contains
-            // an opponent's piece
+            // Ensure the destination square is empty
             if (dest.hasPiece()) {
                 return false;
             }
 
+            // Get the captured square (the square between start and dest)
             int midRow = (start.getRow() + destRow) / 2;
             int midCol = (start.getCol() + destCol) / 2;
             Square midSquare = this.currentGameBoard.getSquare(midRow, midCol);
