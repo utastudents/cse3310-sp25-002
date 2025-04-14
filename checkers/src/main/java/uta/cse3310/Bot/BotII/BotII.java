@@ -68,12 +68,12 @@ public class BotII extends Bot {
     
                 // Try forward-left
                 if (col - 1 >= 0 && board.getSquare(newRow, col - 1).getColor() == null) {
-                    firstMoveSet.addMove(new Move(square, board.getSquare(newRow, col - 1)));
+                    firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col - 1)));
                 }
     
                 // Try forward-right
                 if (col + 1 < 8 && board.getSquare(newRow, col + 1).getColor() == null) {
-                    firstMoveSet.addMove(new Move(square, board.getSquare(newRow, col + 1)));
+                    firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col + 1)));
                 }
             }
         }
