@@ -54,8 +54,16 @@ public class BotII extends Bot {
     // It is an abstract method in the parent class Bot, so it must be implemented
     // here, but can't be until BotI is done
     public Moves requestMove(Board board) {
-        return null; // Placeholder so it compiles
+        this.currentGameBoard = board;
+    
+        Moves firstMoveSet = new Moves(); // Collect valid first moves
+    
+        int frontRow = this.color ? 2 : 5; // Black uses row 2, White uses row 5
+    
+        // (Here we will loop over frontRow and generate valid moves)
+        return null; // Temporary return
     }
+    
 
     /**
      * This function will be called to determine the all possible moves per peice
