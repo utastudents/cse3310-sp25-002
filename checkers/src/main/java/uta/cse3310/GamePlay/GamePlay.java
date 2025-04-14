@@ -7,6 +7,7 @@ import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
+import uta.cse3310.GameManager.Player;
 import uta.cse3310.GamePlay.rules;
 
 public class GamePlay
@@ -18,6 +19,8 @@ public class GamePlay
         Board currentGameBoard = game.getBoard();
         Move currentMove = moves.getFirst();
         Square currentSquare = currentMove.getStart();
+        Square destinationSquare = currentMove.getDest();
+        Player activePlayer = game.getCurrentTurn();
         int numMoves = moves.size();
         int counter = 0;
         rules rule = new rules();
@@ -28,12 +31,39 @@ public class GamePlay
             if(rule.canMovePiece(currentGameBoard, currentSquare, game))
             {
 
+
+                if(activePlayer.getColor())
+                {
+                    if(destinationSquare.getRow() == 7)
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                }
+                else
+                {
+                    if(destinationSquare.getRow() == 0)
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                }
+
             }
             else
             {
                 break;
             }
 
+            // Counter to make sure all moves are processed
+            counter++;
+            currentMove = moves.getNext(currentMove);
         }
         
         
