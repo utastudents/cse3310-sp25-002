@@ -8,14 +8,16 @@ public class GameManagerSubsys {
     public GameManagerSubsys(GamePageController gameStatus) {
         this.gamePageController = gameStatus;
      }
-
-     public String processMove(String jsonObj) {
-        // TODO: implement
-        return null;
-    }
+    // will be updating the methods 
+    //public game_status gameInfoFromClientID(int ) {
+        //game_status status = new game_status();
     
-    public String getGameState(int gameID) {
-        // TODO: implement
-        return null;
-    }
+    //try {
+        //Game game = gamePageController.SendGameFromClientID(ClienID);
+    
+    
+    
+    
+    //}
+   // }
 }

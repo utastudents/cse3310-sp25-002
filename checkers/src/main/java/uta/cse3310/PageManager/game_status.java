@@ -7,6 +7,7 @@ public class game_status {
     // this is just a made up example to demonstrate data flow
     Integer turn;
     Float score;
+    public Integer gameID;
     // game state flags
     public boolean gameOver = false;
     public Integer winner = null;
