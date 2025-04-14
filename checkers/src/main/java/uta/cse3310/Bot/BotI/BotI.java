@@ -23,6 +23,11 @@ public class BotI extends Bot {
         // LinkedList<Move> possibleMoves = determineMoves();
         // implementBotStrategy(possibleMoves);
 
+        // Adding the possible moves from the commented function determineMoves(board)
+        // LinkedList<Move> possibleMoves = determineMoves(board);
+        // boolean isAggressive = isAggressive(board);
+        // return implementStrategy(board, isAggressive, possibleMoves);
+
         return null;
     }
 
@@ -40,7 +45,6 @@ public class BotI extends Bot {
 
     private void isAggressive(Board board) {
         // change void to boolean
-        
 
     }
 
@@ -61,25 +65,52 @@ public class BotI extends Bot {
         return count;
     }
 
-    private void implementStrategy(Board board, boolean isAggresive) {
-
+    private void implementStrategy(Board board, boolean isAggresive, LinkedList<Move> possibleMoves) {
+        // change void to Moves
         if (isAggresive) {
             // aggressive strategy
         } else {
-            // passive strategy
+            // passiveStrategyImplementation(possibleMoves)
         }
 
     }
 
     /* Adding the skeleton for Passive and Aggressive Strategy */
-    // private Moves passiveStrategyImplementation(LinkedList<Moves> possibleMoves)
+    // private Moves passiveStrategyImplementation(LinkedList<Move> possibleMoves)
     // {
     // return null; /* Placeholder for now */
     // }
 
-    // private Moves aggressiveStrategyImplementation(LinkedList<Moves>
+    // private Moves aggressiveStrategyImplementation(LinkedList<Move>
     // possibleMoves) {
     // return null; /* Placeholder for now */
     // }
+
+    /**
+     * determineMoves(Board board) method generates all possible legal moves for the
+     * bot's pieces on the
+     * board.
+     * It scans each square of the board and checks if the square contains a piece
+     * belonging to the bot.
+     * 
+     * For each piece, it checks the following:
+     * 1. Normal Moves – A piece can move diagonally forward (depending on
+     * color) to an empty square.
+     * 2. King Moves – If the piece is a king, it can also move diagonally
+     * backward to an empty square.
+     * 3. Captures – A piece can jump over an opponent’s piece diagonally into
+     * an empty square (forward or backward for kings).
+     * 
+     * The method accounts for board boundaries to avoid index out-of-bound errors.
+     * All valid moves are added to a linked list and returned.
+     *
+     * @param board The current game board.
+     * @return A LinkedList of possible moves for the bot.
+     */
+    private LinkedList<Move> determineMoves(Board board) {
+        LinkedList<Move> validMoves = new LinkedList<>();
+        // Logic Here
+        return validMoves;
+    }
 
 }
