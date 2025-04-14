@@ -85,7 +85,12 @@ public class BotII extends Bot {
      */
     @Override
     public Moves requestMove(Board board) {
-        this.currentGameBoard = board;
+
+        // Clear the moves object before making a new move
+        flushMoves();
+
+        // Set the current game board to the one provided by the game manager
+        setCurrentGameBoard(board);
 
         // if (isFirstMove()) {
         // return startMove(board);
@@ -198,8 +203,8 @@ public class BotII extends Bot {
                     if(strategy)
                         Collections.reverse(pieceMoves);
 
-                    if (!pieceMoves.isEmpty()) {
                         // Add the piece and its possible moves to the list
+                    if (!pieceMoves.isEmpty()) {
                         possibleMoves.add(new Pair<>(square, pieceMoves));
                     }
 
