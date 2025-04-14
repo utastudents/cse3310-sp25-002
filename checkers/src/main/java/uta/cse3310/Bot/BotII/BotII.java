@@ -256,7 +256,7 @@ public class BotII extends Bot {
         Square dest = this.currentGameBoard.getSquare(destRow, destCol);
 
         // For normal moves, the destination must be empty
-        if (!isCapture && dest.getColor() == null) {
+        if (!isCapture && !dest.hasPiece()) {
             return true;
         }
 
@@ -265,7 +265,7 @@ public class BotII extends Bot {
         if (isCapture) {
             // Ensure the destination square is empty and the intermediate square contains
             // an opponent's piece
-            if (dest.getColor() != null) {
+            if (dest.hasPiece()) {
                 return false;
             }
 
@@ -273,7 +273,7 @@ public class BotII extends Bot {
             int midCol = (start.getCol() + destCol) / 2;
             Square midSquare = this.currentGameBoard.getSquare(midRow, midCol);
 
-            return dest.getColor() == null && midSquare.getColor() != null && midSquare.getColor() != this.color;
+            return midSquare.hasPiece() && midSquare.getColor() != this.color;
         }
 
         return false;
