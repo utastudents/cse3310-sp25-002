@@ -143,14 +143,30 @@ public class BotI extends Bot {
         return validMoves;
     }
 
-    private void playNormalMove(LinkedList<Move> moves, Square piece, int toRow, int toCol, Board board) {
+    private void playNormalMove(LinkedList<Move> moves, Square square, int toRow, int toCol, Board board) {
         // Add logic here
+        if (toRow >= 0 && toRow < 8 && toCol >= 0 && toCol < 8) {
+            Square newPosition = board.getSquare(toRow, toCol);
+            if (!newPosition.hasPiece()) { // check and play normal move when the new position is empty
+                moves.add(new Move(square, newPosition));
+            }
+        }
 
     }
 
-    private void playCapture(LinkedList<Move> moves, Square piece, int toRow, int toCol, int midRow, int midCol,
+    private void playCapture(LinkedList<Move> moves, Square square, int toRow, int toCol, int midRow, int midCol,
             Board board) {
         // Add logic here
+        if (toRow >= 0 && toRow < 8 && toCol >= 0 && toCol < 8) {
+            Square newPosition = board.getSquare(toRow, toCol);
+            Square midPosition = board.getSquare(midRow, midCol);
+
+            // Now the capture can be done only when the new position is empty and the mid
+            // position has a opponent piece
+            if (!newPosition.hasPiece() && midPosition.hasPiece() && midPosition.getColor() != this.color) {
+                moves.add(new Move(square, newPosition));
+            }
+        }
     }
 
 }
