@@ -14,12 +14,12 @@ public class Validate
         {
             if (users == username || users == null)
             {
+                System.out.println("401 Invalid username");
                 return;
             }
             else
             {
-                System.out.println("Invalid username");
-                return;
+                System.out.println("201 Username Created");
             }
         }
     }
