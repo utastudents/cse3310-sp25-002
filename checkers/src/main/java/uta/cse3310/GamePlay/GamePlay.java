@@ -23,14 +23,14 @@ public class GamePlay
         // First check if the player is allowed to move the current piece
         while(counter < numMoves)
         {
-            if(canMovePiece(currentGameBoard, currentSquare, game))
+            /*if(canMovePiece(currentGameBoard, currentSquare, game))
             {
 
             }
             else
             {
                 break;
-            }
+            }*/
 
         }
         
