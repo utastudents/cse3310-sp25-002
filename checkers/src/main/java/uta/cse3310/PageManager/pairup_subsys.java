@@ -1,31 +1,41 @@
 package uta.cse3310.PageManager;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.Map;
+
+
 
 public class pairup_subsys {
 
-    public static class reply_m {
-        public String ActivePlayers;
-        public LocalDateTime timestamp;
+    private final PageManager pageManager = new PageManager();
+    private final NewAcctLogin newAcctLogin;
 
-        public reply_m(String activePlayers, LocalDateTime timestamp) {
-            this.ActivePlayers = activePlayers;
-            this.timestamp = timestamp;
-        }
+    public pairup_subsys(NewAcctLogin newAcctLogin)
+    {
+        this.newAcctLogin = newAcctLogin;
     }
 
-    public static class PlayerEntry {
-        public String ClientId;
-        public String UserName;
-        public boolean playAgainstBot;
-        public LocalDateTime timestamp;
 
-        public PlayerEntry(LocalDateTime timestamp, String ClientId, String UserName, boolean playAgainstBot) {
-            this.timestamp = timestamp;
-            this.ClientId = ClientId;
-            this.UserName = UserName;
-            this.playAgainstBot = playAgainstBot;
-        }
-    }
+    public void JoinAndLogin(String inputJSON, Map<String, String> joinData) 
+    {
+        // Account Log In data
+        String input = newAcctLogin.processUsernameInput(inputJSON);
 
-    
+        // JoinGameHandler data
+        JoinGameHandler joinHandler = new JoinGameHandler();
+        JoinGameHandler.Result Result = joinHandler.processJoinGame(joinData);
+
+        // timestamp
+        LocalDateTime now = LocalDateTime.now();
+        long timestamp = now.toInstant(ZoneOffset.UTC).toEpochMilli();
+
+        // Send to PageManager
+        pageManager.handleNewPlayer(
+                timestamp,
+                Result.clientID,
+                input,
+                Result.playAgainstBot,
+                0 
+        );
+
 }
