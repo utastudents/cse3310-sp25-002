@@ -24,6 +24,16 @@ public class BotII extends Bot {
     }
 
     /**
+     * Checks if this is BotII's first move by checking if it has made any moves yet.
+     * Assumes moves list is initially empty and gets populated later.
+     *
+     * @return true if no moves have been made yet; false otherwise.
+     */
+    private boolean isFirstMove() {
+        return this.moves == null || this.moves.getMoves().isEmpty();
+    }
+
+    /**
      * Implementation of requestMove method for BotII.
      * This method is called by the GameManager and BotII will return a move(s)
      * object to the GameManager.
