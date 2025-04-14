@@ -11,6 +11,7 @@ import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
 import uta.cse3310.GameManager.Player;
 
+
 //class rules checks if the move is legal
 public class rules
 {   
