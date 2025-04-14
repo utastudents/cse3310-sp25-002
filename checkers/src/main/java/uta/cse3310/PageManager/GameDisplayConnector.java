@@ -29,9 +29,13 @@ public class GameDisplayConnector {
             Move move = new Move(event.from[0], event.from[1], event.to[0], event.to[1]);
             gameManager.processMove(event.id, move);
 
-            reply.status.turn = -1; // TODO: Replace with actual turn logic
-            reply.status.msg = "Move processed.";
+            reply.status.type = "move_made_by_other_player_or_bot";
+            reply.status.game_id = event.gameId;
+            reply.status.player = event.playerName + " (ID: " + event.id + ")";
+            reply.status.from = List.of(event.from[0], event.from[1]);
+            reply.status.to = List.of(event.to[0], event.to[1]);
         } else {
+            reply.status.type = "error";
             reply.status.msg = "Invalid move data.";
         }
 
@@ -48,8 +52,8 @@ public class GameDisplayConnector {
         reply.recipients = new ArrayList<>();
 
         gameManager.removePlayer(event.id);
-        reply.status.msg = "Player resigned.";
-        reply.recipients.add(event.id); 
+        reply.status.type = "resign";
+        reply.status.player = event.playerName + " (ID: " + event.id + ")";
 
         return reply;
     }
@@ -62,8 +66,8 @@ public class GameDisplayConnector {
         reply.status = new game_status();
         reply.recipients = new ArrayList<>();
 
-        reply.status.msg = "Draw offer sent (not implemented yet)";
-        reply.recipients.add(event.id);
+        reply.status.type = "draw_offer";
+        reply.status.player = event.playerName + " (ID: " + event.id + ")";
 
         return reply;
     }

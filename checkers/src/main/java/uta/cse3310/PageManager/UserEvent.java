@@ -1,5 +1,7 @@
 package uta.cse3310.PageManager;
 
+import com.google.gson.Gson;
+
 public class UserEvent {
     public Integer id; // the user id that created the message
 
@@ -20,13 +22,17 @@ public class UserEvent {
     public int[] to;            // for move: target position
     public int[] square;        // for get_allowed_moves requests
 
-    String msg;     
+    public String msg;     
 
 
-    public static UserEvent fromJSON(String jsonStr){
-        // TODO: implement this method
-        // This method should parse the JSON string and create a UserEvent object
-        return null;
+    public static UserEvent fromJSON(String jsonStr) {
+        try {
+            Gson gson = new Gson();
+            return gson.fromJson(jsonStr, UserEvent.class);
+        } catch (Exception e) {
+            System.err.println("[ERROR] Failed to parse UserEvent JSON: " + e.getMessage());
+            return null;
+        }
     }
 
 }

@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
-
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
 
@@ -20,46 +18,6 @@ public class PageManager {
 
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // this will store the game players for each game session, key is the game id, value is a list of player ids
-
-   
-    // To Use this method globally to parse and convert message please look at the example
-     
-
-    public class JSONConverter {
-
-    private static final Gson gson = new Gson();
-
-    public static <T> T parseJson(String jsonString, Class<T> target) 
-    {
-        return gson.fromJson(jsonString, target);
-    }
-
-    /*
-    * 
-     * EXAMPLE USE
-     * 
-     * UserEvent u = JSONConverter.parseJson(message, UserEvent.class);
-     * PlayerEntry p = JSONConverter.parseJson(message2, PlayerEntry.class);
-     * 
-     */
-
-
-    public static String convertObjectToJson(Object obj) 
-    {
-        return gson.toJson(obj);
-    }
-
-        /*
-        *
-        *EXAMPLE USE 
-        *
-        *String json = JSONConverter.convertObjectToJson(reply);
-        *System.out.println(json);
-        *
-        */
-        
-
-    }
 
 
      // ------------------------------------------------------------------------
