@@ -18,14 +18,15 @@ public class GameTermination {
         // Mark the game as over
         gameOver = true;
 
-        // Check if there's a winner or a draw
-       if (winningPlayer != null) {
-            finalWinner = winningPlayer;
-            System.out.println("Game Over! " + winningPlayer + " has won!");
-        } else {
-            finalWinner = "Draw";
-            System.out.println("Game Over! It's a draw!");
-        }
+    // NOTE: this was causing compile error 
+    //     // Check if there's a winner or a draw
+    //    if (winningPlayer != null) {
+    //         finalWinner = winningPlayer;
+    //         System.out.println("Game Over! " + winningPlayer + " has won!");
+    //     } else {
+    //         finalWinner = "Draw";
+    //         System.out.println("Game Over! It's a draw!");
+    //     }
     }
     // This method will save the results to the database
     public void saveResultsToDatabase(Map<String, Integer> playerScores) {
