@@ -9,8 +9,6 @@ import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
-import uta.cse3310.GameManager.Player;
-
 
 //class rules checks if the move is legal
 public class rules
@@ -49,23 +47,29 @@ public class rules
 
     //checks if the square being moved to is occupied by a piece
     static protected boolean occupied(Moves moves, Board board) {
+        // Return false if there are no moves provided
         if (moves == null || moves.size() == 0) {
             return false;
         }
     
+        // Get the destination square of the most recent move
         int lastIdx = moves.size() - 1;
         Square dest = moves.getDest(lastIdx);
     
         int row = dest.getRow();
         int col = dest.getCol();
     
+        // Retrieve the square from the board at the given coordinates
         Square boardSquare = board.getSquare(row, col);
     
+        // If the square doesn't exist, we can't move there
         if (boardSquare == null) {
             return false;
         }
     
-        return boardSquare.hasPiece(); // returns true only if a piece exists on that square
+        // If the square has a piece on it, we return false (can't move there)
+        // So we return the opposite: true if it's empty, false if occupied
+        return !boardSquare.hasPiece();  // Now returns true only if square is EMPTY
     }
 
     //checks how many spots moved up to compared to number of pieces
@@ -125,64 +129,25 @@ public class rules
         return true;
     }
 
-    //will call occupied to check if a square is occupied by another piece, then check
+    //will call occupied to check if a square is occupied by another piece, then check 
     //if the user can check that piece
-    static protected boolean canCapture(LinkedList<Moves> moves, Square square, int playerId, Player player1, Player player2, boolean playerColor)
+    static protected boolean canCapture(LinkedList<Moves> moves, Board board)
     {
+     
+
+        //call occupied, check if the square is occupied
         //if the space is occupied and the following square is free you can capture that piece and move to the next free space
-        int currentPlayer;
+        //return a map showing were the player can move
 
-        if(player1.getPlayerId() == playerId) //checks to see if player 1 is currently playing
-        {
-            currentPlayer = playerId;
-            playerColor = player1.getColor(); //see what color is assigned to the current player
-        }
-        else if(player2.getPlayerId() == playerId) //checks to see if player 2 is currently playing
-        {
-            currentPlayer = playerId;
-            playerColor = player2.getColor(); //see what color is assigned to the current player
-        }
-        //false is the square is unoccupied or the square is occupied by the one of the players own pieces
-        if(!square.hasPiece() || (square.hasPiece() && square.getColor() == playerColor))
-        {
-            return false;
-        }
-        return true;//default
+        return false;//default
     }
-
-
 
     //Check to see if current player can move selected piece
     //Does the color of the player match the color of the piece
-    static protected boolean canMovePiece(int row, int col, Board board, int playerId, Player player1, Player player2, boolean CurrentPlayerColor)
+    static protected boolean canMovePiece(Game game)
     {
-        Square boardSquare = board.getSquare(row, col); // is there something on the current square
-        boolean boardColor = boardSquare.getColor(); //finds the color of the piece trying to be moved
-
-        // checks to see if there is no piece on the current square or if the player's id doesn't match up
-        if(!boardSquare.hasPiece()|| player1.getPlayerId() != playerId|| player2.getPlayerId()!= playerId)
-        {
-            return false;
-        }
-
-        //is it currently player 1's turn or player 2's turn
-        if(player1.getPlayerId() == playerId)
-        {
-            CurrentPlayerColor = player1.getColor() ;//player 1 can only move with its associated color
-        }
-        else if(player2.getPlayerId() == playerId)
-        {
-            CurrentPlayerColor = player2.getColor() ;//player 2 can only move with its associated color
-        }
-
-        if(boardColor != CurrentPlayerColor) //if the piece trying to be moved doesn't belong to the player trying to move it
-        {
-            return false;
-        }
-
-        return true;
+        return true; //Default value
     }
-
 
     public static ArrayList<Square> getAllPieces(Board board)
     {
@@ -203,40 +168,16 @@ public class rules
         return pieces;
     }
 
-     // find out if this needs to report a piece as 'being captured'
-    static protected boolean removeCaptured(LinkedList<Moves> moves, Board board){
-    boolean capture = false;
-    for(Moves order : moves)
+    // removes captured pieces from the board 
+    // find out if this needs to report a piece as 'being captured'
+    static protected boolean removeCaptured(LinkedList<Moves> moves, Board board)
     {
-        for (int i = 0; i < order.size(); i++) {
-            Square starting = order.getStart(i);
-            Square ending = order.getDest(i);
-
-            int RowDiff = Math.abs(starting.getRow() - ending.getRow());
-            int ColDiff = Math.abs(starting.getCol() - ending.getCol());
-
-            if (RowDiff == 2 && ColDiff == 2)
-            {
-                int RowCap = (starting.getRow() + ending.getRow()) / 2 ;
-                int ColCap = (starting.getCol() + ending.getCol()) / 2 ;
-
-                Square SquareCap = board.getSquare(RowCap, ColCap);
-
-                if(SquareCap.hasPiece())
-                {
-                    SquareCap.remove();
-                    capture = true;
-                }
-            }
-        }
+        return false;
     }
-    return capture;
-}
-
 
     // recursive function for moveList
     // finds all jump chains for a given king piece
-
+    // this may not work as intended depending on the behavior reguarding the moves obj. 
     static protected Moves kingJump(Board board, Moves moves, int rowSkip, int colSkip, Square square)
     {
         int row = square.getRow();
