@@ -14,7 +14,7 @@ import java.util.*;
     find a match, or if they quit matchmaking.
 */
 public class Matchmaking {
-    private LinkedHashMap<String, PlayerInMatchmaking> players;
+    private LinkedHashMap<Integer, PlayerInMatchmaking> players;
     private int gameId;
     // gamePairController gameManagerCommunication;
 
@@ -32,18 +32,18 @@ public class Matchmaking {
         // gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
     }
 
-    public void addPlayer(String PlayerID, PlayerInMatchmaking newPlayer) {
+    public void addPlayer(int PlayerID, PlayerInMatchmaking newPlayer) {
         players.put(PlayerID, newPlayer);
         matching();
     }
 
-    public void removePlayer(String playerId) {
+    public void removePlayer(int playerId) {
         players.remove(playerId);
         matching();
     }
 
     public void matching() {
-        List<Map.Entry<String, PlayerInMatchmaking>> entries = new ArrayList<>(players.entrySet());
+        List<Map.Entry<Integer, PlayerInMatchmaking>> entries = new ArrayList<>(players.entrySet());
         for (int i = 0; i < entries.size(); i++) {
             for (int j = i + 1; j < entries.size(); j++) {
                 PlayerInMatchmaking p1 = entries.get(i).getValue();

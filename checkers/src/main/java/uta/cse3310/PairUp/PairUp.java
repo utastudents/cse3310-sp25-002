@@ -23,7 +23,7 @@ public class PairUp {
 
 
     // Add a player to the Map
-    public void AddPlayer(long timeOfEntry, String playerID, String playerName, boolean playAgainstBot, int wins)
+    public void AddPlayer(long timeOfEntry, int playerID, String playerName, boolean playAgainstBot, int wins)
     {
         // Create a new instance of a player from the player in match making class
         PlayerInMatchmaking player = new PlayerInMatchmaking(timeOfEntry, playerID, playerName, playAgainstBot, wins);
@@ -34,7 +34,7 @@ public class PairUp {
     }
 
     
-    public void removePlayer(String PlayerID)
+    public void removePlayer(int PlayerID)
     {
         // Request a removal from Matchmaking
         Mmaker.removePlayer(PlayerID);
