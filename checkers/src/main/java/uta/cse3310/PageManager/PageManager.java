@@ -5,10 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//might need for NewAcctLogin
-//import java.sql.Connection;
-//import java.sql.DriverManager;
-
 import com.google.gson.Gson;
 
 import uta.cse3310.DB.DB;
@@ -23,17 +19,7 @@ public class PageManager {
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // this will store the game players for each game session, key is the game id, value is a list of player ids
 
-    // ------------------------------------------------------------------------
-    // PAIR UP SUBSYSTEM
-    // ------------------------------------------------------------------------
-
-    /**
-     * Handles initial user requests for matchmaking.
-     *
-     * @param json_UI JSON string from frontend containing user info
-     * @return JSON response with match info or error
-     */
-
+   
     // To Use this method globally to parse and convert message please look at the example
      
 
@@ -73,27 +59,33 @@ public class PageManager {
 
     }
 
-    
-    
-    
-    public String handleUserReq(String json_UI) {
 
-        //TO DO: PairUp interface should create a method to link data
-        /* 
-        try {
-         
-            List<pairup_subsys.PlayerEntry> PlayersWaiting = pairup_subsys.JSONconverter.parsePlayersFromJson(json_UI);
-            List<pairup_subsys.reply_m> PlayersActive = pu.pairPlayers(PlayersWaiting);
+     // ------------------------------------------------------------------------
+    // PAIR UP SUBSYSTEM
+    // ------------------------------------------------------------------------
 
-            return pairup_subsys.JSONconverter.convertRepliesToJson(PlayersActive);
+    /**
+     * Handles initial user requests for matchmaking.
+     *
+     * @param  string from frontend containing user info
+     * @return JSON response with match info or error
+     */
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"error\": \"Failed to process player pairing.\"}";
-        }
-        */
-       return "{\"status\": \"PairUp not implemented yet.\"}";
+    
+    private final PairUp pairUp = new PairUp();
+
+    public void handleNewPlayer(long timestamp, String ClientId, String UserName, boolean playAgainstBot, int wins) 
+    {
+        pairUp.AddPlayer(timestamp, ClientId, UserName, playAgainstBot, wins);
     }
+    
+    public void handlePlayerRemoval(String ClientId) 
+    {
+        pairUp.removePlayer(ClientId);
+    }
+    
+    
+   
 
     // ------------------------------------------------------------------------
     // DEMO TEST METHOD (can be removed/replaced later)
