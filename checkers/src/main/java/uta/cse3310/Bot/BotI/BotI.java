@@ -22,17 +22,17 @@ public class BotI extends Bot {
 
         // int myCount = countallPieces(board, this.color);
         // int oppCount = countallPieces(board, !this.color);
+        // boolean isAggressive = (myCount < oppCount);
+
+        // Move selectedMove;
+        // if (isAgressive){
+        //     selectedMove = aggressiveStrategyImplementation(possibleMoves, board);
+        // }
+        // else {
+        //     selectedMove = passiveStrategyImplementation(possibleMoves, board);
+        // }
 
 
-        Move selectedMove;
-        if (isAgressive){
-            selectedMove = aggressiveStrategyImplementation(possibleMoves, board);
-        }
-        else {
-            selectedMove = passiveStrategyImplementation(possibleMoves, board);
-        }
-
-        
 
 
 
