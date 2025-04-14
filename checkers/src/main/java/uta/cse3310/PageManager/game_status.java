@@ -13,7 +13,7 @@ public class game_status {
     public Integer loser = null;
     public String msg;
     public String type;
-    public String game_id;
+    public int game_id;
     public String player;
     public List<Integer> from;
     public List<Integer> to;

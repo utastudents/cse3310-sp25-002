@@ -19,7 +19,7 @@ public class UserEvent {
 
     // Event info from frontend
     public String type;        // e.g., move, resign, draw, draw_accept, login
-    public String gameId;      // Game session ID
+    public int gameId;      // Game session ID
     public int[] from;         // Move starting position
     public int[] to;           // Move target position
     public int[] square;       // For get_allowed_moves
