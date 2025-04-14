@@ -7,6 +7,7 @@ import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
+import uta.cse3310.GamePlay.rules;
 
 public class GamePlay
 {
@@ -19,18 +20,19 @@ public class GamePlay
         Square currentSquare = currentMove.getStart();
         int numMoves = moves.size();
         int counter = 0;
+        rules rule = new rules();
 
         // First check if the player is allowed to move the current piece
         while(counter < numMoves)
         {
-            /*if(canMovePiece(currentGameBoard, currentSquare, game))
+            if(rule.canMovePiece(currentGameBoard, currentSquare, game))
             {
 
             }
             else
             {
                 break;
-            }*/
+            }
 
         }
         
