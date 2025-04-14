@@ -144,10 +144,35 @@ public class rules
 
     //Check to see if current player can move selected piece
     //Does the color of the player match the color of the piece
-    static protected boolean canMovePiece(Game game)
+    static protected boolean canMovePiece(Board board, Square square, Game game)
     {
-        return true; //Default value
-    }
+        // is there something on the current square
+        boolean boardColor = square.getColor(); //finds the color of the piece trying to be moved
+
+        Player currentPlayer = game.getCurrentTurn(); //who's turn is it
+        boolean currentPlayerColor = currentPlayer.getColor(); //what color is associated with that player
+
+        // checks to see if there is no piece on the current square or if the player's assigned color doesn't the peice they're trying to move
+        if(!square.hasPiece()|| boardColor != currentPlayerColor)
+        {
+            return false;
+        }
+
+        Moves canJump = new Moves();
+        if(square.isKing()) //checks to see if there is anyway for the player to jump legally
+        {
+            canJump = rules.kingJump(board, new Moves(), -1, -1, square);
+        }
+        else
+        {
+            canJump = rules.pieceJump(board, new Moves(), square, currentPlayerColor ? 1: -1);
+        }
+        if(canJump.size() <= 0)// return false if the player can't jump anything even if its a king
+        {
+            return false;
+        }
+        return true;
+        }
 
     public static ArrayList<Square> getAllPieces(Board board)
     {
