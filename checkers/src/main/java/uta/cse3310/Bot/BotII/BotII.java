@@ -90,7 +90,15 @@ public class BotII extends Bot {
         // }
 
         // Future logic can go here for non-starting moves
-        return null;
+
+        LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = determineMoves();
+
+        boolean strategy = PlayStyle();
+
+        // Implement the bot's strategy based on the possible moves
+        implementBotStrategy(strategy, possibleMoves);
+
+        return sendMove(); // Send the moves to the game manager
     }
 
     /**
@@ -321,14 +329,14 @@ public class BotII extends Bot {
         return this.moves;
     }
 
-    private boolean PlayStyle(Board board) {
+    private boolean PlayStyle() {
         int bot_piece_cnt = 0;
         int op_piece_cnt = 0;
 
         // Iterate over the 8x8 board.
         for (int row = 0; row <= 7; row++) {
             for (int col = 0; col <= 7; col++) {
-                Square square = board.getSquare(row, col);
+                Square square = this.currentGameBoard.getSquare(row, col);
                 if (square.hasPiece()) { // Only count if there is a piece on the square.
                     if (square.getColor() == this.color) {
                         bot_piece_cnt++;
