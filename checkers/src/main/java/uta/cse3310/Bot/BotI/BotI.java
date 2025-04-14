@@ -52,13 +52,7 @@ public class BotI extends Bot {
 
         return null;
     }
-
-    private LinkedList<Moves> movesLogic() {
-        // This method should implement the logic to determine the moves.
-        // based on the current state of the game board.
-        return null; // Placeholder for now.
-    }
-
+    
     /* Sending Moves from Bot 1 to the GameManager */
     @Override
     protected Moves sendMove() {
