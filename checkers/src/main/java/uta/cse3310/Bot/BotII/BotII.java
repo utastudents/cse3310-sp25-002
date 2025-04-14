@@ -95,7 +95,16 @@ public class BotII extends Bot {
             }
         }
     
-        return firstMoveSet;    
+        // As more than one moves are found, choose one randomly
+        if (!firstMoveSet.getMoves().isEmpty()) {
+            int pick = (int)(Math.random() * firstMoveSet.getMoves().size());
+            Moves result = new Moves();
+            result.addMove(firstMoveSet.getMoves().get(pick));
+            return result;
+        }
+
+        return null; // No valid move found
+   
     }
     
 
@@ -366,6 +375,7 @@ class Pair<K, V> {
         return value;
     }
 }
+
 /**
  * Determines whether the bot should use an aggressive strategy by counting the pieces on the board.
  * For each square that has a piece, it checks the piece’s color (using Square.getColor()). If the piece belongs to
