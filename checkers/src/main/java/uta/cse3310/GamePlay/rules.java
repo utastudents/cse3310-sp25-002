@@ -181,6 +181,7 @@ public class rules
 
     // removes captured pieces from the board 
     // find out if this needs to report a piece as 'being captured'
+/*
     static protected boolean removeCaptured(Moves moves, Board board)
     {
     boolean capture = false;
@@ -210,7 +211,9 @@ public class rules
         }
     }
     return capture;
-}
+
+    }
+*/
 
     // recursive function for moveList
     // finds all jump chains for a given king piece
