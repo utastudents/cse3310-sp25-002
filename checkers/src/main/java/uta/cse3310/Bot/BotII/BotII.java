@@ -60,8 +60,25 @@ public class BotII extends Bot {
     
         int frontRow = this.color ? 2 : 5; // Black uses row 2, White uses row 5
     
-        // (Here we will loop over frontRow and generate valid moves)
-        return null; // Temporary return
+        for (int col = 0; col < 8; col++) {
+            Square square = board.getSquare(frontRow, col);
+            if (square.hasPiece() && square.getColor() == this.color) {
+                int dir = this.color ? 1 : -1; // Black moves down (+1), white up (-1)
+                int newRow = frontRow + dir;
+    
+                // Try forward-left
+                if (col - 1 >= 0 && board.getSquare(newRow, col - 1).getColor() == null) {
+                    firstMoveSet.addMove(new Move(square, board.getSquare(newRow, col - 1)));
+                }
+    
+                // Try forward-right
+                if (col + 1 < 8 && board.getSquare(newRow, col + 1).getColor() == null) {
+                    firstMoveSet.addMove(new Move(square, board.getSquare(newRow, col + 1)));
+                }
+            }
+        }
+    
+        return firstMoveSet;    
     }
     
 
