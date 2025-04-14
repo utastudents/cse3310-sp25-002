@@ -99,7 +99,7 @@ public class BotII extends Bot {
         if (!firstMoveSet.getMoves().isEmpty()) {
             int pick = (int)(Math.random() * firstMoveSet.getMoves().size());
             Moves result = new Moves();
-            result.addMove(firstMoveSet.getMoves().get(pick));
+            result.addNext(firstMoveSet.getMoves().get(pick));
             return result;
         }
 
@@ -109,7 +109,7 @@ public class BotII extends Bot {
     
 
     /**
-     * This function will be called to determine the all possible moves per peice
+     * This function will be called to determine the all possible moves per piece
      * for BotII. Each moves for each piece will be assigned an elo. It will use the
      * gameboard given by the game manager to determine the possible moves through
      * the {@link BotII#requestMove()} function.
