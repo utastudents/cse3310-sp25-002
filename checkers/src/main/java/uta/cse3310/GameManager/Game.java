@@ -19,15 +19,33 @@ public class Game
 
     /* Game constructor which will initialize the board, will create two new bots which return their assigned color
      * two new players will be created with their designated ID and color 
-     * each game will have a unique id 
+     * each game will have a unique id we have conditions to see if the player will be a bot or not, to initialize it
      */
     public Game(int player1id, int player2id, boolean player1color, boolean player2color, int gameNumber){
         board = new Board();
         board.initializeBoard();
-        bot1 = new BotI(player1color);
-        bot2 = new BotII(player2color);
-        player1 = new Player(player1id, player1color);
-        player2 = new Player(player2id, player2color);
+        if(player1id == 0){
+            bot1 = new BotI(player1color);
+            player1 = new Player(player1id, player1color);
+        }
+        else if(player1id == 1){
+            bot2 = new BotII(player1color);
+            player1 = new Player(player1id, player1color);
+        }
+        else{
+            player1 = new Player(player1id, player1color);
+        }
+        if(player2id == 0){
+            bot1 = new BotI(player2color);
+            player2 = new Player(player2id, player2color);
+        }
+        else if(player2id == 1){
+            bot2 = new BotII(player2color);
+            player2 = new Player(player2id, player2color);
+        }
+        else{
+            player2 = new Player(player2id, player2color);
+        }
         this.gameNumber = gameNumber;
     }
     /* this method returns the winner of the match, if there's no winner it will return null
@@ -77,6 +95,14 @@ public class Game
     public void GameDeclareDraw(){
         draw = true;
         gameIsActive = false;
+    }
+    //method in case others want to know if the player1 is a bot or not
+    public boolean isPlayer1Bot(){
+        return (player1.getPlayerId() == 0 || player1.getPlayerId() == 1);
+    }
+    //method in case others want to know if the player2 is a bot or not
+    public boolean isPlayer2Bot(){
+        return (player2.getPlayerId() == 0 || player2.getPlayerId() == 1);
     }
     //return player scores
     public int getPlayer1Score(){return player1.getScore();}

@@ -5,7 +5,6 @@ public class Player {
      private int score;
      private int pieceCount;
      private boolean color;
-     private String name;
 
      public Player(int playerId, boolean color){
           this.playerId = playerId;
