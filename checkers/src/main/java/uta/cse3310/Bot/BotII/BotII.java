@@ -306,6 +306,27 @@ public class BotII extends Bot {
         return this.moves;
     }
 
+
+    private boolean PlayStyle(Board board) {
+        int bot_piece_cnt = 0;
+        int op_piece_cnt = 0;
+
+        // Iterate over the 8x8 board.
+        for (int row = 0; row <= 7; row++) {
+            for (int col = 0; col <= 7; col++) {
+                Square square = board.getSquare(row, col);
+                if (square.hasPiece()) {  // Only count if there is a piece on the square.
+                    if (square.getColor() == this.color) {
+                        bot_piece_cnt++;
+                    } else {
+                        op_piece_cnt++;
+                    }
+                }
+            }
+        }
+        // Return true if your bot has fewer pieces than its opponent which would result in aggresive gameplay style by Bot
+        return bot_piece_cnt > op_piece_cnt;
+    } 
 }
 
 class MoveRating {
@@ -356,24 +377,3 @@ class Pair<K, V> {
  * @return true if the bot is at a numerical disadvantage (suggesting an aggressive
  *  strategy), or false if not (suggesting a more passive strategy).
  */
-/*Have to make some changes and assure that the proper functioning
-private boolean PlayStyle(Board board) {
-    int bot_piece_cnt = 0;
-    int op_piece_cnt = 0;
-
-    // Iterate over the 8x8 board.
-    for (int row = 0; row <= 7; row++) {
-        for (int col = 0; col <= 7; col++) {
-            Square square = board.getSquare(row, col);
-            if (square.hasPiece()) {  // Only count if there is a piece on the square.
-                if (square.getColor() == this.color) {
-                    bot_piece_cnt++;
-                } else {
-                    op_piece_cnt++;
-                }
-            }
-        }
-    }
-    // Return true if your bot has fewer pieces than its opponent which would result in aggresive gameplay style by Bot
-    return bot_piece_cnt < op_piece_cnt;
-} */
