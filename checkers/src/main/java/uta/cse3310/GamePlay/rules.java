@@ -31,21 +31,6 @@ public class rules
         return true;
     }
 
-    //checks if the piece moves diagonally up-right and up-left
-    //for king: moves diagonally down-right and down-left in addition to above
-    static protected boolean isDiagonal(LinkedList<Moves> moves, Board board)
-    {
-        /*if(isKing = true)
-        {
-            allow the king to move forward/backwards along the diagonal
-        }
-        else{
-            the piece should not be allowed to move down-left or down-right
-        }*/
-        return false; //Default
-    }
-
-
     //checks if the square being moved to is occupied by a piece
     static protected boolean occupied(Moves moves, Board board) {
         // Return false if there are no moves provided

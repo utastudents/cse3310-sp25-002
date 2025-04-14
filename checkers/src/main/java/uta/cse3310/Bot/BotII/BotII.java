@@ -23,6 +23,47 @@ public class BotII extends Bot {
         super(color); // Call the constructor of the parent class (Bot)
     }
 
+    /**
+ * Handles the first move logic for BotII.
+ * It checks all pieces in the front row and tries to move them diagonally if possible.
+ *
+ * @param board the current game board
+ * @return a single randomly chosen move if valid ones exist, null otherwise
+ */
+private Moves startMove(Board board) {
+    Moves firstMoveSet = new Moves(); // Collect valid first moves
+
+    int frontRow = this.color ? 2 : 5; // Black uses row 2, White uses row 5
+
+    for (int col = 0; col < 8; col++) {
+        Square square = board.getSquare(frontRow, col);
+        if (square.hasPiece() && square.getColor() == this.color) {
+            int dir = this.color ? 1 : -1; // Black moves down (+1), white up (-1)
+            int newRow = frontRow + dir;
+
+            // Try forward-left
+            if (col - 1 >= 0 && board.getSquare(newRow, col - 1).getColor() == null) {
+                firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col - 1)));
+            }
+
+            // Try forward-right
+            if (col + 1 < 8 && board.getSquare(newRow, col + 1).getColor() == null) {
+                firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col + 1)));
+            }
+        }
+    }
+
+    // Pick one random move from valid ones
+    if (!firstMoveSet.getMoves().isEmpty()) {
+        int pick = (int)(Math.random() * firstMoveSet.getMoves().size());
+        Moves result = new Moves();
+        result.addNext(firstMoveSet.getMoves().get(pick));
+        return result;
+    }
+
+    return null; // No valid move found
+}
+
 
     /**
      * Implementation of requestMove method for BotII.
@@ -43,40 +84,15 @@ public class BotII extends Bot {
     @Override
     public Moves requestMove(Board board) {
         this.currentGameBoard = board;
-    
-        Moves firstMoveSet = new Moves(); // Collect valid first moves
-    
-        int frontRow = this.color ? 2 : 5; // Black uses row 2, White uses row 5
-    
-        for (int col = 0; col < 8; col++) {
-            Square square = board.getSquare(frontRow, col);
-            if (square.hasPiece() && square.getColor() == this.color) {
-                int dir = this.color ? 1 : -1; // Black moves down (+1), white up (-1)
-                int newRow = frontRow + dir;
-    
-                // Try forward-left
-                if (col - 1 >= 0 && board.getSquare(newRow, col - 1).getColor() == null) {
-                    firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col - 1)));
-                }
-    
-                // Try forward-right
-                if (col + 1 < 8 && board.getSquare(newRow, col + 1).getColor() == null) {
-                    firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col + 1)));
-                }
-            }
-        }
-    
-        // As more than one moves are found, choose one randomly
-        if (!firstMoveSet.getMoves().isEmpty()) {
-            int pick = (int)(Math.random() * firstMoveSet.getMoves().size());
-            Moves result = new Moves();
-            result.addNext(firstMoveSet.getMoves().get(pick));
-            return result;
+
+        if (isFirstMove()) {
+            return startMove(board);
         }
 
-        return null; // No valid move found
-   
+        // Future logic can go here for non-starting moves
+        return null;
     }
+
     
 
     /**
