@@ -90,9 +90,9 @@ public class BotI extends Bot {
     private void implementStrategy(Board board, boolean isAggresive, LinkedList<Move> possibleMoves) {
         // change void to Moves
         if (isAggresive) {
-            // aggressive strategy
+            // aggressiveStrategyImplementation(LinkedList<Move> possibleMoves);
         } else {
-            // passiveStrategyImplementation(possibleMoves)
+            // passiveStrategyImplementation(possibleMoves);
         }
 
     }
