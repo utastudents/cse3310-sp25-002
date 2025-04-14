@@ -7,6 +7,7 @@ import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
 
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public class BotII extends Bot {
@@ -190,7 +191,9 @@ public class BotII extends Bot {
                             });
                         }
                     }
-
+                    // Sort the pieceMoves based on elo rating in descending order
+                    pieceMoves.sort(Comparator.comparingInt(MoveRating::getEloRating).reversed());
+                    
                     if (!pieceMoves.isEmpty()) {
                         // Add the piece and its possible moves to the list
                         possibleMoves.add(new Pair<>(square, pieceMoves));
@@ -312,7 +315,6 @@ public class BotII extends Bot {
 
         //after set isMoves , add move to Move obj
 
-        
 
         //Move m = possibleMoves.getFirst().getValue().getMove()
         //this.Move.addNext(m) 
