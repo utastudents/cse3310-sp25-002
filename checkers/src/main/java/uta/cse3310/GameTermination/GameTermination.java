@@ -45,12 +45,6 @@ public class GameTermination {
         return "results";
     }
 
-    // New method to handle game restart requests
-    public void gameRestartReq() {
-       gameOver = false;
-        finalWinner = null;
-        System.out.println("Game restart requested. Game state has been reset.");
-    }
     // Returns the winner or draw
     public String getWinner() {
         return finalWinner;
