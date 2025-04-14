@@ -1,47 +1,103 @@
 package uta.cse3310.PageManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import uta.cse3310.PageManager.Match_PairUP;
-import uta.cse3310.PageManager.JSONconverter_PairUP;
+import com.google.gson.Gson;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
-import uta.cse3310.PageManager.UserEvent;
-import uta.cse3310.PageManager.UserEventReply;
+
 
 public class PageManager {
     DB db;
     PairUp pu;
-    Integer turn = 0; // just here for a demo. note it is a global, effectively and
-                      // is not unique per client (or game)
+    Integer turn = 0; // TODO: need to call this from GameManager
 
 
-    // CODE FOR PAIR UP subsystem
-    public String handleUserReq(String json_UI) {
-        /*
-        try {
-         
-            List<PlayerEntry_PairUP> PlayersWaiting = JSONconverter_PairUP.parsePlayersFromJson(json_UI);
-            List<Match_PairUP> PlayersActive = pu.pairPlayers(PlayersWaiting);
+    Map<String, List<Integer>> gamePlayers = new HashMap<>(); // this will store the game players for each game session, key is the game id, value is a list of player ids
 
-            return JSONconverter_PairUP.convertMatchesToJson(PlayersActive);
+   
+    // To Use this method globally to parse and convert message please look at the example
+     
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "{\"error\": \"Failed to process player pairing.\"}";
-        }
-        */
-       return "{\"status\": \"PairUp not implemented yet.\"}";
+    public class JSONConverter {
+
+    private static final Gson gson = new Gson();
+
+    public static <T> T parseJson(String jsonString, Class<T> target) 
+    {
+        return gson.fromJson(jsonString, target);
     }
 
-    // CODE FOR PAIR UP SUB system
+    /*
+    * 
+     * EXAMPLE USE
+     * 
+     * UserEvent u = JSONConverter.parseJson(message, UserEvent.class);
+     * PlayerEntry p = JSONConverter.parseJson(message2, PlayerEntry.class);
+     * 
+     */
 
 
+    public static String convertObjectToJson(Object obj) 
+    {
+        return gson.toJson(obj);
+    }
+
+        /*
+        *
+        *EXAMPLE USE 
+        *
+        *String json = JSONConverter.convertObjectToJson(reply);
+        *System.out.println(json);
+        *
+        */
+        
+
+    }
+
+
+     // ------------------------------------------------------------------------
+    // PAIR UP SUBSYSTEM
+    // ------------------------------------------------------------------------
+
+    /**
+     * Handles initial user requests for matchmaking.
+     *
+     * @param  string from frontend containing user info
+     * @return JSON response with match info or error
+     */
 
     
+    private final PairUp pairUp = new PairUp();
 
+    public void handleNewPlayer(long timestamp, String ClientId, String UserName, boolean playAgainstBot, int wins) 
+    {
+        pairUp.AddPlayer(timestamp, ClientId, UserName, playAgainstBot, wins);
+    }
+    
+    public void handlePlayerRemoval(String ClientId) 
+    {
+        pairUp.removePlayer(ClientId);
+    }
+    
+    
+   
+
+    // ------------------------------------------------------------------------
+    // DEMO TEST METHOD (can be removed/replaced later)
+    // ------------------------------------------------------------------------
+    // TODO : add switch statement for controlling types of events
+    /**
+     * Placeholder method for testing input/output with the frontend.
+     * Simulates switching turns on each call.
+     *
+     * @param U The user event received
+     * @return A test reply with toggled turn
+     */
     public UserEventReply ProcessInput(UserEvent U) {
         UserEventReply ret = new UserEventReply();
         ret.status = new game_status();
@@ -67,7 +123,7 @@ public class PageManager {
     public PageManager() {
         db = new DB();
         // pass over a pointer to the single database object in this system
-        pu = new PairUp(db);
+        pu = new PairUp();
     }
 
 }

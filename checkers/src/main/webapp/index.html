@@ -11,23 +11,94 @@
         </style>
     </head>
     <body>
-    <div id="new_account">
-    new account
+    <div id="new_account" class="hidden"
+    style =
+        "position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255,255,255,0.9);
+        z-index: 100;">
+    New Account/Login 
+        <div id="login_container" 
+        style="width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+        outline: none;
+        transition: border-color 0.3s ease;">
+          <h2>Login</h2>
+          <div class="form-group">
+            <input type="text" placeholder="Enter your Username" id="username"  
+            style =
+            "width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s ease;">
+          </div>
+          <button onclick="sendUsername()" style="
+          padding: 12px 24px;
+          font-size: 16px;
+          background-color: #333;
+          color: #fff;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;">Join Game</button>
+        </div>
+
+        <script>
+            function sendUsername()
+            {
+                const username = document.getElementById("username").value.trim();
+                const errorDiv = document.getElementById("username_error");
+            if(!username)
+                {
+                    errorDiv.innerText = "Please enter a username."
+                    errorDiv.style.display = "block"
+                    return;
+                }
+            }
+            const userData = 
+            {
+                type: "join",
+                username: username
+            }
+            // Sending data through websocket
+            if(connection === WebSocket.OPEN)
+            {
+                connection.send(JSON.stringify(userData));
+            }
+            else
+            {
+                errorDiv.innerText = "Connection to server not available.";
+                errorDiv.style.display = "block";
+            }
+
+        </script>
     </div>
     <div id="join_game">
+
     join game
     </div>
     <div id="game_display">
         game display
         <div style="width: 336px; max-width:auto; margin: 10px auto;" class="hidden" id="game_display_container">
             <div style="text-align: center; font-size: 16px; margin-top: 10px; font-weight: bold; color: #333;">
-                <!-- TODO: New Account / Login Team responsible for displatying the current player. This information will be received via websockets -->
                 <p id="current-player">Current Player: Player 1</p>
             </div>
             <br/>
             <div class="game" style="display: inline-block; border: 4px solid #333; background: #333; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.3); width: 328px; height: 328px; padding: 0; box-sizing: content-box;"></div>
             <div style="margin-top: 15px; text-align: center;">
-                <!-- TODO: Page Manager Team responsible to handling the sequencing between pages. The button press events will be sent to java via websockets -->
                 <button id="resign_buttom" class="button" style="background-color: #ff4f4f; color: white; padding: 8px 16px; font-size: 14px; border: none; cursor: pointer; margin: 5px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: all 0.2s ease;">Resign</button>
                 <button id="offer_draw_button" class="button" style="background-color: #ffcb45; color: #333; padding: 8px 16px; font-size: 14px; border: none; cursor: pointer; margin: 5px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: all 0.2s ease;">Offer Draw</button>
             </div>
@@ -37,13 +108,16 @@
     summary
     </div>
     <div id="stuff">
-     <input type="button" value="Send Something" onclick="msg()">
-      <label for="tbox">Received</label>
-      <textarea id="tbox" name="tbox" rows="4" cols="50">
-     </textarea>
+        <input type="button" value="Send Something" onclick="msg()">
+        <label for="tbox">Received</label>
+        <textarea id="tbox" name="tbox" rows="4" cols="50">
+        </textarea>
     </div>
-    <!-- This javascript code contains logic for the game display. It is currently incomplete. -->
-    <script src="js/game_display_checkers.js" defer></script>
+
+    <!-- Note from gamedisplay: Our entire component mostly uses javascript to handle the game display. The only thing we use html for is to create the divs that will be used to display the game. The rest of the functionality is handled by javascript. -->
+    <!-- WARNING: Do not remove this javascript file!! This javascript code contains logic for the game display. Imports the CheckersBoard class which contains methods to create and add functionality to the checkers board. -->
+    <script src="js/game_display_checkers.js"></script>
+
     </body>
 </html>
 <script>
@@ -56,8 +130,6 @@
     // a reminder.  we want to create one websocket connection, and use if, basically forever.
     // or until the user decides to go to another page.
     // this requires everything to load from this page.
-
-   
     var connection = null;
 
     var serverUrl;
@@ -75,67 +147,22 @@
     connection.onmessage = function (evt) {
         var msg;
         msg = evt.data;
-        const data = JSON.parse(evt.data);
+
 
         console.log("Message received: " + msg);
         document.getElementById("tbox").innerHTML = msg + '\n' + document.getElementById("tbox").innerHTML;
         const obj = JSON.parse(msg);
-        //If the message data is a stringified 2d array, it will assign the values to checkerBoard.received_coords
-        if(checkerBoard.allowed_moves_validation(obj)){
-                      checkerBoard.received_coords = obj;
-                  } 
 
-        if(data.type === "resign") {
-            alert(`${data.player} has resigned. The game is now over.`);
-        }
-        else if(data.type === "draw_offer") {
-            if(confirm(`${data.player} offered a draw, would you like to accept?`)) {
-                connection.send(JSON.stringify({type: "draw_accept", game_id: game_id, player: currentPlayer}))
-            }
-        }
-        else if(data.type === 'draw_accept'){
-            alert("The draw has been accepted. The game is now over.")
-        }
-        else if(data.type === 'player_name_update'){
-            checkerBoard.update_player_name(data.current_move);
-        }
+        let data = JSON.parse(msg);
+
+        // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
+        // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
+        game_display_handle_websocket_received_data(connection, data);
+
     }
 
-    
-
-    let gameContainer = document.getElementById("game_display_container");
-    let boardInitialization = false;
-
-    //showing the game board
-    function showGameDisplay(gameid, startingPlayer){
-        if (!gameContainer){
-            console.log("game display container not found");
-            return;
-        }
-        gameContainer.classList.remove("hidden");
-        gameContainer.classList.add("visible");
-
-        if(!boardInitialization){
-            window.checkerBoard = new CheckersBoard(conn = connection, g_id = gameid, starting_player = startingPlayer);
-            checkerBoard.create_checkers_board();
-            add_game_display_user_control_event_listener();
-            boardInitialization = true;
-        }
-        document.getElementById("current-player").textContent = 'Current Player: ${startingPlayer}';
-    }
-
-    //function to hide the board
-    function hideGameDisplay(){
-        if(!gameContainer){
-            console.log("game display container not found");
-            return;
-        }
-        if(!boardInitialization){
-            return;
-        }
-        gameContainer.classList.add("hidden");
-        gameContainer.classList.remove("visible");
-    }
+    // Note from Game Display: comment the line below to hide the game board
+    setTimeout(show_game_display(connection, "134242424", "this is player 1", "this is player2", "B"),3000);
 
     class UserEvent {
         msg;

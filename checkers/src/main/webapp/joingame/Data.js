@@ -1,57 +1,46 @@
-// Data structures for Join Game component
-
-// Players will have the following data:
-// ID, Username, flag to indicate waitlist status, timer indicating time spent on waitlist
-// Has methods to obtain player information
+// Data handling for Join Game component
 class Player
 {
-    constructor(username, id) // Users will have an assigned ID and chosen username
+    constructor(username, id) 
     {
         this.username = username;
         this.id = id;
         this.waitlistStatus = false; 
-        this.timer = Date.now(); 
     }
-
-    // Needs methods to access player information
     // Accessing the player's ID
     getID() // No parameters needed
     {
-        return id;
+        return this.id;
     }
 
     // Accessing the player's username
     getUsername() // No parameters needed
     {
-        return username;
+        return this.username;
     }
 }
 
-// This class includes the possible game options: against a bot or a player
-// Has methods to set the game mode and then obtain the mode for communication
+// Game mode selection handling
 class GameOptions
 {
     // Initially set both game (bot and standard) options to null
     constructor()
     {
-        this.opponentType = null;
+        this.gameMode = null; // Using gameMode to match Page Manager's convention
     }
 
-    // Method sets the game mode to either bot or standard mode
-    // Parameter is a boolean representing the type
-    // If true, bot mode is set
-    // If false, standard mode is set 
+    // Set the game mode to either "Bot","Human", "Spectate"
+    // Parameter is a string: "Bot", "Human", "Spectate"
     setMode(type)
     {
-        this.opponentType = type; 
+        this.gameMode = type; 
     }
 
-    // Get the current opponent type selection
-    // No parameters
-    // Returns a string such as "human", "bot1", "bot2", or null if not selected
-    getOpponentType()
+    // Get the current game mode
+    // Returns "Bot", "Human", "Spectate", or null if not selected
+    getMode()
     {
-        return this.opponentType;
+        return this.gameMode;
     }
 }
 

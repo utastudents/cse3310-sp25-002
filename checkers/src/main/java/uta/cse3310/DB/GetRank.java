@@ -5,8 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 public class GetRank
 {
-    
-    public int getRank(String userId)
+    public static void getRank(int playerId)
     {
         // This method will be used to get the rank of a player from the database.
         // It will take the player's ID as input and return their rank.
