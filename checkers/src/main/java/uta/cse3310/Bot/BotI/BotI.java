@@ -17,6 +17,15 @@ public class BotI extends Bot {
 
     @Override
     public Moves requestMove(Board board) {
+
+        // LinkedList<Move> possibleMoves = determineMoves(board);
+
+        // int myCount = countallPieces(board, this.color);
+        // int oppCount = countallPieces(board, !this.color);
+
+
+
+
         // setCurrentGameBoard(board);
         // flushMoves();
 
