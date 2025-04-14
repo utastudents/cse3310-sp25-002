@@ -216,7 +216,18 @@ public class BotII extends Bot {
      * @return A Move object if the move is valid, otherwise null.
      */
     private Moves checkSingleMove(Square start, char direction, boolean isCapture) {
-        int rowSign = (direction == 'F') ? (this.color ? -1 : 1) : (this.color ? 1 : -1);
+
+        // Get the starting square's row for determining forward direction
+        int pieceRow = start.getRow();
+
+        // Determine forward direction for this piece
+        int forward = (this.color && pieceRow > 4) || (!this.color && pieceRow < 3) ? 1 : -1;
+
+        // Determine the row sign based on the direction
+        int rowSign = (direction == 'F') ? forward : -forward;
+
+        // Determine the step size based on whether it's a capturing move
+        // For capturing moves, we need to move two squares forward
         int step = isCapture ? 2 : 1;
 
         int destRow = start.getRow() + (rowSign * step);
