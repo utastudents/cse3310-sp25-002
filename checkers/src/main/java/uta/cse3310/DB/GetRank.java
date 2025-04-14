@@ -14,15 +14,16 @@ public class GetRank
         int rank = 1;
         for (String users : UserData)
         {
-            if (users == userId)
+            if (Integer.parseInt(users) == playerId)
             {
-                return rank;
+                System.out.println("Rank: " + rank);
+                break;
                 
             }else{
                 rank ++;
             }
         }
-        return rank;
+        // Placeholder for actual database logic
 
     }
     public static void updateScore()
