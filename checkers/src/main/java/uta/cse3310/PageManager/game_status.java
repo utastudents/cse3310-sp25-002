@@ -8,6 +8,6 @@ public class game_status {
     public boolean gameOver = false;
     public Integer winner = null;
     public Integer loser = null;
-    public String message = "";
+    public String msg;
 
 }

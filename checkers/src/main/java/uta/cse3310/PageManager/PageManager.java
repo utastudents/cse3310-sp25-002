@@ -9,12 +9,17 @@ import com.google.gson.Gson;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
-
+import uta.cse3310.PageManager.UserEvent;
+import uta.cse3310.PageManager.UserEventReply; 
+import uta.cse3310.PageManager.game_status;
+import uta.cse3310.GameManager.GameManager;
+import uta.cse3310.PageManager.GameDisplayConnector;
 
 public class PageManager {
     DB db;
     PairUp pu;
     Integer turn = 0; // TODO: need to call this from GameManager
+    GameDisplayConnector gdc = new GameDisplayConnector(new GameManager());
 
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // this will store the game players for each game session, key is the game id, value is a list of player ids
@@ -84,40 +89,24 @@ public class PageManager {
         pairUp.removePlayer(ClientId);
     }
     
-    
-   
-
-    // ------------------------------------------------------------------------
-    // DEMO TEST METHOD (can be removed/replaced later)
-    // ------------------------------------------------------------------------
-    // TODO : add switch statement for controlling types of events
-    /**
-     * Placeholder method for testing input/output with the frontend.
-     * Simulates switching turns on each call.
-     *
-     * @param U The user event received
-     * @return A test reply with toggled turn
-     */
-    public UserEventReply ProcessInput(UserEvent U) {
-        UserEventReply ret = new UserEventReply();
-        ret.status = new game_status();
-        // fake data for the example
-        if (turn == 0) {
-            ret.status.turn = 1;
-            turn = 1;
-        } else {
-            ret.status.turn = 0;
-            turn = 0;
+   public UserEventReply ProcessInput(UserEvent U) {
+        switch (U.type) {
+            case "move":
+                return gdc.handleMoveRequest(U);
+            case "resign":
+                return gdc.handleResign(U);
+            case "draw":
+                return gdc.handleDrawOffer(U);
+            case "get_allowed_moves":
+                return gdc.handleGetAllowedMoves(U);
+            default:
+                UserEventReply fallback = new UserEventReply();
+                fallback.status = new game_status();
+                fallback.status.msg = "Unknown event type: " + U.type;
+                fallback.recipients = new ArrayList<>();
+                fallback.recipients.add(U.id);
+                return fallback;
         }
-
-        // for now, the idea is to send it back where it came from
-        // in the future, all of the id's that need the data will need to
-        // be added to this list
-        ret.recipients = new ArrayList<>();
-        ret.recipients.add(U.id);
-
-        return ret;
-
     }
 
     public PageManager() {
