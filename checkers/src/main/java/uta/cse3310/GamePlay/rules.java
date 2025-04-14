@@ -31,31 +31,18 @@ public class rules
         return true;
     }
 
-    //checks if the square being moved to is occupied by a piece
-    static protected boolean occupied(Moves moves, Board board) {
-        // Return false if there are no moves provided
-        if (moves == null || moves.size() == 0) {
-            return false;
+    //checks if the piece moves diagonally up-right and up-left
+    //for king: moves diagonally down-right and down-left in addition to above
+    static protected boolean isDiagonal(LinkedList<Moves> moves, Board board)
+    {
+        /*if(isKing = true)
+        {
+            allow the king to move forward/backwards along the diagonal
         }
-    
-        // Get the destination square of the most recent move
-        int lastIdx = moves.size() - 1;
-        Square dest = moves.getDest(lastIdx);
-    
-        int row = dest.getRow();
-        int col = dest.getCol();
-    
-        // Retrieve the square from the board at the given coordinates
-        Square boardSquare = board.getSquare(row, col);
-    
-        // If the square doesn't exist, we can't move there
-        if (boardSquare == null) {
-            return false;
-        }
-    
-        // If the square has a piece on it, we return false (can't move there)
-        // So we return the opposite: true if it's empty, false if occupied
-        return !boardSquare.hasPiece();  // Now returns true only if square is EMPTY
+        else{
+            the piece should not be allowed to move down-left or down-right
+        }*/
+        return false; //Default
     }
 
     //checks how many spots moved up to compared to number of pieces
