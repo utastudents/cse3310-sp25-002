@@ -11,6 +11,7 @@ package uta.cse3310.PageManager;
 
 import java.sql.Connection;// database connection
 
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -27,9 +28,26 @@ public class NewAcctLogin
     //check if user already in database
     public boolean usernameExists(String username)
     {
-        //sql database code here ?
-        //String
-        //try-catch
+        //SQLite for DataBase
+        String getUser = "SELECT * FROM users WHERE username = ?";
+        //try with resources here
+        //to have the SQL connection
+        try(var nameConn = userDB.prepareStatement(getUser))
+        {
+            nameConn.setString(1, username);
+            var resultSet = nameConn.executeQuery();
+            if(resultSet.next())
+            {
+                //Confirm if there is an instance
+                //of that username.
+                return resultSet.getInt(1) > 0;
+            }
+        }
+        catch(Exception e)
+        {
+            //If all else fails, do error handling
+            System.out.println("Could not verify username: " + e.getMessage());
+        }
 
         //does user exist?
         //return true if user is found...otherwise...
@@ -44,15 +62,34 @@ public class NewAcctLogin
             return false;//user exists so no need to add
         }
 
-        //sql database code here ?
-        //String
-        //try-catch
+        //SQLite for DataBase
+        String addUserSQL = "INSERT INTO users WHERE username = ?";
+
+        //try with resources again
+        //to insert the user name into the database
+        try(var nameConn = userDB.prepareStatement(addUserSQL))
+        {
+            //This will grab the username and
+            //replace the ?
+            nameConn.setString(1, username);
+            //Actually run the SQL query here
+            nameConn.executeUpdate();
+            //Success!
+            return true;            
+        }
+        catch(Exception e)
+        {
+            //error handling if could not add the user
+            System.out.println("Could not add the user: " + e.getMessage());
+            //returns false since error happened
+            return false;
+        }
 
         //otherwise, return true to add user
-        return true;
+        //return true;
     }
 
-    //process the input of the usernames
+    //Beging to process the input of the usernames
     public String processUsernameInput(String inputJSON)
     {
         JsonObject response = new JsonObject();

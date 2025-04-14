@@ -1,5 +1,7 @@
 package uta.cse3310.PageManager;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,12 +11,14 @@ import com.google.gson.Gson;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
-
+import uta.cse3310.PageManager.NewAcctLogin;
 
 public class PageManager {
     DB db;
     PairUp pu;
     Integer turn = 0; // TODO: need to call this from GameManager
+    //NewAcctLogin implement:
+    NewAcctLogin login;
 
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // this will store the game players for each game session, key is the game id, value is a list of player ids
@@ -83,8 +87,6 @@ public class PageManager {
     {
         pairUp.removePlayer(ClientId);
     }
-    
-    
    
 
     // ------------------------------------------------------------------------
@@ -120,10 +122,22 @@ public class PageManager {
 
     }
 
+
     public PageManager() {
         db = new DB();
         // pass over a pointer to the single database object in this system
         pu = new PairUp();
+
+        String url = "";
+        try
+        {
+            Connection pgConnection = DriverManager.getConnection(url);
+            login = new NewAcctLogin(pgConnection);
+        }
+        catch(Exception e)
+        {
+            System.out.println("Could not connect: " + e.getMessage());
+        }
     }
 
 }
