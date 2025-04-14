@@ -34,6 +34,23 @@ public class BotII extends Bot {
     }
 
     /**
+     * Helper method for first move validation: checks if destination is within bounds and empty.
+     *
+     * @param board The current game board.
+     * @param fromRow Source row.
+     * @param fromCol Source column.
+     * @param toRow Destination row.
+     * @param toCol Destination column.
+     * @return true if move is valid, false otherwise.
+     */
+    private boolean isValid(Board board, int fromRow, int fromCol, int toRow, int toCol) {
+        return toRow >= 0 && toRow < 8 &&
+            toCol >= 0 && toCol < 8 &&
+            board.getPiece(toRow, toCol) == ' ';
+    }
+
+
+    /**
      * Implementation of requestMove method for BotII.
      * This method is called by the GameManager and BotII will return a move(s)
      * object to the GameManager.
