@@ -11,6 +11,7 @@ import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
 import uta.cse3310.GameManager.Player;
 
+
 //class rules checks if the move is legal
 public class rules
 {   
@@ -43,34 +44,6 @@ public class rules
             the piece should not be allowed to move down-left or down-right
         }*/
         return false; //Default
-    }
-
-
-    //checks if the square being moved to is occupied by a piece
-    static protected boolean occupied(Moves moves, Board board) {
-        // Return false if there are no moves provided
-        if (moves == null || moves.size() == 0) {
-            return false;
-        }
-    
-        // Get the destination square of the most recent move
-        int lastIdx = moves.size() - 1;
-        Square dest = moves.getDest(lastIdx);
-    
-        int row = dest.getRow();
-        int col = dest.getCol();
-    
-        // Retrieve the square from the board at the given coordinates
-        Square boardSquare = board.getSquare(row, col);
-    
-        // If the square doesn't exist, we can't move there
-        if (boardSquare == null) {
-            return false;
-        }
-    
-        // If the square has a piece on it, we return false (can't move there)
-        // So we return the opposite: true if it's empty, false if occupied
-        return !boardSquare.hasPiece();  // Now returns true only if square is EMPTY
     }
 
     //checks how many spots moved up to compared to number of pieces
@@ -196,10 +169,12 @@ public class rules
 
     // removes captured pieces from the board 
     // find out if this needs to report a piece as 'being captured'
-    static protected boolean removeCaptured(LinkedList<Moves> moves, Board board)
-    {
-        return false;
-    }
+    //static protected void removeCaptured(Square square)
+    //{
+        //square.piece = false;
+       // square.color = null;
+        //square.king = false;
+    }//
 
     // recursive function for moveList
     // finds all jump chains for a given king piece

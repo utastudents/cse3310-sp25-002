@@ -3,6 +3,8 @@ package uta.cse3310.PairUp;
 import uta.cse3310.GameManager.GamePairController;
 import java.util.LinkedHashMap;
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.*;
 
 /*
     The Matchmaking class will deal with all things
@@ -11,8 +13,8 @@ import java.util.Random;
     up, and removes them from matchmaking once they
     find a match, or if they quit matchmaking.
 */
-public class Matchmaking implements Runnable {
-    private LinkedHashMap<String,PlayerInMatchmaking> players;
+public class Matchmaking {
+    private LinkedHashMap<Integer, PlayerInMatchmaking> players;
     private int gameId;
     // gamePairController gameManagerCommunication;
 
@@ -20,8 +22,6 @@ public class Matchmaking implements Runnable {
         players = new LinkedHashMap<>();
         gameId = 0;
         // gameManagerCommunication = new gamePairController;
-        Thread thread = new Thread(this);
-        thread.start();
     }
 
     public void pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2, boolean isBotGame) {
@@ -32,22 +32,24 @@ public class Matchmaking implements Runnable {
         // gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
     }
 
-    @Override
-    public void run() {
+    public void addPlayer(int PlayerID, PlayerInMatchmaking newPlayer) {
+        players.put(PlayerID, newPlayer);
+        matching();
+    }
+
+    public void removePlayer(int playerId) {
+        players.remove(playerId);
         matching();
     }
 
     public void matching() {
-        while (true) {
-            // TO-DO: implement pairing algorithm
+        List<Map.Entry<Integer, PlayerInMatchmaking>> entries = new ArrayList<>(players.entrySet());
+        for (int i = 0; i < entries.size(); i++) {
+            for (int j = i + 1; j < entries.size(); j++) {
+                PlayerInMatchmaking p1 = entries.get(i).getValue();
+                PlayerInMatchmaking p2 = entries.get(j).getValue();
+                // TO-DO: implement matchmaking algorithm
+            }
         }
-    }
-
-    public void addPlayer(String PlayerID, PlayerInMatchmaking newPlayer) {
-        players.put(PlayerID, newPlayer);
-    }
-
-    public void removePlayer(String playerId) {
-        players.remove(playerId);
     }
 }

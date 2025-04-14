@@ -11,50 +11,76 @@
         </style>
     </head>
     <body>
-    <div id="new_account" class="hidden"
-    style =
-        "position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.9);
-        z-index: 100;">
-    New Account/Login 
-        <div id="login_container" 
-        style="width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-sizing: border-box;
-        outline: none;
-        transition: border-color 0.3s ease;">
-          <h2>Login</h2>
-          <div class="form-group">
-            <input type="text" placeholder="Enter your Username" id="username"  
-            style =
-            "width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.3s ease;">
+
+    <!-- Container of the login page -->
+     <div class ="wrapper">
+        <form action="">
+          <h1>CHECKERS WITH 3310-002</h1>  
+          <div class="input-box">
+            <input type="text" placeholder="Enter Username" id="username" />
           </div>
-          <button onclick="sendUsername()" style="
-          padding: 12px 24px;
-          font-size: 16px;
-          background-color: #333;
-          color: #fff;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;">Join Game</button>
-        </div>
+          <button onclick="joinGame()">Join Game</button>
+        </form>
+      </div>
+
+    <!-- Styling-->
+<style>  
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Garamond, serif;
+}
+
+body{
+  min-height: 100vh;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: burlywood;
+  background: url('CheckersImage-2.jpg');
+}
+.wrapper{
+
+  background-color: rgba(255, 250, 240, 0.95);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.wrapper h1{
+  font-size: 22px;
+  color: rgb(67,0,134);
+}
+
+.input-box input {
+  width: 250px;
+  padding: 12px;
+  margin-top: 15px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 20px; /* Smaller size */
+  font-size: 14px;
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #333; /* Slight hover effect */
+}
+            
+</style>
 
         <script>
             function sendUsername()

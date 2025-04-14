@@ -17,6 +17,28 @@ public class BotI extends Bot {
 
     @Override
     public Moves requestMove(Board board) {
+
+        // LinkedList<Move> possibleMoves = determineMoves(board);
+
+        // int myCount = countallPieces(board, this.color);
+        // int oppCount = countallPieces(board, !this.color);
+        // boolean isAggressive = (myCount < oppCount);
+
+        // Move selectedMove;
+        // if (isAgressive){
+        //     selectedMove = aggressiveStrategyImplementation(possibleMoves, board);
+        // }
+        // else {
+        //     selectedMove = passiveStrategyImplementation(possibleMoves, board);
+        // }
+
+        // this.moves.add(selectedMove);
+        // return sendMove();
+
+
+
+
+
         // setCurrentGameBoard(board);
         // flushMoves();
 
