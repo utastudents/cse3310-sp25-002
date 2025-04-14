@@ -199,7 +199,6 @@ class CheckersBoard {
         this.player = player;
         // the color of the player who is currently playing the game
         this.player_color = player_color;
-        this.opponents_turn=false;
     }
 
 
@@ -274,7 +273,6 @@ class CheckersBoard {
 
     //move_made_by_other_player_or_bot() sets a flag to call move_checkers_piece() without sending a move request to the backend.
     move_made_by_other_player_or_bot(move_from_x, move_from_y, move_to_x, move_to_y){
-        this.opponents_turn = true;
         this.move_checkers_piece(move_from_x, move_from_y, move_to_x, move_to_y);
     }
 
@@ -316,9 +314,9 @@ class CheckersBoard {
                 // relay the move to the backend through the ws connection
                 console.log({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
                 //Does not send a move request to the backend if it is the opponent's turn
-                if(!this.opponents_turn){
+                if(this.player !== this.current_player){
                     this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
-                } else {this.opponents_turn=false;}
+                } 
             }
 
         } catch (error) {
