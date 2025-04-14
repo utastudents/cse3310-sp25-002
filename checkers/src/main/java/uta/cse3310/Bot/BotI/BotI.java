@@ -110,7 +110,47 @@ public class BotI extends Bot {
     private LinkedList<Move> determineMoves(Board board) {
         LinkedList<Move> validMoves = new LinkedList<>();
         // Logic Here
+        int movement = this.color ? 1 : -1; // if true: white, false: black
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                Square square = board.getSquare(row, col);
+                if (square.hasPiece() && square.getColor() == this.color) {
+                    // Normal moves
+                    playNormalMove(validMoves, square, row + movement, col - 1, board); // move left
+                    playNormalMove(validMoves, square, row + movement, col + 1, board); // move right
+
+                    // King moves backward as well
+                    if (square.isKing()) {
+                        playNormalMove(validMoves, square, row - movement, col - 1, board);
+                        playNormalMove(validMoves, square, row - movement, col + 1, board);
+                    }
+
+                    // Captures
+                    playCapture(validMoves, square, row + 2 * movement, col - 2, row + movement,
+                            col - 1, board);
+                    playCapture(validMoves, square, row + 2 * movement, col + 2, row + movement,
+                            col + 1, board);
+                    if (square.isKing()) {
+                        playCapture(validMoves, square, row - 2 * movement, col - 2, row - movement,
+                                col - 1, board);
+                        playCapture(validMoves, square, row - 2 * movement, col + 2, row - movement,
+                                col + 1, board);
+                    }
+                }
+            }
+        }
         return validMoves;
+    }
+
+    private void playNormalMove(LinkedList<Move> moves, Square piece, int toRow, int toCol, Board board) {
+        // Add logic here
+
+    }
+
+    private void playCapture(LinkedList<Move> moves, Square piece, int toRow, int toCol, int midRow, int midCol,
+            Board board) {
+        // Add logic here
     }
 
 }
