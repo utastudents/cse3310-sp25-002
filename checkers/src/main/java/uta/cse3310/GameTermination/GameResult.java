@@ -85,4 +85,18 @@ public class GameResult {
     public int getScore(String playerId) {
         return playerScores.getOrDefault(playerId, -1);
     }
+
+    //for testing 
+    @Override
+    public String toString() 
+    {
+        if (isDraw()) 
+        {
+            return "Game ended in a draw.\nScores: " + playerScores.toString();
+        } 
+        else 
+        {
+            return "Winner: " + winningPlayerId + "\nScores: " + playerScores.toString();
+        }
+    }
 }
