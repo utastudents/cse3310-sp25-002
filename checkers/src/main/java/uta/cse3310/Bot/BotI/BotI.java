@@ -32,8 +32,8 @@ public class BotI extends Bot {
         //     selectedMove = passiveStrategyImplementation(possibleMoves, board);
         // }
 
-        this.moves.add(selectedMove);
-        return sendMove();
+        // this.moves.add(selectedMove);
+        // return sendMove();
 
 
 
