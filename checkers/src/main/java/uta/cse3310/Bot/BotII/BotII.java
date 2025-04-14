@@ -305,7 +305,17 @@ public class BotII extends Bot {
      */
     private void implementBotStrategy(boolean strategy,
             LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves) {
+            //ORDER OF HOW TO WRITE THIS FUNC
+        //determine strategy
+        // if passive , sort by ELo and use lowest 
+        //if aggr , sort by ELO and use highest
 
+        //after set isMoves , add move to Move obj
+
+        
+
+        //Move m = possibleMoves.getFirst().getValue().getMove()
+        //this.Move.addNext(m) 
     }
 
     /**
