@@ -1,16 +1,15 @@
 package uta.cse3310.GamePlay;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.Map;
 
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.Game;
-import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Move;
-import uta.cse3310.GameManager.Square;
+import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Player;
+import uta.cse3310.GameManager.Square;
 
 
 //class rules checks if the move is legal
@@ -154,7 +153,7 @@ public class rules
             for (int j = 0; j < 8; j++)
             {
                 Square boardSquare = board.getSquare(i, j); 
-                if (boardSquare != null) 
+                if (boardSquare != null && boardSquare.hasPiece())
                 {
                     pieces.add(boardSquare);
                 }
