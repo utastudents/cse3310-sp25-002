@@ -1,34 +1,13 @@
 class Displaynotification {
     constructor() {
-        this.notifications = []; // stores all notifications
+      this.notificationBox = document.getElementById("notification");
     }
-
-    // adds a new notification message
+  
     addNotification(message) {
-        const timestamp = new Date().toLocaleTimeString(); // this is done to get the time for the notification
-        const notification = `[${timestamp}] ${message}`;
-        this.notifications.push(notification);
-
-        // display the notification in the console
-        this.displayNotification(notification);
+      const time = new Date().toLocaleTimeString();
+      const entry = document.createElement("p");
+      entry.innerHTML = `<strong>${time}</strong>: ${message}`;
+      this.notificationBox.appendChild(entry);
     }
-
-    // this displays a notification in the console
-    displayNotification(notification) {
-        console.log(notification);
-    
-        const notifArea = document.getElementById("notification");
-        notifArea.textContent = notification;
-    
-        setTimeout(() => {
-            notifArea.textContent = '';
-        }, 5000);
-    }
-    
-
-    // return the notifications
-    getNotifications() {
-        return this.notifications;
-    }
-
-}
+  }
+  
