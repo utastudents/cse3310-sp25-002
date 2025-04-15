@@ -165,7 +165,15 @@ public class BotI extends Bot {
         return null;
     }
 
-    /* Adding the skeleton for Passive and Aggressive Strategy */
+    /**
+     * Chooses a move using a basic passive strategy.
+     * Prefers safer moves with minimal risk.
+     *
+     * @param possibleMoves A list of possible moves the player can make.
+     * @param board         The current state of the game board.
+     * @return A Moves object containing the selected move (or first move if none
+     *         preferred).
+     */
     private Moves passiveStrategyImplementation(LinkedList<Move> possibleMoves, Board board) {
         Move bestMove = null;
         int bestPreference = -1;
@@ -205,11 +213,8 @@ public class BotI extends Bot {
     /* Helper Methods for passiveStrategyImplementation */
 
     private void insideDangerRegion(Move move, Board board) {
-        // function serves to tell if a piece is in danger of being captured after a move is made
-        
+        // function serves to tell if a piece is in danger of being captured after a
+        // move is made
+
     }
 }
-
-        // 
-
-    
