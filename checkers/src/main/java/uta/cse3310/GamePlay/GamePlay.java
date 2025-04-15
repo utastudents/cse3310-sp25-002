@@ -14,6 +14,8 @@ public class GamePlay
 {
     public Board returnBoard(Game game, Moves moves)
     {
+        rules rule = new rules();
+        
         // Default is return NULL as it assumes the move is illegal until proven legal
         Board updatedBoard = null;
         Board currentGameBoard = game.getBoard();
@@ -23,38 +25,38 @@ public class GamePlay
         Player activePlayer = game.getCurrentTurn();
         int numMoves = moves.size();
         int counter = 0;
-        rules rule = new rules();
 
-        // First check if the player is allowed to move the current piece
+        // Loop to go through each move in the linked list
         while(counter < numMoves)
         {
+            // Check if there is at least one legal move the player can make with this piece
             if(rule.canMovePiece(currentGameBoard, currentSquare, game))
             {
-
-
-                if(activePlayer.getColor())
+                if(rule.inBounds(currentMove))
                 {
-                    if(destinationSquare.getRow() == 7)
+                    if(activePlayer.getColor())
                     {
-
+                        if(destinationSquare.getRow() == 0)
+                        {
+                            currentGameBoard.execute(currentMove, true);
+                        }
+                        else
+                        {
+                            currentGameBoard.execute(currentMove, false);
+                        }
                     }
                     else
                     {
-
+                        if(destinationSquare.getRow() == 7)
+                        {
+                            currentGameBoard.execute(currentMove, true);
+                        }
+                        else
+                        {
+                            currentGameBoard.execute(currentMove, false);
+                        }
                     }
                 }
-                else
-                {
-                    if(destinationSquare.getRow() == 0)
-                    {
-
-                    }
-                    else
-                    {
-
-                    }
-                }
-
             }
             else
             {
@@ -66,14 +68,14 @@ public class GamePlay
             currentMove = moves.getNext(currentMove);
         }
         
-        
         return updatedBoard;
     }
 
-    public Map<Square, Move> returnMoves(Game game)
+    public Map<Square, Moves> returnMoves(Game game)
     {
-        Map<Square, Move> moveList = new HashMap<>();
-        
+        Player currentPlayer = game.getCurrentTurn();
+        rules rule = new rules();
+        Map<Square, Moves> moveList = rule.moveList(game.getBoard(), currentPlayer.getColor());
         return moveList;
     }
 }

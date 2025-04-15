@@ -8,6 +8,7 @@ import java.util.Map;
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameManager.Moves;
+import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Square;
 import uta.cse3310.GameManager.Player;
 
@@ -17,15 +18,10 @@ public class rules
 {   
     //checks if the move is within the bounds of the board
     //8x8 board
-    //assumption: program starts counting at 0
-    //assumption: gameManager waits until current move is processed
-    //and then processes the next move
-    static protected boolean inBounds(Moves moves)
+    static protected boolean inBounds(Move move)
     {
-        int index = moves.size() - 1;
-        Square square = moves.getDest(index);
+        Square square = move.getDest();
 
-        //assuming program starts counting at 0
         if (square.getCol() > 7 || square.getCol() < 0 ||
             square.getRow() > 7 || square.getRow() < 0)
             return false;
