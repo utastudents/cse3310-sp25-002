@@ -91,15 +91,30 @@ public class rules
 
     //will call occupied to check if a square is occupied by another piece, then check 
     //if the user can check that piece
-    static protected boolean canCapture(LinkedList<Moves> moves, Board board)
+    static protected boolean canCapture(Moves moves, Board board, Square square, int playerId, Player player1, Player player2, boolean playerColor)
     {
-     
 
-        //call occupied, check if the square is occupied
         //if the space is occupied and the following square is free you can capture that piece and move to the next free space
-        //return a map showing were the player can move
+        int currentPlayer;
 
-        return false;//default
+        if(player1.getPlayerId() == playerId) //checks to see if player 1 is currently playing
+        {
+            currentPlayer = playerId;
+            playerColor = player1.getColor(); //see what color is assigned to the current player
+        }
+        else if(player2.getPlayerId() == playerId) //checks to see if player 2 is currently playing
+        {
+            currentPlayer = playerId;
+            playerColor = player2.getColor(); //see what color is assigned to the current player
+        }
+        //false is the square is unoccupied or the square is occupied by the one of the players own pieces
+        if(!square.hasPiece() || (square.hasPiece() && square.getColor() == playerColor))
+        {
+            return false;
+        }
+
+
+        return true;//default
     }
 
     //Check to see if current player can move selected piece
