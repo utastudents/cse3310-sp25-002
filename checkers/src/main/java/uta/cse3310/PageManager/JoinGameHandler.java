@@ -8,42 +8,50 @@ public class JoinGameHandler {
     }
 
     public Result processJoinGame(Map<String, String> joinData) {
-        String ClientID = joinData.get("ClientID");
+
+        
+        int clientID = Integer.parseInt(joinData.get("ClientID"));// client Id should be int
+        
         String gameMode = joinData.get("gameMode");
 
-        boolean isBot = "Bot".equalsIgnoreCase(gameMode);
+        boolean playAgainstBot = "Bot".equalsIgnoreCase(gameMode);
         
-        if (isBot) {
-            sendToPairUpForBot(ClientID);
-        } else {
-            sendAvailabilityToDB(ClientID);
+        if (playAgainstBot) 
+        {
+            sendToPairUpForBot(clientID);
+        } else 
+        {
+            sendAvailabilityToDB(clientID);
         }
 
 
-        return new Result(ClientID, isBot); // sends data to pairup_subsys
+         return new Result(clientID, playAgainstBot);// sends data to pairup_subsys
     }
 
-    private void sendAvailabilityToDB(String ClientID) {
+    private void sendAvailabilityToDB(int ClientID) {
         System.out.println("Flagging user as available in DB...");
         System.out.println("ClientID: " + ClientID);
     }
 
-    private void sendToPairUpForBot(String ClientID) {
+    private void sendToPairUpForBot(int ClientID) {
         System.out.println("Sending request to PairUp for bot match...");
         System.out.println("ClientID: " + ClientID);
     }
 
 
     // helper return class to extract data in pairup_subsys
-    public static class Result
-    {
-        public String clientID;
-        public boolean playAgainstBot;
 
-        public Result(String clientID, boolean playAgainstBot)
+
+    public static class Result 
+    {
+        public int clientID; 
+        public boolean playAgainstBot;
+    
+        public Result(int clientID, boolean playAgainstBot) 
         {
             this.clientID = clientID;
             this.playAgainstBot = playAgainstBot;
         }
     }
+    
 }
