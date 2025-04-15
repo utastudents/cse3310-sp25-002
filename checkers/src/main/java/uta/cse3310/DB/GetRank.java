@@ -1,8 +1,4 @@
 package uta.cse3310.DB;
-
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.List;
 public class GetRank
 {
     public static void getRank(int playerId)
@@ -26,9 +22,10 @@ public class GetRank
         // Placeholder for actual database logic
 
     }
-    public static void updateScore()
+    public static void updateScore(String username, String Oppusername)
     {
         // This will update and store score of the player in the database.
+        String query = "SELECT username, rank FROM USERS WHERE username IN (?,?)";
     }
     // public List<String> getLeaderboard()
     // {
