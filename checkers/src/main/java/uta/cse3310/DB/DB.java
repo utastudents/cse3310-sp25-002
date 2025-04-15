@@ -66,9 +66,9 @@ public class DB
 			 //leaderboardQuery )
 	}
 
-	public static void UpdatePlayer(String username, int newRank )			
+	public static void updatePlayer(String username, int newRank )			
 	{
-		String updatePlayer = "Update USERS set rank = ? WHERE username =?";  		
+		String updatePlayer = "UPDATE USERS SET rank = ? WHERE username = ?";  		
 		try(Connection connection = SQLiteConnector.connect();
 			PreparedStatement pstmt = connection.prepareStatement(updatePlayer)) 
 		{
