@@ -1,4 +1,4 @@
-/*package cse3310.uta.GameManagerTests;
+package cse3310.uta.GameManagerTests;
 import org.junit.Test;
 import uta.cse3310.GameManager.GameManager;
 import static org.junit.Assert.*;
@@ -25,4 +25,4 @@ public class Test3{
         assertEquals("Total active games should be 2", 2, total_no_active_game);
 
     }
-}*/
+}
