@@ -74,16 +74,6 @@ public class BotI extends Bot {
         return count;
     }
 
-    private void implementStrategy(Board board, boolean isAggresive, LinkedList<Move> possibleMoves) {
-        // change void to Moves
-        if (isAggresive) {
-            // aggressiveStrategyImplementation(LinkedList<Move> possibleMoves);
-        } else {
-            // passiveStrategyImplementation(possibleMoves,board);
-        }
-
-    }
-
     /**
      * determineMoves(Board board)
      * This method finds all valid moves for the current player.
@@ -219,3 +209,7 @@ public class BotI extends Bot {
         
     }
 }
+
+        // 
+
+    
