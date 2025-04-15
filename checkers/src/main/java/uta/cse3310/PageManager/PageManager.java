@@ -12,11 +12,13 @@ import com.google.gson.JsonObject;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
+import uta.cse3310.GameManager.GameManager;
 
 public class PageManager {
     DB db;
     PairUp pu;
-    public NewAcctLogin accountHandler; // Make this public so App.java can access if needed
+    public NewAcctLogin accountHandler;
+    private GameDisplayConnector displayConnector;
     Integer turn = 0;
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // key = gameId, value = player IDs
@@ -26,6 +28,8 @@ public class PageManager {
     public PageManager() {
         db = new DB();
         pu = new PairUp();
+
+        displayConnector = new GameDisplayConnector(new GameManager());
 
         try
         {
@@ -86,9 +90,14 @@ public class PageManager {
                 break;
             }
 
-            default:
+            case "test": {
+                return displayConnector.sendShowGameDisplayTest(U);
+            }
+
+            default: {
                 ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
                 break;
+            }
         }
 
         // Always send a response back to the sender
