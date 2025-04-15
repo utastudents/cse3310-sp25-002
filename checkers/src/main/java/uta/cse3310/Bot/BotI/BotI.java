@@ -17,19 +17,24 @@ public class BotI extends Bot {
 
     @Override
     public Moves requestMove(Board board) {
+        setCurrentGameBoard(board);
+        flushMoves();
 
-        // setCurrentGameBoard(board);
-        // flushMoves();
+        LinkedList<Move> possibleMoves = determineMoves(board);
+        boolean isAggressive = isAggressive(board);
 
-        // LinkedList<Move> possibleMoves = determineMoves();
-        // implementBotStrategy(possibleMoves);
+        Moves playMove;
+        if(isAggressive){
+            playMove = aggressiveStrategyImplementation(possibleMoves, board);
+        }
+        else{
+            playMoves = passiveStrategyImplementation(possibleMoves, board);
+        }
 
-        // Adding the possible moves from the commented function determineMoves(board)
-        // LinkedList<Move> possibleMoves = determineMoves(board);
-        // boolean isAggressive = isAggressive(board);
-        // return implementStrategy(board, isAggressive, possibleMoves);
+        this.moves = playMove;
+        return sendMove();
+        
 
-        return null;
     }
 
     /* Sending Moves from Bot 1 to the GameManager */
