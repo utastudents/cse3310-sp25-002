@@ -57,13 +57,34 @@ public class DB
 		}
 	}
 
-	public static void getLeaderboard()
+	public static List<String> getLeaderboard()
 	{
-		//List<String> leaderboard = new ArrayList<>();
-		//String selectStatement = "SELECT username, rank FROM USERS ORDER BY rank DESC";
+		List<String> leaderboard = new ArrayList<>();
+		String selectStatement = "SELECT username, rank FROM USERS ORDER BY rank DESC";
 
-		//try (Connection connection = SQLiteConnector.connect();
-			 //leaderboardQuery )
+		try (Connection connection = SQLiteConnector.connect();
+			 Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(selectStatement))
+		{
+			if (connection != null)
+			{
+				while(rs.next())
+				{
+					String entry = rs.getString("username") + ": " + rs.getInt("rank"); //here the query is parsed and entered into the List
+					leaderboard.add(entry);
+				}
+			}
+			else
+			{
+				System.err.println("Failed to connect to database in Leaderboard query");
+			}
+		}
+		catch (SQLException e)
+		{
+			System.err.println("Error retrieving Leaderboard: " + e.getMessage());
+		}
+		
+		return leaderboard;
 	}
 /*
 	public static void updatePlayer(String username, int newRank )			
