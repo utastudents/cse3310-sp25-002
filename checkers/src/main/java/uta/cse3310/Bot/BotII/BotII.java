@@ -130,7 +130,7 @@ public class BotII extends Bot {
         setCurrentGameBoard(board);
 
         if (isFirstMove()) {
-        return startMove(board);
+            return startMove(board);
         }
 
         // Future logic can go here for non-starting moves
