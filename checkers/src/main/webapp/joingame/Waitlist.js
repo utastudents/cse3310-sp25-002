@@ -1,7 +1,7 @@
 class Waitlist{
 	constructor(){
         this.waitlist = []; // Array to store player objects
-		this.communication = new Communication;
+		this.data = new Data;
     }
 	
 	add(playerInfo){	//Add a player's info onto the waitlist
@@ -30,5 +30,11 @@ class Waitlist{
 		const list = document.getElementById(waitlist);
 
 		HTMLDataListElement.innerHTML = "";
+
+		this.waitlist.forEach(player => {
+			const li = document.createElement("li");
+			li.textContent = '${player.getUsername()}	${player.getID()}';
+			HTMLDataListElement.appendChild(li);
+		});
 	}
 }
