@@ -11,7 +11,6 @@ package uta.cse3310.PageManager;
 
 import java.sql.Connection;// database connection
 
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
