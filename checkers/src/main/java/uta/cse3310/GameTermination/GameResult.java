@@ -32,6 +32,11 @@ public class GameResult {
     public boolean isDraw() {
         return winningPlayerId == null;
     }
+
+    public List<String> getPlayerIds() {
+        return new ArrayList<>(playerScores.keySet());
+    }
+    
     //to call player's id anywhere later
     public void setWinner(Player player) {
         this.winningPlayerId = String.valueOf(player.getPlayerId());
@@ -86,7 +91,7 @@ public class GameResult {
         return playerScores.getOrDefault(playerId, -1);
     }
 
-    //for testing 
+    //used for testing 
     @Override
     public String toString() 
     {
