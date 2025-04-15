@@ -7,6 +7,8 @@ package uta.cse3310.PageManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gson.JsonObject;
+
 public class Summary
 {
     //store the summaries of the (multiple) users to display
@@ -34,35 +36,39 @@ public class Summary
         }
     }
 
-    //retrieve the username once given
-    //public String getUsername()
-    //{
-        //return username;
-    //}
-
-    //retrieve the user's clientID
-    //public int getClientID()
-    //{
-        //return clientID;
-    //}
-
-    //retrieve the user's score once game is done
-    //public int getUserScore()
-    //{
-        //return score;
-    //}
-
-    //
-    //public void addSummary(String username, int clientID, int score)
-    //{
-        //allUsersSummaries.add(new userSummary(username, clientID, score));
-    //}
+    //once a player has completed their round,
+    //get that information and add it so can store to display later
+    public void addSummary(String username, int clientID, int score)
+    {
+        allUsersSummaries.add(new userSummary(username, clientID, score));
+    }
 
     //Summary wants a search player bar
-    //public String searchBar(String searchUser)
-    //{
-        //JsonObject response = new JsonObject();
+    //for the user to look at score and rank
+    public String searchBar(String searchUser)
+    {
+        //receive the action of search
+        JsonObject response = new JsonObject();
 
-        //return response;
-    //}
+        //now need to iterate through the usernames
+        for(userSummary eachUser : allUsersSummaries)
+        {
+            //once found the username in the search
+            if(eachUser.username.equals(searchUser))
+            {
+                //get the information to display
+                response.addProperty("Username",eachUser.username);
+                response.addProperty("ClientID",eachUser.clientID);
+                response.addProperty("Score",eachUser.score);
+                response.addProperty("Status","Success!");
+            }
+        }
+
+        //otherwise could not find anything
+        response.addProperty("Status", "Nothing to find");
+        response.addProperty("Message","Could not find user");
+
+        //should return the user that is searched
+        return response.toString();
+    }
 }
