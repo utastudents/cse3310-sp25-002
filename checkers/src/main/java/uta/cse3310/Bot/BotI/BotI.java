@@ -18,6 +18,24 @@ public class BotI extends Bot {
     @Override
     public Moves requestMove(Board board) {
 
+        // Determine all legal moves available in the current board state.
+        LinkedList<Move> possibleMoves = determineMoves(board);
+
+        // Simple heuristic: if our piece count is lower than the opponent's, play aggressively.
+        int myCount = countallPieces(board, this.color);
+        int oppCount = countallPieces(board, !this.color);
+        boolean isAggressive = (myCount < oppCount);
+
+        Move selectedMove;
+        if (isAggressive) {
+            selectedMove = aggressiveStrategyImplementation(possibleMoves, board);
+        } else {
+            selectedMove = passiveStrategyImplementation(possibleMoves, board);
+        }
+
+        // Add the selected move to the moves container and send it to the GameManager.
+        this.moves.add(selectedMove);
+        return sendMove();
         // setCurrentGameBoard(board);
         // flushMoves();
 
