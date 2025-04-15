@@ -168,10 +168,39 @@ public class rules
 
     // removes captured pieces from the board 
     // find out if this needs to report a piece as 'being captured'
-    static protected boolean removeCaptured(LinkedList<Moves> moves, Board board)
+/*
+    static protected boolean removeCaptured(Moves moves, Board board)
     {
-        return false;
+    boolean capture = false;
+    for (Moves order : moves)
+    {
+        for (int i = 0; i < order.size(); i++)
+        {
+            Square starting = order.getStart(i);
+            Square ending = order.getDest(i);
+
+            int RowDiff = Math.abs(starting.getRow() - ending.getRow());
+            int ColDiff = Math.abs(starting.getCol() - ending.getCol());
+
+            if (RowDiff == 2 && ColDiff == 2) 
+            {
+                int RowCap= (starting.getRow() + ending.getRow()) / 2;
+                int ColCap = (starting.getCol() + ending.getCol()) / 2;
+
+                Square Square = board.getSquare(RowCap, ColCap);
+
+                if (SquareCap.hasPiece())
+                {
+                    SquareCap.remove();
+                    capture  = true;
+                }
+            }
+        }
     }
+    return capture;
+
+    }
+*/
 
     // recursive function for moveList
     // finds all jump chains for a given king piece

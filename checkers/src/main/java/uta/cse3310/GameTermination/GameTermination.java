@@ -10,7 +10,7 @@ public class GameTermination {
     private String finalWinner = null; // Stores the winner's ID or "Draw"
 
     // Method to handle the end of the game and declare the winner
-    public void endGame(Map<String, Integer> playerScores, String winningPlayer) {
+    public void endGame(Map<String, Integer> playerScores, int winningPlayer) {
         if (gameOver) {
             System.out.println("The game has already ended."); //to handle abrupt endings
             return;
@@ -45,14 +45,18 @@ public class GameTermination {
         return "results";
     }
 
-    // New method to handle game restart requests
-    public void gameRestartReq() {
-       gameOver = false;
-        finalWinner = null;
-        System.out.println("Game restart requested. Game state has been reset.");
-    }
     // Returns the winner or draw
     public String getWinner() {
         return finalWinner;
     }
+    
+    public int playerHasResigned(int player1, int player2){
+        //logic will look something like this.
+        //if player1 has regsined -> winningPlayer = player2
+        //if player2 has resigned -> winningPlayer = player1
+        //else continue the game
+        //dummy return
+        return 3;
+    }
+    
 }
