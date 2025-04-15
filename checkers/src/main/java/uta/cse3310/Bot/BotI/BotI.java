@@ -154,7 +154,7 @@ public class BotI extends Bot {
         }
     }
 
-    private Moves aggressiveStrategyImplementation(LinkedList<Move> possibleMoves) {
+    private Moves aggressiveStrategyImplementation(LinkedList<Move> possibleMoves, Board board) {
         // similar implementation to passive strategy BUT...
         // bot's goal is so maximize the number of capture moves
 
