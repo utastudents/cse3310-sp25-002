@@ -84,32 +84,31 @@ public class rules
         return true;
     }
 
-    //will call occupied to check if a square is occupied by another piece, then check 
-    //if the user can check that piece
-    static protected boolean canCapture(Moves moves, Board board, Square square, int playerId, Player player1, Player player2, boolean playerColor)
+    static protected boolean canCapture(Game game, Move move)
     {
+        boolean capturable = false;
 
-        //if the space is occupied and the following square is free you can capture that piece and move to the next free space
-        int currentPlayer;
+        Square startSquare = move.getStart();
+        Square destinationSquare = move.getDest();
 
-        if(player1.getPlayerId() == playerId) //checks to see if player 1 is currently playing
+        int rowDistance = Math.abs(startSquare.getRow() - destinationSquare.getRow());
+        int columnDistance = Math.abs(startSquare.getCol() - destinationSquare.getCol());
+
+        boolean isKing = startSquare.isKing();
+
+        if(isKing)
         {
-            currentPlayer = playerId;
-            playerColor = player1.getColor(); //see what color is assigned to the current player
-        }
-        else if(player2.getPlayerId() == playerId) //checks to see if player 2 is currently playing
-        {
-            currentPlayer = playerId;
-            playerColor = player2.getColor(); //see what color is assigned to the current player
-        }
-        //false is the square is unoccupied or the square is occupied by the one of the players own pieces
-        if(!square.hasPiece() || (square.hasPiece() && square.getColor() == playerColor))
-        {
-            return false;
+            if(rowDistance == 2)
+            {
+
+            }
+            else if(columnDistance == 2)
+            {
+                
+            }
         }
 
-
-        return true;//default
+        return capturable;
     }
 
     //Check to see if current player can move selected piece
