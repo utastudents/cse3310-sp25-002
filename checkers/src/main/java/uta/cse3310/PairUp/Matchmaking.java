@@ -33,8 +33,13 @@ public class Matchmaking {
     }
 
     public void addPlayer(int PlayerID, PlayerInMatchmaking newPlayer) {
-        players.put(PlayerID, newPlayer);
-        matching();
+        if (newPlayer.isPlayAgainstBot()) {
+            // TO-DO: pair bot with user
+        }
+        else {
+            players.put(PlayerID, newPlayer);
+            matching();
+        }
     }
 
     public void removePlayer(int playerId) {
