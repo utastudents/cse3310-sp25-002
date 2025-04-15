@@ -49,8 +49,7 @@ public class BotI extends Bot {
         Move atMove;
         if (isAggresive) {
             // atMove = aggressiveStrategyImplementation(openmoves, board);
-        }
-        else {
+        } else {
             // atMove = passiveStrategyImplementation(openmoves, board);
         }
 
@@ -80,36 +79,23 @@ public class BotI extends Bot {
         if (isAggresive) {
             // aggressiveStrategyImplementation(LinkedList<Move> possibleMoves);
         } else {
-            // passiveStrategyImplementation(possibleMoves);
+            // passiveStrategyImplementation(possibleMoves,board);
         }
 
     }
 
     /**
-     * determineMoves(Board board) method generates all possible legal moves for the
-     * bot's pieces on the
-     * board.
-     * It scans each square of the board and checks if the square contains a piece
-     * belonging to the bot.
+     * determineMoves(Board board)
+     * This method finds all valid moves for the current player.
+     * It checks normal moves and capturing moves for all the player's pieces.
+     * King pieces are also allowed to move and capture backward.
      * 
-     * For each piece, it checks the following:
-     * 1. Normal Moves – A piece can move diagonally forward (depending on
-     * color) to an empty square.
-     * 2. King Moves – If the piece is a king, it can also move diagonally
-     * backward to an empty square.
-     * 3. Captures – A piece can jump over an opponent’s piece diagonally into
-     * an empty square (forward or backward for kings).
-     * 
-     * The method accounts for board boundaries to avoid index out-of-bound errors.
-     * All valid moves are added to a linked list and returned.
-     *
      * @param board The current game board.
      * @return A LinkedList of possible moves for the bot.
      */
     private LinkedList<Move> determineMoves(Board board) {
         LinkedList<Move> validMoves = new LinkedList<>();
-        // Logic Here
-        int movement = this.color ? 1 : -1; // if true: white, false: black
+        int movement = this.color ? 1 : -1;
 
         for (int row = 0; row < 8; row++) {
             for (int col = 0; col < 8; col++) {
@@ -170,18 +156,21 @@ public class BotI extends Bot {
 
     private Moves aggressiveStrategyImplementation(LinkedList<Move> possibleMoves) {
         // similar implementation to passive strategy BUT...
-        // bot's goal is so maximize the number of capture moves 
-        
+        // bot's goal is so maximize the number of capture moves
+
         // initialize a variable which starts with no move (make in null)
         // loop through all possible moves
-            //increment a variable that judges how good the move is (higher score = better move)
-            // every move should be initialized to 1
-            // (this is all from a defensive POV)
-        
-        // if the move has a better score than the current best move, update the best move variable to the move that has a better score
-        // if no move was safe for the bot && there are no possible moves -> pick the first move to make game continue
+        // increment a variable that judges how good the move is (higher score = better
+        // move)
+        // every move should be initialized to 1
+        // (this is all from a defensive POV)
+
+        // if the move has a better score than the current best move, update the best
+        // move variable to the move that has a better score
+        // if no move was safe for the bot && there are no possible moves -> pick the
+        // first move to make game continue
         // put the resulting move into a Moves object and return it
-        
+
         return null;
     }
 
