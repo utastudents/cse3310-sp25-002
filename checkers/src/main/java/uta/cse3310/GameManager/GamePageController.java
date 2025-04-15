@@ -1,16 +1,20 @@
 package uta.cse3310.GameManager;
 
+import java.util.ArrayList;
+
 public class GamePageController {
+    private GameManager gameManager;
 
-
+    GamePageController(GameManager gameManager){
+        this.gameManager = gameManager;
+    }
     public Board sendBoard(){
-        Board board = new Board();
-
-        return board;
+        
+        return null;
     }
 
-    public Game sendID(){
-        //return gameID;
+    public Game getID(int playerID){
+        
         return null;
     }
 
