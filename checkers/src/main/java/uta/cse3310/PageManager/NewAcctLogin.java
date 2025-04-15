@@ -127,5 +127,12 @@ public class NewAcctLogin
         }
         //return back the reponse of success or failure
         return response.toString();
+
     }
+
+    // Helper to extract username from JSON
+    public String extractUsernameFromInput(String inputJSON) {
+    return JsonParser.parseString(inputJSON).getAsJsonObject().get("username").getAsString();
+}
+
 }

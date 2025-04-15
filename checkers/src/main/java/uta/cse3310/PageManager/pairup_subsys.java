@@ -38,7 +38,7 @@ public class pairup_subsys {
     public void JoinAndLogin(String inputJSON, Map<String, String> joinData) 
     {
         // Account Log In data
-        String input = newAcctLogin.processUsernameInput(inputJSON);
+        String username = newAcctLogin.extractUsernameFromInput(inputJSON);
 
         // JoinGameHandler data
         JoinGameHandler joinHandler = new JoinGameHandler();
@@ -52,7 +52,7 @@ public class pairup_subsys {
         pageManager.handleNewPlayer(
                 timestamp,
                 clientID,
-                input,
+                username,
                 Result.playAgainstBot,
                 0 
         );
