@@ -110,7 +110,7 @@ public class Game
     //return game activity status
     public boolean gameActive(){return gameIsActive;}
     //return the number of moves since last capture
-    public int lastCapture(){return lastCapture;}
+    public int lastCapture(){return lastCapture++;}
     //declare draw and set game to inactive
     public void GameDeclareDraw(){
         draw = true;
