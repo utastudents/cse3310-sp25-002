@@ -90,30 +90,7 @@ public class GameManager {
             System.out.println("Game " + gameNumber + " has been terminated.");
         }
     } */
-/*
-    // Restart a game by requeuing players
-    public void restartGame(int gameNumber) {
-        if (gameNumber >= 0 && gameNumber < MAXIMUM_GAMES) {
-            Game game = games.get(gameNumber);
-            if (game != null) {
-                gt.gameRestartReq(); // from GameTermination.java
 
-                // Extract info from players and requeue them
-                Player p1 = game.getPlayer1();
-                Player p2 = game.getPlayer2();
-
-                if (p1 != null) {
-                    PairUp.AddPlayer(System.currentTimeMillis(), p1.getPlayerID(),p1.isPlayAgainstBot(), p1.getWins());
-                }
-
-                if (p2 != null) {
-                    PairUp.AddPlayer(System.currentTimeMillis(), p2.getPlayerID(), p2.isPlayAgainstBot(), p2.getWins());
-                }
-                games.set(gameNumber, null);
-                System.out.println("Game " + gameNumber + " restart requested.");
-            }
-        }
-    }   */
 
     // Find a game by player ID
     public Game findGameByPlayerId(int playerId) {

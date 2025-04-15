@@ -7,6 +7,8 @@ import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 public class BotII extends Bot {
@@ -23,6 +25,88 @@ public class BotII extends Bot {
         super(color); // Call the constructor of the parent class (Bot)
     }
 
+    /**
+     * Handles the first move logic for BotII.
+     * It checks all pieces in the front row and tries to move them diagonally if
+     * possible.
+     *
+     * @param board the current game board
+     * @return a single randomly chosen move if valid ones exist, null otherwise
+     */
+    private Moves startMove(Board board) {
+        Moves firstMoveSet = new Moves(); // Collect valid first moves
+
+        int frontRow = this.color ? 2 : 5; // Black uses row 2, White uses row 5
+
+        for (int col = 0; col < 8; col++) {
+            Square square = board.getSquare(frontRow, col);
+            if (square.hasPiece() && square.getColor() == this.color) {
+                int dir = this.color ? 1 : -1; // Black moves down (+1), white up (-1)
+                int newRow = frontRow + dir;
+
+                // Try forward-left
+                if (col - 1 >= 0 && board.getSquare(newRow, col - 1).getColor() == null) {
+                    firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col - 1)));
+                }
+
+                // Try forward-right
+                if (col + 1 < 8 && board.getSquare(newRow, col + 1).getColor() == null) {
+                    firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col + 1)));
+                }
+            }
+        }
+
+        // Pick one random move from valid ones
+        if (!firstMoveSet.getMoves().isEmpty()) {
+            int pick = (int) (Math.random() * firstMoveSet.getMoves().size());
+            Moves result = new Moves();
+            result.addNext(firstMoveSet.getMoves().get(pick));
+            return result;
+        }
+
+        return null; // No valid move found
+    }
+
+    /**
+     * Checks if it's the bot's first move.
+     * This is true if:
+     * - All bot pieces are still in their default starting row
+     * AND
+     * - The opponent has made 0 or 1 moves (meaning the bot is either going first or second)
+     *
+     * @param board The current game board
+     * @return true if this is BotII's first move
+     */
+    private boolean isFirstMove(Board board) {
+        
+        int botRow = this.color ? 2 : 5;
+        int opponentRow = this.color ? 5 : 2;
+        boolean opponentColor = !this.color;
+
+        // 1. Check if all bot pieces are still in their starting row
+        boolean allBotInDefaultRow = true;
+        for (int col = 0; col < 8; col++) {
+            Square sq = board.getSquare(botRow, col);
+            if (!sq.hasPiece() || sq.getColor() != this.color) {
+                allBotInDefaultRow = false;
+                break;
+            }
+        }
+
+        if (!allBotInDefaultRow) return false; // Bot already moved
+
+        // 2. Check how many opponent pieces have moved from their starting row
+        int movedOpponentPieces = 0;
+        for (int col = 0; col < 8; col++) {
+            Square sq = board.getSquare(opponentRow, col);
+            if (!sq.hasPiece() || sq.getColor() != opponentColor) {
+                movedOpponentPieces++;
+            }
+        }
+
+        // If opponent has moved 0 or 1 piece, it's bot's first move
+        return movedOpponentPieces <= 1;
+    }
 
     /**
      * Implementation of requestMove method for BotII.
@@ -42,42 +126,27 @@ public class BotII extends Bot {
      */
     @Override
     public Moves requestMove(Board board) {
-        this.currentGameBoard = board;
-    
-        Moves firstMoveSet = new Moves(); // Collect valid first moves
-    
-        int frontRow = this.color ? 2 : 5; // Black uses row 2, White uses row 5
-    
-        for (int col = 0; col < 8; col++) {
-            Square square = board.getSquare(frontRow, col);
-            if (square.hasPiece() && square.getColor() == this.color) {
-                int dir = this.color ? 1 : -1; // Black moves down (+1), white up (-1)
-                int newRow = frontRow + dir;
-    
-                // Try forward-left
-                if (col - 1 >= 0 && board.getSquare(newRow, col - 1).getColor() == null) {
-                    firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col - 1)));
-                }
-    
-                // Try forward-right
-                if (col + 1 < 8 && board.getSquare(newRow, col + 1).getColor() == null) {
-                    firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col + 1)));
-                }
-            }
-        }
-    
-        // As more than one moves are found, choose one randomly
-        if (!firstMoveSet.getMoves().isEmpty()) {
-            int pick = (int)(Math.random() * firstMoveSet.getMoves().size());
-            Moves result = new Moves();
-            result.addNext(firstMoveSet.getMoves().get(pick));
-            return result;
+
+        // Clear the moves object before making a new move
+        flushMoves();
+
+        // Set the current game board to the one provided by the game manager
+        setCurrentGameBoard(board);
+
+        if (isFirstMove(board)) {
+            return startMove(board);
         }
 
-        return null; // No valid move found
-   
+        // Future logic can go here for non-starting moves
+        boolean strategy = playStyle();
+
+        LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = determineMoves(strategy);
+
+        // Implement the bot's strategy based on the possible moves
+        implementBotStrategy(strategy, possibleMoves);
+
+        return sendMove(); // Send the moves to the game manager
     }
-    
 
     /**
      * This function will be called to determine the all possible moves per piece
@@ -94,7 +163,7 @@ public class BotII extends Bot {
      * @see Board
      * @see Moves
      */
-    private LinkedList<Pair<Square, LinkedList<MoveRating>>> determineMoves() {
+    private LinkedList<Pair<Square, LinkedList<MoveRating>>> determineMoves(boolean strategy) {
 
         // Gets possible moves per piece with each move having an elo rating
         LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = new LinkedList<>();
@@ -128,7 +197,7 @@ public class BotII extends Bot {
 
                                 // Base elo for normal move
                                 int elo = 1;
-                                
+
                                 // Add rows to king to elo rating
                                 elo += 7 - rowsToKing;
                                 MoveRating mr = new MoveRating(x, elo);
@@ -147,7 +216,7 @@ public class BotII extends Bot {
 
                                 // Base elo for capturing move
                                 int elo = 3;
-                                
+
                                 // Add rows to king to elo rating
                                 elo += 7 - rowsToKing;
 
@@ -168,9 +237,15 @@ public class BotII extends Bot {
                             });
                         }
                     }
+                    // Sort the pieceMoves based on elo rating
+                    pieceMoves.sort(Comparator.comparingInt(MoveRating::getEloRating));
 
-                    if (!pieceMoves.isEmpty()) {
+                    // If strategy is aggressive, reverse the order of the  (highest elo first)
+                    if(strategy)
+                        Collections.reverse(pieceMoves);
+
                         // Add the piece and its possible moves to the list
+                    if (!pieceMoves.isEmpty()) {
                         possibleMoves.add(new Pair<>(square, pieceMoves));
                     }
 
@@ -191,7 +266,18 @@ public class BotII extends Bot {
      * @return A Move object if the move is valid, otherwise null.
      */
     private Moves checkSingleMove(Square start, char direction, boolean isCapture) {
-        int rowSign = (direction == 'F') ? (this.color ? -1 : 1) : (this.color ? 1 : -1);
+
+        // Get the starting square's row for determining forward direction
+        int pieceRow = start.getRow();
+
+        // Determine forward direction for this piece
+        int forward = (this.color && pieceRow > 4) || (!this.color && pieceRow < 3) ? 1 : -1;
+
+        // Determine the row sign based on the direction
+        int rowSign = (direction == 'F') ? forward : -forward;
+
+        // Determine the step size based on whether it's a capturing move
+        // For capturing moves, we need to move two squares forward
         int step = isCapture ? 2 : 1;
 
         int destRow = start.getRow() + (rowSign * step);
@@ -231,24 +317,24 @@ public class BotII extends Bot {
         Square dest = this.currentGameBoard.getSquare(destRow, destCol);
 
         // For normal moves, the destination must be empty
-        if (!isCapture && dest.getColor() == null) {
+        if (!isCapture && !dest.hasPiece()) {
             return true;
         }
 
         // For capturing moves, check if the intermediate square contains an opponent's
         // piece
         if (isCapture) {
-            // Ensure the destination square is empty and the intermediate square contains
-            // an opponent's piece
-            if (dest.getColor() != null) {
+            // Ensure the destination square is empty
+            if (dest.hasPiece()) {
                 return false;
             }
 
+            // Get the captured square (the square between start and dest)
             int midRow = (start.getRow() + destRow) / 2;
             int midCol = (start.getCol() + destCol) / 2;
             Square midSquare = this.currentGameBoard.getSquare(midRow, midCol);
 
-            return dest.getColor() == null && midSquare.getColor() != null && midSquare.getColor() != this.color;
+            return midSquare.hasPiece() && midSquare.getColor() != this.color;
         }
 
         return false;
@@ -281,8 +367,17 @@ public class BotII extends Bot {
      * @see Moves
      * @see Board
      */
-    private void implementBotStrategy(boolean strategy) {
+    private void implementBotStrategy(boolean strategy,
+            LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves) {
+        // ORDER OF HOW TO WRITE THIS FUNC
+        // determine strategy
+        // if passive , sort by ELo and use lowest
+        // if aggr , sort by ELO and use highest
 
+        // after set isMoves , add move to Move obj
+
+        // Move m = possibleMoves.getFirst().getValue().getMove()
+        // this.Move.addNext(m)
     }
 
     /**
@@ -306,74 +401,41 @@ public class BotII extends Bot {
         return this.moves;
     }
 
-}
+    /**
+     * Determines whether the bot should use an aggressive strategy by counting the
+     * pieces on the board.
+     * For each square that has a piece, it checks the piece’s color (using
+     * Square.getColor()). If the piece belongs to
+     * the bot (using this bot's color stored in this.color), it increments the
+     * bot's count;
+     * otherwise, it increments the opponent's count.*
+     * 
+     * @param None
+     * 
+     * @return true if the bot is at a numerical disadvantage (suggesting an
+     *         aggressive
+     *         strategy), or false if not (suggesting a more passive strategy).
+     * 
+     */
+    private boolean playStyle() {
+        int bot_piece_cnt = 0;
+        int op_piece_cnt = 0;
 
-class MoveRating {
-
-    private Move move;
-    private int eloRating;
-
-    public MoveRating(Move move, int eloRating) {
-        this.move = move;
-        this.eloRating = eloRating;
-    }
-
-    public Move getMove() {
-        return move;
-    }
-
-    public int getEloRating() {
-        return eloRating;
-    }
-
-}
-
-class Pair<K, V> {
-
-    private K key;
-    private V value;
-
-    public Pair(K key, V value) {
-        this.key = key;
-        this.value = value;
-    }
-
-    public K getKey() {
-        return key;
-    }
-
-    public V getValue() {
-        return value;
-    }
-}
-
-/**
- * Determines whether the bot should use an aggressive strategy by counting the pieces on the board.
- * For each square that has a piece, it checks the piece’s color (using Square.getColor()). If the piece belongs to
- * the bot (using this bot's color stored in this.color), it increments the bot's count;
- * otherwise, it increments the opponent's count.*
- * @param board the current game board.
- * @return true if the bot is at a numerical disadvantage (suggesting an aggressive
- *  strategy), or false if not (suggesting a more passive strategy).
- */
-/*Have to make some changes and assure that the proper functioning
-private boolean PlayStyle(Board board) {
-    int bot_piece_cnt = 0;
-    int op_piece_cnt = 0;
-
-    // Iterate over the 8x8 board.
-    for (int row = 0; row <= 7; row++) {
-        for (int col = 0; col <= 7; col++) {
-            Square square = board.getSquare(row, col);
-            if (square.hasPiece()) {  // Only count if there is a piece on the square.
-                if (square.getColor() == this.color) {
-                    bot_piece_cnt++;
-                } else {
-                    op_piece_cnt++;
+        // Iterate over the 8x8 board.
+        for (int row = 0; row <= 7; row++) {
+            for (int col = 0; col <= 7; col++) {
+                Square square = this.currentGameBoard.getSquare(row, col);
+                if (square.hasPiece()) { // Only count if there is a piece on the square.
+                    if (square.getColor() == this.color) {
+                        bot_piece_cnt++;
+                    } else {
+                        op_piece_cnt++;
+                    }
                 }
             }
         }
+        // Return true if your bot has fewer pieces than its opponent which would result
+        // in aggresive gameplay style by Bot
+        return bot_piece_cnt > op_piece_cnt;
     }
-    // Return true if your bot has fewer pieces than its opponent which would result in aggresive gameplay style by Bot
-    return bot_piece_cnt < op_piece_cnt;
-} */
+}

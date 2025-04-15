@@ -8,11 +8,11 @@ public class GamePairController{
     }
 
     public Game newMatch(Match match){
-        int player1ID = Integer.parseInt(match.getPlayer1Id());
-        int player2ID = Integer.parseInt(match.getPlayer2Id());
+        int player1ID = match.getPlayer1Id();
+        int player2ID = match.getPlayer2Id();
         boolean player1Color = match.getPlayer1Color();
         boolean player2Color = match.getPlayer2Color();
-        int gameNumber = Integer.parseInt(match.getGameId());
+        int gameNumber = match.getGameId();
 
         Game newGame = new Game(player1ID, player2ID, player1Color, player2Color, gameNumber);
 

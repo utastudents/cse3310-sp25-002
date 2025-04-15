@@ -7,74 +7,81 @@ package uta.cse3310.PairUp;
 */
 public class Match {
 
-    private String playerId;
-    private String player2Id;
+    private int player1Id;
+    private int player2Id;
     private String player1Name; 
     private String player2Name;
     private Boolean isBot;
-    private String gameId;
+    private int gameId;
     private Boolean player1Color;
     private Boolean player2Color;
 
 
-    public Match(String player1Id, String player2Id, String player1Name, String player2Name,
-     Boolean isBot, String gameId, Boolean player1Color, Boolean player2Color) {
-        
+    public Match(int player1Id, int player2Id, String player1Name, String player2Name,
+     Boolean isBot, int gameId, Boolean player1Color, Boolean player2Color) {
+        this.player1Id = player1Id;
+        this.player2Id = player2Id;
+        this.player1Name = player1Name;
+        this.player2Name = player2Name;
+        this.isBot = isBot;
+        this.gameId = gameId;
+        this.player1Color = player1Color;
+        this.player2Color = player2Color;
     }
 
     /* Method to get the player1 ID from MatchMaking class
        Returns an string to be used in Match class to create JSON
     */
-    public String getPlayer1Id(){
-        return "";
+    public int getPlayer1Id(){
+        return player1Id;
     }
 
     /* Method to get the player2 ID from MatchMaking class
        Returns an string to be used in Match class to create JSON 
     */
-    public String getPlayer2Id(){
-        return "";
+    public int getPlayer2Id(){
+        return player2Id;
     }
 
     /* Method to get the player1 Name from MatchMaking class
        Returns an string to be used in Match class to create JSON
     */
     public String getPlayer1Name(){
-        return "";
+        return player1Name;
     }    
 
     /* Method to get the player2 Name from MatchMaking class
        Returns an string to be used in Match class to create JSON
     */
     public String getPlayer2Name(){
-        return "";
+        return player2Name;
     }
 
     /* Method to check if the player is playing against a bot or another player
        Returns an boolean value to be used in Match class to create JSON
     */
     public Boolean isBotGame(){
-        return true;
+        return isBot;
     }
 
     /* Method to get the gameId from MatchMaking class
        Returns an string to be used in Match class to create JSON
     */
-    public String getGameId(){
-        return "";
+    public int getGameId(){
+        return gameId;
     }
 
     /* Method to get the piece color of player1
        Returns an boolean to be used in Match class to create JSON
     */
     public Boolean getPlayer1Color(){
-        return true;
+        return player1Color;
     }
 
     /* Method to get the piece color of player2
        Returns an boolean to be used in Match class to create JSON
     */
     public Boolean getPlayer2Color(){
-        return false;
+        return player2Color;
     }
 }

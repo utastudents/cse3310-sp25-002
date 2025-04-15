@@ -199,23 +199,27 @@ class CheckersBoard {
         this.player = player;
         // the color of the player who is currently playing the game
         this.player_color = player_color;
-        this.opponents_turn=false;
     }
 
 
     update_current_player(player) {
         // Update the UI to show whose turn it is
+    
         try{
             this.current_player = player;
             game_display_current_player_name = player;
-            document.getElementById("current-player").innerText = `Current Player: ${player}`;
-        } catch (error) {
-            console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) update_current_player: An error occurred while handling the game display. Please check the console.`);
+
+            if (this.current_player === this.plater){
+                document.getElementById("current-player").innerText = "It's your turn to make a move!";
+            } else{
+                document.getElementById("current-player").innerText = 'Your opponent (${player}) is going to make a move.';
+            }
         }
-
+        catch (error){
+            console.error("Error in game_display_checkers.js: ", error);
+            game_display_popup_messages('(gd) update_current_player: An error occurred while handling the game display. Please check the console.');
+        }
     }
-
 
 
     /*
@@ -274,7 +278,6 @@ class CheckersBoard {
 
     //move_made_by_other_player_or_bot() sets a flag to call move_checkers_piece() without sending a move request to the backend.
     move_made_by_other_player_or_bot(move_from_x, move_from_y, move_to_x, move_to_y){
-        this.opponents_turn = true;
         this.move_checkers_piece(move_from_x, move_from_y, move_to_x, move_to_y);
     }
 
@@ -316,14 +319,41 @@ class CheckersBoard {
                 // relay the move to the backend through the ws connection
                 console.log({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
                 //Does not send a move request to the backend if it is the opponent's turn
-                if(!this.opponents_turn){
+                if(this.player !== this.current_player){
                     this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
-                } else {this.opponents_turn=false;}
+                } 
             }
 
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
             game_display_popup_messages(`(gd) move_checkers_piece: An error occurred while handling the game display. Please check the console.`);
+        }
+    }
+
+    rotateBoardIfBlack() {
+        try {
+            if (this.player_color === "B") {
+                // rotate the entire game board container
+                const gameBoard = document.querySelector(".game");
+                gameBoard.style.transform = "rotate(180deg)";
+                
+                // rotate each piece in the opposite direction to keep them upright
+                this.checkers_board.forEach(square => {
+                    const piece = square.el.querySelector('.piece');
+                    if (piece) {
+                        piece.style.transform = "rotate(180deg)";
+                    }
+                });
+                
+                // also rotate the king text to keep it readable
+                const kings = document.querySelectorAll('.King');
+                kings.forEach(king => {
+                    king.style.transform = "rotate(180deg)";
+                });
+            }
+        } catch (error) {
+            console.error("Error in game_display_checkers.js: ", error);
+            game_display_popup_messages(`(gd) rotateBoardIfBlack: An error occurred while rotating the board. Please check the console.`);
         }
     }
 
@@ -378,6 +408,7 @@ class CheckersBoard {
                 }
 
             });
+            this.rotateBoardIfBlack();
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
             game_display_popup_messages(`(gd) update_board_style: An error occurred while handling the game display. Please check the console.`);
@@ -514,6 +545,7 @@ class CheckersBoard {
             };
             // sanitize the board to remove any previous styles and make sure that each piece is displayed correctly
             this.update_board_style();
+            this.rotateBoardIfBlack();
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
             game_display_popup_messages(`(gd) create_checkers_board: An error occurred while handling the game display. Please check the console.`);

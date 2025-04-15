@@ -11,6 +11,7 @@ import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
 import uta.cse3310.GameManager.Player;
 
+
 //class rules checks if the move is legal
 public class rules
 {   
@@ -29,48 +30,6 @@ public class rules
             square.getRow() > 7 || square.getRow() < 0)
             return false;
         return true;
-    }
-
-    //checks if the piece moves diagonally up-right and up-left
-    //for king: moves diagonally down-right and down-left in addition to above
-    static protected boolean isDiagonal(LinkedList<Moves> moves, Board board)
-    {
-        /*if(isKing = true)
-        {
-            allow the king to move forward/backwards along the diagonal
-        }
-        else{
-            the piece should not be allowed to move down-left or down-right
-        }*/
-        return false; //Default
-    }
-
-
-    //checks if the square being moved to is occupied by a piece
-    static protected boolean occupied(Moves moves, Board board) {
-        // Return false if there are no moves provided
-        if (moves == null || moves.size() == 0) {
-            return false;
-        }
-    
-        // Get the destination square of the most recent move
-        int lastIdx = moves.size() - 1;
-        Square dest = moves.getDest(lastIdx);
-    
-        int row = dest.getRow();
-        int col = dest.getCol();
-    
-        // Retrieve the square from the board at the given coordinates
-        Square boardSquare = board.getSquare(row, col);
-    
-        // If the square doesn't exist, we can't move there
-        if (boardSquare == null) {
-            return false;
-        }
-    
-        // If the square has a piece on it, we return false (can't move there)
-        // So we return the opposite: true if it's empty, false if occupied
-        return !boardSquare.hasPiece();  // Now returns true only if square is EMPTY
     }
 
     //checks how many spots moved up to compared to number of pieces
@@ -132,15 +91,30 @@ public class rules
 
     //will call occupied to check if a square is occupied by another piece, then check 
     //if the user can check that piece
-    static protected boolean canCapture(LinkedList<Moves> moves, Board board)
+    static protected boolean canCapture(Moves moves, Board board, Square square, int playerId, Player player1, Player player2, boolean playerColor)
     {
-     
 
-        //call occupied, check if the square is occupied
         //if the space is occupied and the following square is free you can capture that piece and move to the next free space
-        //return a map showing were the player can move
+        int currentPlayer;
 
-        return false;//default
+        if(player1.getPlayerId() == playerId) //checks to see if player 1 is currently playing
+        {
+            currentPlayer = playerId;
+            playerColor = player1.getColor(); //see what color is assigned to the current player
+        }
+        else if(player2.getPlayerId() == playerId) //checks to see if player 2 is currently playing
+        {
+            currentPlayer = playerId;
+            playerColor = player2.getColor(); //see what color is assigned to the current player
+        }
+        //false is the square is unoccupied or the square is occupied by the one of the players own pieces
+        if(!square.hasPiece() || (square.hasPiece() && square.getColor() == playerColor))
+        {
+            return false;
+        }
+
+
+        return true;//default
     }
 
     //Check to see if current player can move selected piece
@@ -192,13 +166,6 @@ public class rules
         }
 
         return pieces;
-    }
-
-    // removes captured pieces from the board 
-    // find out if this needs to report a piece as 'being captured'
-    static protected boolean removeCaptured(LinkedList<Moves> moves, Board board)
-    {
-        return false;
     }
 
     // recursive function for moveList

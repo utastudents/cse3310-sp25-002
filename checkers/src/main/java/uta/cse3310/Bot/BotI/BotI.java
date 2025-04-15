@@ -17,6 +17,7 @@ public class BotI extends Bot {
 
     @Override
     public Moves requestMove(Board board) {
+
         // setCurrentGameBoard(board);
         // flushMoves();
 
@@ -29,12 +30,6 @@ public class BotI extends Bot {
         // return implementStrategy(board, isAggressive, possibleMoves);
 
         return null;
-    }
-
-    private LinkedList<Moves> movesLogic() {
-        // This method should implement the logic to determine the moves.
-        // based on the current state of the game board.
-        return null; // Placeholder for now.
     }
 
     /* Sending Moves from Bot 1 to the GameManager */
@@ -68,18 +63,12 @@ public class BotI extends Bot {
     private void implementStrategy(Board board, boolean isAggresive, LinkedList<Move> possibleMoves) {
         // change void to Moves
         if (isAggresive) {
-            // aggressive strategy
+            // aggressiveStrategyImplementation(LinkedList<Move> possibleMoves);
         } else {
-            // passiveStrategyImplementation(possibleMoves)
+            // passiveStrategyImplementation(possibleMoves);
         }
 
     }
-
-    /* Adding the skeleton for Passive and Aggressive Strategy */
-    // private Moves passiveStrategyImplementation(LinkedList<Move> possibleMoves)
-    // {
-    // return null; /* Placeholder for now */
-    // }
 
     // private Moves aggressiveStrategyImplementation(LinkedList<Move>
     // possibleMoves) {
@@ -169,4 +158,42 @@ public class BotI extends Bot {
         }
     }
 
+    /* Adding the skeleton for Passive and Aggressive Strategy */
+    private Moves passiveStrategyImplementation(LinkedList<Move> possibleMoves, Board board) {
+        Move bestMove = null;
+        int bestPreference = -1;
+
+        for (Move move : possibleMoves) {
+
+            // Skip risky moves
+            // if (isInDangerZone(move, board))
+            // continue;
+
+            int prefernceScore = 0;
+
+            prefernceScore += 1;
+
+            // hasBackupAfterMove — +1 if protected
+            // if (hasBackupAfterMove(move, board)) {
+            // prefernceScore += 1;
+            // }
+
+            if (prefernceScore > bestPreference) {
+                bestPreference = prefernceScore;
+                bestMove = move;
+            }
+
+        }
+        // If all the moves are isInDangerZone pick the first move
+        if (bestMove == null && !possibleMoves.isEmpty()) {
+            bestMove = possibleMoves.getFirst();
+        }
+
+        Moves result = new Moves();
+        if (bestMove != null) {
+            result.addNext(bestMove);
+        }
+        return result;
+    }
+    /* Helper Methods for passiveStrategyImplementation */
 }

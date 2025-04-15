@@ -3,6 +3,8 @@ package uta.cse3310.PairUp;
 import uta.cse3310.GameManager.GamePairController;
 import java.util.LinkedHashMap;
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.*;
 
 /*
     The Matchmaking class will deal with all things
@@ -11,43 +13,51 @@ import java.util.Random;
     up, and removes them from matchmaking once they
     find a match, or if they quit matchmaking.
 */
-public class Matchmaking implements Runnable {
-    private LinkedHashMap<String,PlayerInMatchmaking> players;
+public class Matchmaking {
+    private LinkedHashMap<Integer, PlayerInMatchmaking> players;
     private int gameId;
-    // gamePairController gameManagerCommunication;
+    GamePairController gameManagerCommunication;
 
     public Matchmaking() {
         players = new LinkedHashMap<>();
         gameId = 0;
-        // gameManagerCommunication = new gamePairController;
-        Thread thread = new Thread(this);
-        thread.start();
+        gameManagerCommunication = new GamePairController();
     }
 
     public void pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2, boolean isBotGame) {
         Random coinflip = new Random();
         boolean p1Color = coinflip.nextBoolean();
         boolean p2Color = !p1Color;
-        // Match match = new Match(gameId, p1.getPlayerId, p2.getPlayerId, p1.getPlayerName, p2.getPlayerName, p1Color, p2Color, isBotGame);
-        // gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
+        Match match = new Match(p1.getPlayerID(), p2.getPlayerID(), p1.getPlayerName(), p2.getPlayerName(), isBotGame, gameId++, p1Color, p2Color);
+        gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
     }
 
-    @Override
-    public void run() {
+    public void addPlayer(int PlayerID, PlayerInMatchmaking newPlayer) {
+        if (newPlayer.isPlayAgainstBot()) {
+            // TO-DO: pair bot with user
+        }
+        else {
+            players.put(PlayerID, newPlayer);
+            matching();
+        }
+    }
+
+    public void removePlayer(int playerId) {
+        players.remove(playerId);
         matching();
     }
 
     public void matching() {
-        while (true) {
-            // TO-DO: implement pairing algorithm
+        List<Map.Entry<Integer, PlayerInMatchmaking>> entries = new ArrayList<>(players.entrySet());
+        for (int i = 0; i < entries.size(); i++) {
+            for (int j = i + 1; j < entries.size(); j++) {
+                PlayerInMatchmaking p1 = entries.get(i).getValue();
+                PlayerInMatchmaking p2 = entries.get(j).getValue();
+                // TO-DO: implement matchmaking algorithm
+
+                // Put this line into when a match is made between two humans
+                pair(p1, p2, false);
+            }
         }
-    }
-
-    public void addPlayer(String PlayerID, PlayerInMatchmaking newPlayer) {
-        players.put(PlayerID, newPlayer);
-    }
-
-    public void removePlayer(String playerId) {
-        players.remove(playerId);
     }
 }
