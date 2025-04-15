@@ -3,7 +3,7 @@ import org.junit.Test;
 import uta.cse3310.GameManager.GameManager;
 import static org.junit.Assert.*;
 
-public class Test1 {
+public class Test2 {
 
     @Test
     public void testCreateGameSuccessfully() {
