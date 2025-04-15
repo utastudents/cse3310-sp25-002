@@ -29,11 +29,11 @@ class Waitlist{
 	displayWaitlist(){	//Displays the updated waitlist
 		const list = document.getElementById(waitlist);
 
-		HTMLDataListElement.innerHTML = "";
+		list.innerHTML = "";
 
 		this.waitlist.forEach(player => {
 			const li = document.createElement("li");
-			li.textContent = '${player.getUsername()}	${player.getID()}';
+			li.textContent = `${player.getUsername()}	${player.getID()}`;
 			HTMLDataListElement.appendChild(li);
 		});
 	}
