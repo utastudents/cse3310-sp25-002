@@ -69,7 +69,24 @@ public class Game
         }
         return null;
     }
-    
+    // returning loser as requested by page controller
+    public Player getLoser(){
+        int playerOnePieces = player1.getPieces();
+        int playerTwoPieces = player2.getPieces();
+        if(draw){
+            gameIsActive = false;
+            return null;
+        }
+        else if(playerOnePieces == 0 || player1quit){
+            gameIsActive = false;
+            return player1;
+        }
+        else if(playerTwoPieces == 0 || player2quit){
+            gameIsActive = false;
+            return player2;
+        }
+        return null;
+    }
     /* methods to recieve game information */
     //returns who's turn it is
     public Player getCurrentTurn(){return player1Turn ? player1 : player2;}
