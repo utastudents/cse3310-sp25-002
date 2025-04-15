@@ -83,26 +83,26 @@ public class BotII extends Bot {
     
         // 1. Check if all bot pieces are in starting row
         boolean allBotInDefaultRow = true;
-        /*
+        
         for (int col = 0; col < 8; col++) {
             if (board.getPiece(botRow, col) != botChar) {
                 allBotInDefaultRow = false;
                 break;
             }
         }
-        */
+        
     
         if (allBotInDefaultRow) return true;
     
         // 2. Count how many opponent pieces are NOT in their starting row
         int movedOpponentPieces = 0;
-        /*
+        
         for (int col = 0; col < 8; col++) {
             if (board.getPiece(opponentRow, col) != opponentChar) {
                 movedOpponentPieces++;
             }
         }
-        */
+        
     
         return movedOpponentPieces == 1;  // Bot is second, opponent moved once
     }
@@ -132,11 +132,11 @@ public class BotII extends Bot {
 
         // Set the current game board to the one provided by the game manager
         setCurrentGameBoard(board);
-/*
+
         if (isFirstMove()) {
             return startMove(board);
         }
-*/
+
         // Future logic can go here for non-starting moves
         boolean strategy = playStyle();
 
