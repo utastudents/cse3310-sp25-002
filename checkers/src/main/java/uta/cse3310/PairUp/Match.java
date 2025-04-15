@@ -26,7 +26,8 @@ public class Match {
        Returns an string to be used in Match class to create JSON
     */
     public int getPlayer1Id(){
-        return player1Id;
+        //return player1Id;
+        return 0;
     }
 
     /* Method to get the player2 ID from MatchMaking class
