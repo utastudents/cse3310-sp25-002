@@ -68,6 +68,43 @@ public class BotII extends Bot {
     }
 
     /**
+     * Checks if it's the bot's first move:
+     * - Either all bot pieces are in default positions (so bot hasn't played yet)
+     * - Or opponent has made only one move (so bot is going second)
+     *
+     * @param board The current game board
+     * @return true if this is BotII's first move
+     */
+    private boolean isFirstMove(Board board) {
+        int botRow = this.color ? 2 : 5;
+        int opponentRow = this.color ? 5 : 2;
+        char botChar = this.color ? 'b' : 'w';
+        char opponentChar = this.color ? 'w' : 'b';
+    
+        // 1. Check if all bot pieces are in starting row
+        boolean allBotInDefaultRow = true;
+        for (int col = 0; col < 8; col++) {
+            if (board.getPiece(botRow, col) != botChar) {
+                allBotInDefaultRow = false;
+                break;
+            }
+        }
+    
+        if (allBotInDefaultRow) return true;
+    
+        // 2. Count how many opponent pieces are NOT in their starting row
+        int movedOpponentPieces = 0;
+        for (int col = 0; col < 8; col++) {
+            if (board.getPiece(opponentRow, col) != opponentChar) {
+                movedOpponentPieces++;
+            }
+        }
+    
+        return movedOpponentPieces == 1;  // Bot is second, opponent moved once
+    }
+    
+
+    /**
      * Implementation of requestMove method for BotII.
      * This method is called by the GameManager and BotII will return a move(s)
      * object to the GameManager.
