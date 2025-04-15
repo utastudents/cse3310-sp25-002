@@ -33,6 +33,12 @@ The Game Display Module communicates the following actions to the Page Manager:
 - Draw Signal: If a player accepts a draw, this is sent to back end to finalize the result
 - Valid Move Request: Request asking for all legal moves that can be made from that position
 
+# Updated Functionality
+
+- Blocking moves during oponenet's turn // Prevents interaction unless it's the player's turn
+- The board is roated 180 degrees for black pieces to provide correct perspective
+- The board visually updates when a move is made by the opponent or a bot
+
 # Side information
 
 - Game Display only handles the rendering and user input captures of the player movements.
