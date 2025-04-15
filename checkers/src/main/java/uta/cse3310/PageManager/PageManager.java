@@ -5,83 +5,77 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import uta.cse3310.DB.DB;
 import uta.cse3310.PairUp.PairUp;
-
 
 public class PageManager {
     DB db;
     PairUp pu;
-    Integer turn = 0; // TODO: need to call this from GameManager
+    public NewAcctLogin accountHandler; // Make this public so App.java can access if needed
+    Integer turn = 0;
 
+    Map<String, List<Integer>> gamePlayers = new HashMap<>(); // key = gameId, value = player IDs
 
-    Map<String, List<Integer>> gamePlayers = new HashMap<>(); // this will store the game players for each game session, key is the game id, value is a list of player ids
-
-
-     // ------------------------------------------------------------------------
-    // PAIR UP SUBSYSTEM
-    // ------------------------------------------------------------------------
-
-    /**
-     * Handles initial user requests for matchmaking.
-     *
-     * @param  string from frontend containing user info
-     * @return JSON response with match info or error
-     */
-
-    
     private final PairUp pairUp = new PairUp();
-
-    public void handleNewPlayer(long timestamp, int ClientId, String UserName, boolean playAgainstBot, int wins) 
-    {
-        pairUp.AddPlayer(timestamp, ClientId, UserName, playAgainstBot, wins);
-    }
-    
-    public void handlePlayerRemoval(int ClientId) 
-    {
-        pairUp.removePlayer(ClientId);
-    }
-    
-    
-   
-
-    // ------------------------------------------------------------------------
-    // DEMO TEST METHOD (can be removed/replaced later)
-    // ------------------------------------------------------------------------
-    // TODO : add switch statement for controlling types of events
-    /**
-     * Placeholder method for testing input/output with the frontend.
-     * Simulates switching turns on each call.
-     *
-     * @param U The user event received
-     * @return A test reply with toggled turn
-     */
-    public UserEventReply ProcessInput(UserEvent U) {
-        UserEventReply ret = new UserEventReply();
-        ret.status = new game_status();
-        // fake data for the example
-        if (turn == 0) {
-            ret.status.turn = 1;
-            turn = 1;
-        } else {
-            ret.status.turn = 0;
-            turn = 0;
-        }
-
-        // for now, the idea is to send it back where it came from
-        // in the future, all of the id's that need the data will need to
-        // be added to this list
-        ret.recipients = new ArrayList<>();
-        ret.recipients.add(U.id);
-
-        return ret;
-
-    }
 
     public PageManager() {
         db = new DB();
-        // pass over a pointer to the single database object in this system
         pu = new PairUp();
+        accountHandler = new NewAcctLogin(db.getConnection());
     }
 
+    // Add a new player to matchmaking
+    public void handleNewPlayer(long timestamp, int clientId, String playerName, boolean playAgainstBot, int wins) {
+        pairUp.AddPlayer(timestamp, clientId, playerName, playAgainstBot, wins);
+    }
+
+    // Remove a player from matchmaking
+    public void handlePlayerRemoval(int clientId) {
+        pairUp.removePlayer(clientId);
+    }
+
+    // Username validation logic
+    public JsonObject handleUsernameValidation(String username) {
+        JsonObject responseMsg = new JsonObject();
+
+        if (accountHandler.usernameExists(username)) {
+            responseMsg.addProperty("type", "username_status");
+            responseMsg.addProperty("accepted", false);
+        } else if (accountHandler.addUser(username)) {
+            responseMsg.addProperty("type", "username_status");
+            responseMsg.addProperty("accepted", true);
+        } else {
+            responseMsg.addProperty("type", "username_status");
+            responseMsg.addProperty("accepted", false);
+        }
+
+        return responseMsg;
+    }
+
+    // Main handler for all events sent from frontend
+    public UserEventReply ProcessInput(UserEvent U) {
+        UserEventReply ret = new UserEventReply();
+        ret.status = new game_status();
+        ret.recipients = new ArrayList<>();
+
+        switch (U.type) {
+            case "join": {
+                JsonObject result = handleUsernameValidation(U.playerName);
+                ret.status.type = result.get("type").getAsString();
+                ret.status.msg = result.get("accepted").getAsBoolean() ? "accepted" : "rejected";
+                break;
+            }
+
+            default:
+                ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
+                break;
+        }
+
+        // Always send a response back to the sender
+        ret.recipients.add(U.id);
+        return ret;
+    }
 }
