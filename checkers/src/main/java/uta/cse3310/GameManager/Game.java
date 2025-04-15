@@ -16,6 +16,7 @@ public class Game
     private boolean draw = false;
     private boolean player1quit = false;
     private boolean player2quit = false;
+    private int lastCapture;
 
     /* Game constructor which will initialize the board, will create two new bots which return their assigned color
      * two new players will be created with their designated ID and color 
@@ -108,6 +109,8 @@ public class Game
     public int gameNumber(){return gameNumber;}
     //return game activity status
     public boolean gameActive(){return gameIsActive;}
+    //return the number of moves since last capture
+    public int lastCapture(){return lastCapture;}
     //declare draw and set game to inactive
     public void GameDeclareDraw(){
         draw = true;
