@@ -6,114 +6,19 @@
   <title>Game Page</title>
 </head>
 <body>
-
+  <div id = "new_account">
    <!-- Container of the login page -->
     <div class ="wrapper">
-        <form action="">
+        <form onsubmit = "joinGame(); return false;">
           <h1>CHECKERS WITH 3310-002</h1>  
           <div class="input-box">
             <input type="text" placeholder="Enter Username" id="username" />
           </div>
-          <button onclick="joinGame()">Join Game</button>
+          <button type="submit">Join Game</button>
         </form>
       </div>
-    
-    <!-- Styling-->
-  <style>  
-    
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Garamond, serif;
-}
-
-body{
-  min-height: 100vh;
-  background-size: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: burlywood;
-  background: url('CheckersImage-2.jpg');
-}
-.wrapper{
-
-  background-color: rgba(255, 250, 240, 0.95);
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-  max-width: 400px;
-  width: 90%;
-  text-align: center;
-}
-
-.wrapper h1{
-  font-size: 22px;
-  color: rgb(67,0,134);
-}
-
-.input-box input {
-  width: 250px;
-  padding: 12px;
-  margin-top: 15px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-button {
-  margin-top: 15px;
-  padding: 10px 20px; 
-  font-size: 14px;
-  background-color: black;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #333; 
-}
-            
-</style>
-
-  <script>
-    function joinGame() {
-      const username = document.getElementById('username').value;
-      const pattern = /^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
-      
-      if (!username) {
-      alert('Please enter a username.');
-    } else if (!pattern.test(username)) {
-      alert('Username must be atleast 8 characters long, and contain atleast one digit and one special character.');
-    } else {
-      alert('Joining Game');
-      }
-    }
-/*          const userData = 
-            {
-                type: "join",
-                username: username
-            }
-            // Sending data through websocket
-            if(connection === WebSocket.OPEN)
-            {
-                connection.send(JSON.stringify(userData));
-            }
-            else
-            {
-                errorDiv.innerText = "Connection to server not available.";
-                errorDiv.style.display = "block";
-            }  */
-
-        </script>
-        </body>
-        </html>
   
-    </div>
-        -->
+ </div>
     <div id="join_game">
 
     join game
@@ -187,6 +92,8 @@ button:hover {
         // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
         game_display_handle_websocket_received_data(connection, data);
 
+        //Receiving from Page Manager (newAccount)
+        receiveFromPageManager(data);
     }
 
     // Note from Game Display: comment the line below to hide the game board
@@ -205,3 +112,4 @@ button:hover {
     }
 
 </script>
+<script src = "js/loginHandler.js"></script>
