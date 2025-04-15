@@ -325,6 +325,33 @@ class CheckersBoard {
         }
     }
 
+    rotateBoardIfBlack() {
+        try {
+            if (this.player_color === "B") {
+                // rotate the entire game board container
+                const gameBoard = document.querySelector(".game");
+                gameBoard.style.transform = "rotate(180deg)";
+                
+                // rotate each piece in the opposite direction to keep them upright
+                this.checkers_board.forEach(square => {
+                    const piece = square.el.querySelector('.piece');
+                    if (piece) {
+                        piece.style.transform = "rotate(180deg)";
+                    }
+                });
+                
+                // also rotate the king text to keep it readable
+                const kings = document.querySelectorAll('.King');
+                kings.forEach(king => {
+                    king.style.transform = "rotate(180deg)";
+                });
+            }
+        } catch (error) {
+            console.error("Error in game_display_checkers.js: ", error);
+            game_display_popup_messages(`(gd) rotateBoardIfBlack: An error occurred while rotating the board. Please check the console.`);
+        }
+    }
+
 
 
 
@@ -376,6 +403,7 @@ class CheckersBoard {
                 }
 
             });
+            this.rotateBoardIfBlack();
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
             game_display_popup_messages(`(gd) update_board_style: An error occurred while handling the game display. Please check the console.`);
@@ -512,6 +540,7 @@ class CheckersBoard {
             };
             // sanitize the board to remove any previous styles and make sure that each piece is displayed correctly
             this.update_board_style();
+            this.rotateBoardIfBlack();
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
             game_display_popup_messages(`(gd) create_checkers_board: An error occurred while handling the game display. Please check the console.`);
