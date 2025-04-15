@@ -76,36 +76,35 @@ public class BotII extends Bot {
      * @return true if this is BotII's first move
      */
     private boolean isFirstMove(Board board) {
+        
         int botRow = this.color ? 2 : 5;
         int opponentRow = this.color ? 5 : 2;
-        char botChar = this.color ? 'b' : 'w';
-        char opponentChar = this.color ? 'w' : 'b';
-    
+        boolean opponentColor = !this.color;
+
         // 1. Check if all bot pieces are in starting row
         boolean allBotInDefaultRow = true;
-        
         for (int col = 0; col < 8; col++) {
-            if (board.getPiece(botRow, col) != botChar) {
+            Square sq = board.getSquare(botRow, col);
+            if (!sq.hasPiece() || sq.getColor() != this.color) {
                 allBotInDefaultRow = false;
                 break;
             }
         }
-        
-    
         if (allBotInDefaultRow) return true;
-    
+
         // 2. Count how many opponent pieces are NOT in their starting row
         int movedOpponentPieces = 0;
-        
         for (int col = 0; col < 8; col++) {
-            if (board.getPiece(opponentRow, col) != opponentChar) {
+            Square sq = board.getSquare(opponentRow, col);
+            if (!sq.hasPiece() || sq.getColor() != opponentColor) {
                 movedOpponentPieces++;
             }
         }
-        
-    
-        return movedOpponentPieces == 1;  // Bot is second, opponent moved once
+
+        // Return true if opponent made exactly 1 move (so bot is second)
+        return movedOpponentPieces == 1;
     }
+
     
 
     /**
@@ -133,7 +132,7 @@ public class BotII extends Bot {
         // Set the current game board to the one provided by the game manager
         setCurrentGameBoard(board);
 
-        if (isFirstMove()) {
+        if (isFirstMove(board)) {
             return startMove(board);
         }
 
