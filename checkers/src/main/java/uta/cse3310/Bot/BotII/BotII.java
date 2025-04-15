@@ -129,9 +129,9 @@ public class BotII extends Bot {
         // Set the current game board to the one provided by the game manager
         setCurrentGameBoard(board);
 
-        // if (isFirstMove()) {
-        // return startMove(board);
-        // }
+        if (isFirstMove()) {
+        return startMove(board);
+        }
 
         // Future logic can go here for non-starting moves
         boolean strategy = playStyle();
