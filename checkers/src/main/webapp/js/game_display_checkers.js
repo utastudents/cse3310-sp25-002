@@ -204,17 +204,22 @@ class CheckersBoard {
 
     update_current_player(player) {
         // Update the UI to show whose turn it is
+    
         try{
             this.current_player = player;
             game_display_current_player_name = player;
-            document.getElementById("current-player").innerText = `Current Player: ${player}`;
-        } catch (error) {
-            console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) update_current_player: An error occurred while handling the game display. Please check the console.`);
+
+            if (this.current_player === this.plater){
+                document.getElementById("current-player").innerText = "It's your turn to make a move!";
+            } else{
+                document.getElementById("current-player").innerText = 'Your opponent (${player}) is going to make a move.';
+            }
         }
-
+        catch (error){
+            console.error("Error in game_display_checkers.js: ", error);
+            game_display_popup_messages('(gd) update_current_player: An error occurred while handling the game display. Please check the console.');
+        }
     }
-
 
 
     /*
