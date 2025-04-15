@@ -31,7 +31,7 @@ public class BotI extends Bot {
 
         return null;
     }
-    
+
     /* Sending Moves from Bot 1 to the GameManager */
     @Override
     protected Moves sendMove() {
@@ -69,12 +69,6 @@ public class BotI extends Bot {
         }
 
     }
-
-    /* Adding the skeleton for Passive and Aggressive Strategy */
-    // private Moves passiveStrategyImplementation(LinkedList<Move> possibleMoves)
-    // {
-    // return null; /* Placeholder for now */
-    // }
 
     // private Moves aggressiveStrategyImplementation(LinkedList<Move>
     // possibleMoves) {
@@ -164,4 +158,42 @@ public class BotI extends Bot {
         }
     }
 
+    /* Adding the skeleton for Passive and Aggressive Strategy */
+    private Moves passiveStrategyImplementation(LinkedList<Move> possibleMoves, Board board) {
+        Move bestMove = null;
+        int bestPreference = -1;
+
+        for (Move move : possibleMoves) {
+
+            // Skip risky moves
+            // if (isInDangerZone(move, board))
+            // continue;
+
+            int prefernceScore = 0;
+
+            prefernceScore += 1;
+
+            // hasBackupAfterMove — +1 if protected
+            // if (hasBackupAfterMove(move, board)) {
+            // prefernceScore += 1;
+            // }
+
+            if (prefernceScore > bestPreference) {
+                bestPreference = prefernceScore;
+                bestMove = move;
+            }
+
+        }
+        // If all the moves are isInDangerZone pick the first move
+        if (bestMove == null && !possibleMoves.isEmpty()) {
+            bestMove = possibleMoves.getFirst();
+        }
+
+        Moves result = new Moves();
+        if (bestMove != null) {
+            result.addNext(bestMove);
+        }
+        return result;
+    }
+    /* Helper Methods for passiveStrategyImplementation */
 }
