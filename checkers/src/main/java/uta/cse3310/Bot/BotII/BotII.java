@@ -33,25 +33,25 @@ public class BotII extends Bot {
      * @param board the current game board
      * @return a single randomly chosen move if valid ones exist, null otherwise
      */
-    private Moves startMove(Board board) {
+    private Moves startMove() {
         Moves firstMoveSet = new Moves(); // Collect valid first moves
 
         int frontRow = this.color ? 2 : 5; // Black uses row 2, White uses row 5
 
         for (int col = 0; col < 8; col++) {
-            Square square = board.getSquare(frontRow, col);
+            Square square = this.currentGameBoard.getSquare(frontRow, col);
             if (square.hasPiece() && square.getColor() == this.color) {
                 int dir = this.color ? 1 : -1; // Black moves down (+1), white up (-1)
                 int newRow = frontRow + dir;
 
                 // Try forward-left
-                if (col - 1 >= 0 && board.getSquare(newRow, col - 1).getColor() == null) {
-                    firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col - 1)));
+                if (col - 1 >= 0 && this.currentGameBoard.getSquare(newRow, col - 1).getColor() == null) {
+                    firstMoveSet.addNext(new Move(square, this.currentGameBoard.getSquare(newRow, col - 1)));
                 }
 
                 // Try forward-right
-                if (col + 1 < 8 && board.getSquare(newRow, col + 1).getColor() == null) {
-                    firstMoveSet.addNext(new Move(square, board.getSquare(newRow, col + 1)));
+                if (col + 1 < 8 && this.currentGameBoard.getSquare(newRow, col + 1).getColor() == null) {
+                    firstMoveSet.addNext(new Move(square, this.currentGameBoard.getSquare(newRow, col + 1)));
                 }
             }
         }
@@ -77,7 +77,7 @@ public class BotII extends Bot {
      * @param board The current game board
      * @return true if this is BotII's first move
      */
-    private boolean isFirstMove(Board board) {
+    private boolean isFirstMove() {
         
         int botRow = this.color ? 2 : 5;
         int opponentRow = this.color ? 5 : 2;
@@ -86,7 +86,7 @@ public class BotII extends Bot {
         // 1. Check if all bot pieces are still in their starting row
         boolean allBotInDefaultRow = true;
         for (int col = 0; col < 8; col++) {
-            Square sq = board.getSquare(botRow, col);
+            Square sq = this.currentGameBoard.getSquare(botRow, col);
             if (!sq.hasPiece() || sq.getColor() != this.color) {
                 allBotInDefaultRow = false;
                 break;
@@ -98,7 +98,7 @@ public class BotII extends Bot {
         // 2. Check how many opponent pieces have moved from their starting row
         int movedOpponentPieces = 0;
         for (int col = 0; col < 8; col++) {
-            Square sq = board.getSquare(opponentRow, col);
+            Square sq = this.currentGameBoard.getSquare(opponentRow, col);
             if (!sq.hasPiece() || sq.getColor() != opponentColor) {
                 movedOpponentPieces++;
             }
@@ -133,11 +133,12 @@ public class BotII extends Bot {
         // Set the current game board to the one provided by the game manager
         setCurrentGameBoard(board);
 
-        if (isFirstMove(board)) {
-            return startMove(board);
+        if (isFirstMove()) {
+            return startMove();
         }
 
-        // Future logic can go here for non-starting moves
+        // Determine the bot's strategy based on the game state
+        // If the bot is at a numerical disadvantage, it will play aggressively
         boolean strategy = playStyle();
 
         LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = determineMoves(strategy);
