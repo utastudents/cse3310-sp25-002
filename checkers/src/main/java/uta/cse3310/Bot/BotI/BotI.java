@@ -85,11 +85,6 @@ public class BotI extends Bot {
 
     }
 
-    // private Moves aggressiveStrategyImplementation(LinkedList<Move>
-    // possibleMoves) {
-    // return null; /* Placeholder for now */
-    // }
-
     /**
      * determineMoves(Board board) method generates all possible legal moves for the
      * bot's pieces on the
@@ -171,6 +166,15 @@ public class BotI extends Bot {
                 moves.add(new Move(square, newPosition));
             }
         }
+    }
+
+    private Moves aggressiveStrategyImplementation(LinkedList<Move> possibleMoves) {
+        // similar implementation to passive strategy BUT...
+        // bot's goal is so maximize the number of capture moves 
+        
+        
+        
+        return null;
     }
 
     /* Adding the skeleton for Passive and Aggressive Strategy */
