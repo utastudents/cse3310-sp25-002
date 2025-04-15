@@ -28,13 +28,13 @@ public class BotI extends Bot {
 
         Move selectedMove;
         if (isAggressive) {
-            selectedMove = aggressiveStrategyImplementation(possibleMoves, board);
+            //selectedMove = aggressiveStrategyImplementation(possibleMoves, board);
         } else {
-            selectedMove = passiveStrategyImplementation(possibleMoves, board);
+            //selectedMove = passiveStrategyImplementation(possibleMoves, board);
         }
 
         // Add the selected move to the moves container and send it to the GameManager.
-        this.moves.add(selectedMove);
+        //this.moves.add(selectedMove);
         return sendMove();
         // setCurrentGameBoard(board);
         // flushMoves();
@@ -47,7 +47,7 @@ public class BotI extends Bot {
         // boolean isAggressive = isAggressive(board);
         // return implementStrategy(board, isAggressive, possibleMoves);
 
-        return null;
+        //return null;
     }
 
     /* Sending Moves from Bot 1 to the GameManager */
