@@ -172,7 +172,15 @@ public class BotI extends Bot {
         // similar implementation to passive strategy BUT...
         // bot's goal is so maximize the number of capture moves 
         
+        // initialize a variable which starts with no move (make in null)
+        // loop through all possible moves
+            //increment a variable that judges how good the move is (higher score = better move)
+            // every move should be initialized to 1
+            // (this is all from a defensive POV)
         
+        // if the move has a better score than the current best move, update the best move variable to the move that has a better score
+        // if no move was safe for the bot && there are no possible moves -> pick the first move to make game continue
+        // put the resulting move into a Moves object and return it
         
         return null;
     }
