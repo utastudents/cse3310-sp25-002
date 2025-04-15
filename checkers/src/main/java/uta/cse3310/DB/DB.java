@@ -35,9 +35,26 @@ public class DB
 		}
 	}
 
-	public static void insertUser()
+	public static void insertUser(String username)
 	{
-		//String insertStatement = "INSERT INTO users (username, rank) VALUES";
+		String insertStatement = "INSERT INTO users (username) VALUES(?)";
+		try(Connection connection = SQLiteConnector.connect();
+			PreparedStatement pstmt = connection.prepareStatement(insertStatement)) 
+		{
+			if(connection != null)
+			{
+				pstmt.setString(0, username);
+				pstmt.executeUpdate();
+			}
+			else
+			{
+				System.err.println("Failed to connect to database in Insert User command");
+			}
+		}
+		catch(SQLException e)
+		{
+			System.err.println("Error inserting user: " + e.getMessage());
+		}
 		/*string url;
 
 		string Attributes; // will parse attributes from other interfaces
