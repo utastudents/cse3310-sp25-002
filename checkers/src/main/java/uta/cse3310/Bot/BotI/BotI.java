@@ -39,7 +39,12 @@ public class BotI extends Bot {
     }
 
     private void isAggressive(Board board) {
-        // change void to boolean
+        LinkedList<Move> openmoves = determineMoves(board);
+        
+        int bot_pieces = countallPieces(board, color);
+        int player_pieces = countallPieces(board, color);
+
+        boolean isAggresive = (bot_pieces < player_pieces);
 
     }
 
