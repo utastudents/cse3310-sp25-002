@@ -40,12 +40,22 @@ public class BotI extends Bot {
 
     private void isAggressive(Board board) {
         LinkedList<Move> openmoves = determineMoves(board);
-        
+
         int bot_pieces = countallPieces(board, color);
         int player_pieces = countallPieces(board, color);
 
         boolean isAggresive = (bot_pieces < player_pieces);
 
+        Move atMove;
+        if (isAggresive) {
+            // atMove = aggressiveStrategyImplementation(openmoves, board);
+        }
+        else {
+            // atMove = passiveStrategyImplementation(openmoves, board);
+        }
+
+        // this.moves.addNext(atMove);
+        // return sendMove();
     }
 
     private int countallPieces(Board board, boolean color) {
