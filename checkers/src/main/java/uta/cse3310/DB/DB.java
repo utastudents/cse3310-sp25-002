@@ -68,7 +68,7 @@ public class DB
 
 	public static void UpdatePlayer(STring username, int newRank )			
 	{
-		String updatePlayer = "Update USERS set rank = ? WHERE username =?";  		
+		/*String updatePlayer = "Update USERS set rank = ? WHERE username =?";  		
 		try(Connection connection = SQLiteConnector.connect();
 			PreparedStatement pstmt = connection.prepareStatement(updatePlayer)) 
 		{
@@ -88,6 +88,6 @@ public class DB
 			System.err.println("Error updating user: " + e.getMessage());
 		}
 
-
+*/
 }
 
