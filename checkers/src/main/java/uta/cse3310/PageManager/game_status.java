@@ -14,6 +14,8 @@ public class game_status {
     public Integer loser = null;
     public String msg;
     public String type;
+    public String player_color;       
+    public String starting_player;    
     public int game_id;
     public String player;
     public List<Integer> from;
