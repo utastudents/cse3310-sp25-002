@@ -12,13 +12,13 @@ public class Match {
     private String player1Name; 
     private String player2Name;
     private Boolean isBot;
-    private String gameId;
+    private int gameId;
     private Boolean player1Color;
     private Boolean player2Color;
 
 
     public Match(int player1Id, int player2Id, String player1Name, String player2Name,
-     Boolean isBot, String gameId, Boolean player1Color, Boolean player2Color) {
+     Boolean isBot, int gameId, Boolean player1Color, Boolean player2Color) {
         this.player1Id = player1Id;
         this.player2Id = player2Id;
         this.player1Name = player1Name;
@@ -67,7 +67,7 @@ public class Match {
     /* Method to get the gameId from MatchMaking class
        Returns an string to be used in Match class to create JSON
     */
-    public String getGameId(){
+    public int getGameId(){
         return gameId;
     }
 
