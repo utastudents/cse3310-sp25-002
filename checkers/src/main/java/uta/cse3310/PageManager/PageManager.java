@@ -29,12 +29,17 @@ public class PageManager {
 
         try
         {
+            //temporary url for database for now
             String sqlURL = "jdbc:sqlite:userDB.db";
+            //from the documentation, drivermanager is able to get the connection
+            //via the url
             Connection connection = DriverManager.getConnection(sqlURL);
+            //if successful it should make this connection to use
             accountHandler = new NewAcctLogin(connection);
         }
         catch(SQLException e)
         {
+            //if not, then error handle it
             System.out.println("Fail: No database connection: " + e.getMessage());
         }
     }
