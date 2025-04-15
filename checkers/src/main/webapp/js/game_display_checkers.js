@@ -204,15 +204,15 @@ class CheckersBoard {
 
     update_current_player(player) {
         // Update the UI to show whose turn it is
-    
+
         try{
             this.current_player = player;
             game_display_current_player_name = player;
 
-            if (this.current_player === this.plater){
+            if (this.current_player === this.player){
                 document.getElementById("current-player").innerText = "It's your turn to make a move!";
             } else{
-                document.getElementById("current-player").innerText = 'Your opponent (${player}) is going to make a move.';
+                document.getElementById("current-player").innerText = `Your opponent (${this.current_player}) is going to make a move.`;
             }
         }
         catch (error){
