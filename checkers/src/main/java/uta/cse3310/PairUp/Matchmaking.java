@@ -16,20 +16,20 @@ import java.util.*;
 public class Matchmaking {
     private LinkedHashMap<Integer, PlayerInMatchmaking> players;
     private int gameId;
-    // gamePairController gameManagerCommunication;
+    GamePairController gameManagerCommunication;
 
     public Matchmaking() {
         players = new LinkedHashMap<>();
         gameId = 0;
-        // gameManagerCommunication = new gamePairController;
+        gameManagerCommunication = new GamePairController();
     }
 
     public void pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2, boolean isBotGame) {
         Random coinflip = new Random();
         boolean p1Color = coinflip.nextBoolean();
         boolean p2Color = !p1Color;
-        // Match match = new Match(gameId, p1.getPlayerId, p2.getPlayerId, p1.getPlayerName, p2.getPlayerName, p1Color, p2Color, isBotGame);
-        // gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
+        Match match = new Match(p1.getPlayerID(), p2.getPlayerID(), p1.getPlayerName(), p2.getPlayerName(), isBotGame, gameId++, p1Color, p2Color);
+        gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
     }
 
     public void addPlayer(int PlayerID, PlayerInMatchmaking newPlayer) {
@@ -49,6 +49,9 @@ public class Matchmaking {
                 PlayerInMatchmaking p1 = entries.get(i).getValue();
                 PlayerInMatchmaking p2 = entries.get(j).getValue();
                 // TO-DO: implement matchmaking algorithm
+
+                // Put this line into when a match is made between two humans
+                pair(p1, p2, false);
             }
         }
     }
