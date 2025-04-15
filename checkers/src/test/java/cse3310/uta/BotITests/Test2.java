@@ -1,1 +1,7 @@
-//test 2 to be added
+package cse3310.uta.BotITests;
+
+import uta.cse3310.Bot.BotI.BotI;
+
+public class test2{
+    
+}
