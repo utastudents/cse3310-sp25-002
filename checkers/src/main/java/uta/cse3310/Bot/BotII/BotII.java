@@ -68,9 +68,11 @@ public class BotII extends Bot {
     }
 
     /**
-     * Checks if it's the bot's first move:
-     * - Either all bot pieces are in default positions (so bot hasn't played yet)
-     * - Or opponent has made only one move (so bot is going second)
+     * Checks if it's the bot's first move.
+     * This is true if:
+     * - All bot pieces are still in their default starting row
+     * AND
+     * - The opponent has made 0 or 1 moves (meaning the bot is either going first or second)
      *
      * @param board The current game board
      * @return true if this is BotII's first move
@@ -81,7 +83,7 @@ public class BotII extends Bot {
         int opponentRow = this.color ? 5 : 2;
         boolean opponentColor = !this.color;
 
-        // 1. Check if all bot pieces are in starting row
+        // 1. Check if all bot pieces are still in their starting row
         boolean allBotInDefaultRow = true;
         for (int col = 0; col < 8; col++) {
             Square sq = board.getSquare(botRow, col);
@@ -90,9 +92,10 @@ public class BotII extends Bot {
                 break;
             }
         }
-        if (allBotInDefaultRow) return true;
 
-        // 2. Count how many opponent pieces are NOT in their starting row
+        if (!allBotInDefaultRow) return false; // Bot already moved
+
+        // 2. Check how many opponent pieces have moved from their starting row
         int movedOpponentPieces = 0;
         for (int col = 0; col < 8; col++) {
             Square sq = board.getSquare(opponentRow, col);
@@ -101,11 +104,9 @@ public class BotII extends Bot {
             }
         }
 
-        // Return true if opponent made exactly 1 move (so bot is second)
-        return movedOpponentPieces == 1;
+        // If opponent has moved 0 or 1 piece, it's bot's first move
+        return movedOpponentPieces <= 1;
     }
-
-    
 
     /**
      * Implementation of requestMove method for BotII.
