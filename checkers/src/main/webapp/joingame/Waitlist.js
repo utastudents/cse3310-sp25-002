@@ -1,8 +1,8 @@
 class Waitlist{
 	constructor(){
         this.waitlist = []; // Array to store player objects
+		this.data = new Data;
     }
-
 	
 	add(playerInfo){	//Add a player's info onto the waitlist
 		player = new Player(playerInfo.username, playerInfo.id); // Create a new Player object with given data
@@ -25,12 +25,16 @@ class Waitlist{
 		  this.waitlist = this.waitlist.filter(p => p.getID() !== playerID); // Filter out the player with the matching ID
 		  this.displayWaitlist();  // Update the display
 	}
-	
-	updateWaitlist(playerInfo){	//Update waitlist and placement's of players each time another player is added/removed
-		this.playerInfo = new playerInfo;
-	}
 
 	displayWaitlist(){	//Displays the updated waitlist
+		const list = document.getElementById(waitlist);
 
+		HTMLDataListElement.innerHTML = "";
+
+		this.waitlist.forEach(player => {
+			const li = document.createElement("li");
+			li.textContent = '${player.getUsername()}	${player.getID()}';
+			HTMLDataListElement.appendChild(li);
+		});
 	}
 }
