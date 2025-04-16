@@ -12,6 +12,7 @@ public class game_status {
     public boolean gameOver = false;
     public Integer winner = null;
     public Integer loser = null;
+    public boolean draw = false;
     public String msg;
     public String type;
     public String player_color;       
