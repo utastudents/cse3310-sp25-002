@@ -111,6 +111,9 @@ public class Game
     public boolean gameActive(){return gameIsActive;}
     //return the number of moves since last capture
     public int lastCapture(){return lastCapture++;}
+    //sets lastCapture to 0
+    public void newCapture(){lastCapture = 0;}
+
     //declare draw and set game to inactive
     public void GameDeclareDraw(){
         draw = true;
