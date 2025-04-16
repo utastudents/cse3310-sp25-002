@@ -4,21 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Page</title>
+  <link rel = "stylesheet" href="style.css">
 </head>
 <body>
   <div id = "new_account">
    <!-- Container of the login page -->
+    
     <div class ="wrapper">
-        <form onsubmit = "joinGame(); return false;">
-          <h1>CHECKERS WITH 3310-002</h1>  
-          <div class="input-box">
-            <input type="text" placeholder="Enter Username" id="username" />
-          </div>
-          <button type="submit">Join Game</button>
-        </form>
+      <div class="header">
+      <article class="mascot">
+        <div class="Piece">
+          <div class="Face"></div>
+        </div>
+      </article>
+      <h1>CHECKERS WITH CSE 3310-002</h1>
+    </div>
+
+      <form action="">
+      <div class="input-box">
+        <input type="text" placeholder="Enter Username"   id="username" />
       </div>
-  
+      <button onclick="joinGame()">Join Game</button>
+    </form>
+  </div>
+        <form onsubmit = "joinGame(); return false;"> <!-- ? -->
+
+          <!--button type="submit">Join Game</button--> 
  </div>
+  
     <div id="join_game">
 
     join game
