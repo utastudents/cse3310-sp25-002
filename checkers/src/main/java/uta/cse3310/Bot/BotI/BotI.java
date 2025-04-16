@@ -237,7 +237,7 @@ public class BotI extends Bot {
     }
     /* Helper Methods for passiveStrategyImplementation */
 
-    private void insideDangerRegion(Move move, Board board) {
+    private boolean insideDangerRegion(Move move, Board board) {
         // function serves to tell if a piece is in danger of being captured after a
         // move is made
         int row = move.getDest().getRow();
@@ -248,7 +248,7 @@ public class BotI extends Bot {
                 canBeAttackedFrom(row, col, row + enemyDir, col +1, board);
     }
 
-    private void canBeAttackedFrom(int targetRow, int targetCol, int attackerRow, int attackerCol, Board board) {
+    private boolean canBeAttackedFrom(int targetRow, int targetCol, int attackerRow, int attackerCol, Board board) {
         if (!isInsideBoard(attackerRow, attackerCol))
             return false;
         
