@@ -4,7 +4,10 @@ import java.util.Map;
 
 public class JoinGameHandler {
 
-    public JoinGameHandler() {
+    private GameDisplayConnector displayConnector;
+
+    public JoinGameHandler(GameDisplayConnector displayConnector) {
+        this.displayConnector = displayConnector;
     }
 
     public Result processJoinGame(Map<String, String> joinData) {
