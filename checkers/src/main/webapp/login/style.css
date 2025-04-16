@@ -27,6 +27,7 @@ body{
   max-width: 400px;
   width: 90%;
   text-align: center;
+  position: relative;
 }
 
 .header{
@@ -39,8 +40,8 @@ body{
 }
 
 .wrapper h1{
-  font-size: 22px;
-  color: rgb(67,0,134);
+  font-size: 18px;
+  color: #4b2e1e;
 }
 
 .mascot{
