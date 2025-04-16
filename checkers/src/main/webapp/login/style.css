@@ -29,6 +29,15 @@ body{
   text-align: center;
 }
 
+.header{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
 .wrapper h1{
   font-size: 22px;
   color: rgb(67,0,134);
