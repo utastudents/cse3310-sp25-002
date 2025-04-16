@@ -7,27 +7,47 @@ import java.sql.SQLException;
 
 public class GetRank
 {
-    public static void getRank(int playerId)
+    public static int getRank(String playerName)
     {
         // This method will be used to get the rank of a player from the database.
         // It will take the player's ID as input and return their rank.
         // DB db = new DB();
-        String [] UserData = new String[10];
-        int rank = 1;
-        for (String users : UserData)
-        {
-            if (Integer.parseInt(users) == playerId)
-            {
-                System.out.println("Rank: " + rank);
-                break;
-                
-            }else{
-                rank ++;
-            }
-        }
-        // Placeholder for actual database logic
+        // String writeQuery = "SELECT rank FROM USERS WHERE username = ?";
 
-    }
+        // String [] UserData = new String[10];
+        // int rank = 1;
+        // for (String users : UserData)
+        // {
+        //     if (Integer.parseInt(users) == playerId)
+        //     {
+        //         System.out.println("Rank: " + rank);
+        //         break;
+                
+        //     }else{
+        //         rank ++;
+        //     }
+        // }
+        // Placeholder for actual database logic
+        String writeQuery = "SELECT rank FROM USERS WHERE username = ?";
+        try (Connection conn = SQLiteConnector.connect();
+        PreparedStatement conPreparedStatement = conn.prepareStatement(writeQuery)) {
+
+        conPreparedStatement.setString(1, playerName);
+        ResultSet resultSet = conPreparedStatement.executeQuery();
+
+       if (resultSet.next()) {
+           return resultSet.getInt("rank");
+       } else {
+           System.out.println("User not found.");
+           return -1;
+       }
+
+   } catch (SQLException e) {
+       System.err.println("Error retrieving stored rank: " + e.getMessage());
+       return -1;
+   }
+
+}
     public static int updateScore(String playerUsername, String oppUsername, double W)
     {
         // This query gets username and rank of the player and his opp
