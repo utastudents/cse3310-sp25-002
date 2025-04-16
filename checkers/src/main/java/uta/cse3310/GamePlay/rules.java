@@ -51,6 +51,85 @@ public class rules
             if(playerColor)
             {
                 // isLegal for white pieces
+                // King piece
+                if(start.isKing())
+                {
+                    // Regular move
+                    if (rowDiff == 1 && colDiff == 1)
+                    {
+                        legality = true;
+                    }
+                    // Capture piece
+                    else if (rowDiff == 2 && colDiff == 2)
+                    {
+                        int middleRow = start.getRow();
+                        int middleCol = start.getCol();
+
+                        // Determine if the move is to the left or right
+                        if(middleCol < dest.getCol())
+                        {
+                            middleCol++;
+                        }
+                        else
+                        {
+                            middleCol--;
+                        }
+
+                        // Determine if the move is up or down
+                        if(middleRow < dest.getRow())
+                        {
+                            middleRow++;
+                        }
+                        else
+                        {
+                            middleRow--;
+                        }
+
+                        Square middleSquare = board.getSquare(middleRow, middleCol);
+
+                        // middle square must exist, have a piece, and be of the opposite color
+                        if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
+                        {
+                            legality = true;
+                        }
+                    }
+                }
+                else
+                {
+                    // Regular piece, not king
+                    if(start.getRow() > dest.getRow())
+                    {
+                        // Regular move
+                        if (rowDiff == 1 && colDiff == 1)
+                        {
+                            legality = true;
+                        }
+                        // Capture piece
+                        else if (rowDiff == 2 && colDiff == 2)
+                        {
+                            int middleRow = start.getRow() + 1;
+                            int middleCol = start.getCol();
+
+                            // Determine if the move is to the left or right
+                            if(middleCol < dest.getCol())
+                            {
+                                middleCol++;
+                            }
+                            else
+                            {
+                                middleCol--;
+                            }
+
+                            Square middleSquare = board.getSquare(middleRow, middleCol);
+
+                            // Middle square must exist, have a piece, and be of the opposite color
+                            if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
+                            {
+                                legality = true;
+                            }
+                        }
+                    }
+                }
             }
             else
             {
