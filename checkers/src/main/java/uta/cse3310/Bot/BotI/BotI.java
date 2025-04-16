@@ -24,16 +24,14 @@ public class BotI extends Bot {
         boolean isAggressive = isAggressive(board);
 
         Moves playMove;
-        if(isAggressive){
+        if (isAggressive) {
             playMove = aggressiveStrategyImplementation(possibleMoves, board);
-        }
-        else{
+        } else {
             playMove = passiveStrategyImplementation(possibleMoves, board);
         }
 
         this.moves = playMove;
         return sendMove();
-        
 
     }
 
@@ -167,9 +165,9 @@ public class BotI extends Bot {
         for (Move move : possibleMoves) {
             int score = 1;
 
-            //incremement for being a better move
+            // incremement for being a better move
             if (isCapturingMove(move, board)) {
-                score +=1; 
+                score += 1;
             }
 
             if (score > bestScore) {
@@ -178,7 +176,7 @@ public class BotI extends Bot {
             }
         }
 
-        //if no move selected, pick the first
+        // if no move selected, pick the first
         if (bestMove == null && !possibleMoves.isEmpty()) {
             bestMove = possibleMoves.getFirst();
         }
@@ -207,7 +205,7 @@ public class BotI extends Bot {
 
             // Skip risky moves
             if (insideDangerRegion(move, board))
-            continue;
+                continue;
 
             int prefernceScore = 0;
 
@@ -244,20 +242,29 @@ public class BotI extends Bot {
         int col = move.getDest().getCol();
         int enemyDir = this.color ? -1 : 1;
 
-        return canBeAttackedFrom(row, col, row + enemyDir, col -1, board) ||
-                canBeAttackedFrom(row, col, row + enemyDir, col +1, board);
+        return canBeAttackedFrom(row, col, row + enemyDir, col - 1, board) ||
+                canBeAttackedFrom(row, col, row + enemyDir, col + 1, board);
     }
 
     private boolean canBeAttackedFrom(int targetRow, int targetCol, int attackerRow, int attackerCol, Board board) {
         if (!isInsideBoard(attackerRow, attackerCol))
             return false;
-        
+
         Square attacker = board.getSquare(attackerRow, attackerCol);
         return attacker.hasPiece() && attacker.getColor() != this.color;
+    }
+
+    private boolean hasBackupAfterMove(Move move, Board board) {
+        return true; /* Place holder for now */
+    }
+
+    private boolean hasSupportAt(int row, int col, Board board) {
+        return true; /* Place holder for now */
     }
 
     // Utility method to check board boundaries
     private boolean isInsideBoard(int row, int col) {
         return row >= 0 && row < 8 && col >= 0 && col < 8;
     }
+
 }
