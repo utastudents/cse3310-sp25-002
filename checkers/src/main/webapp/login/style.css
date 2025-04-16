@@ -47,17 +47,21 @@ body{
 .mascot{
   width: 60px;
   height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 article.mascot{
   position: relative;
-  width: 100%;
-  height: 100%;
+  width: 60%;
+  height: 60%;
   aspect-ratio: 1;
   background: transparent;
   transform: none;
-  top: auto;
-  left: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .Piece{
@@ -102,7 +106,7 @@ button {
   margin-top: 15px;
   padding: 10px 20px; 
   font-size: 14px;
-  background-color: #d08c60;
+  background-color: #975930;
   color: white;
   border: none;
   border-radius: 5px;
@@ -110,6 +114,6 @@ button {
 }
 
 button:hover {
-  background-color: #b4744e;
+  background-color: #5c331b;
 }
 
