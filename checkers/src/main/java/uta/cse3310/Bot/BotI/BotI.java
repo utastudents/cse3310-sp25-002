@@ -226,4 +226,9 @@ public class BotI extends Bot {
         // move is made
 
     }
+
+    // Utility method to check board boundaries
+    private boolean isInsideBoard(int row, int col) {
+        return row >= 0 && row < 8 && col >= 0 && col < 8;
+    }
 }
