@@ -259,7 +259,10 @@ public class BotI extends Bot {
     }
 
     private boolean hasSupportAt(int row, int col, Board board) {
-        return true; /* Place holder for now */
+        if (!isInsideBoard(row, col))
+            return false;
+        Square square = board.getSquare(row, col);
+        return square.hasPiece() && square.getColor() == this.color;
     }
 
     // Utility method to check board boundaries
