@@ -20,9 +20,10 @@ public class Validate
             }
             else
             {
+
                 System.out.println("201 Username Created");
                 String insertStatement = "INSERT INTO users (username) VALUES(?)";
-                String insert = insertUser(String username);
+                // String insert = insertUser(String username);
                 try (java.sql.Connection connection = DriverManager.getConnection("jdbc:sqlite:users.db");
                     java.sql.PreparedStatement pstmt = connection.prepareStatement(insertStatement))
                 {
