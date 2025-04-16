@@ -27,6 +27,45 @@ public class rules
         return true;
     }
 
+    //checks if a move is legal based on checkers rules
+    //returns true if:
+    // - the destination square is unoccupied AND
+    // - the move is either a regular 1-step diagonal move
+    // - OR a 2-step jump over an opponent's piece
+    //returns false in all other cases
+    static protected boolean isLegal(Move move, Board board, boolean playerColor) {
+        Square start = move.getStart(); // starting square
+        Square dest = move.getDest();   // destination square
+
+        // check if move is out of bounds or destination is occupied
+        if (dest == null || !inBounds(move) || dest.hasPiece()) {
+            return false;
+        }
+
+        int rowDiff = Math.abs(dest.getRow() - start.getRow());
+        int colDiff = Math.abs(dest.getCol() - start.getCol());
+
+        // Case 1: Regular 1-step diagonal move
+        if (rowDiff == 1 && colDiff == 1) {
+            return true;
+        }
+
+        // Case 2: 2-step jump move — must have opponent piece in the middle
+        if (rowDiff == 2 && colDiff == 2) {
+            int middleRow = (start.getRow() + dest.getRow()) / 2;
+            int middleCol = (start.getCol() + dest.getCol()) / 2;
+            Square middleSquare = board.getSquare(middleRow, middleCol);
+
+            // middle square must exist, have a piece, and be of the opposite color
+            if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor) {
+                return true;
+            }
+        }
+
+        // Any other move is illegal
+        return false;
+    }
+
     //checks how many spots moved up to compared to number of pieces
     //0 pieces = 1, 1 piece = 2, 2 pieces = 4 etc...
     static protected boolean pieceToMoves(Moves moves, Board board)
