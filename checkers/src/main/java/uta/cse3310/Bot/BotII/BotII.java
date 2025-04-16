@@ -447,28 +447,5 @@ public class BotII extends Bot {
     }
 }
 /**
-keeps track of where the opponent moves to find out if they're playing aggressively or defensively. 
-def trackOpponentMoves():
-    opponent_move_history = []  remember opponent's moves
-    aggression_score = 0        # Higher score means opponent is being aggressive
-
-    def update(move):
-        nonlocal aggression_score
-        opponent_move_history.append(move)
-        
-        if move['type'] == 'jump' or move['direction'] == 'forward' and move['distance'] > 1:
-            aggression_score += 1
-        else:
-            aggression_score -= 1
-
-    def analyzePattern():
-        if aggression_score > 3:
-            return "aggressive"
-        elif aggression_score < -3:
-            return "defensive"
-        else:
-            return "neutral"
-
-    return update, analyzePattern
 
 */
