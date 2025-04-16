@@ -167,10 +167,10 @@ public class BotI extends Bot {
         for (Move move : possibleMoves) {
             int score = 1;
 
-            //incremement for being a better move??
-            /*if (isCapturingMove(move)) {
+            //incremement for being a better move
+            if (isCapturingMove(move)) {
                 score +=1; 
-            }*/
+            }
 
             if (score > bestScore) {
                 bestScore = score;
