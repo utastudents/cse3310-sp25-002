@@ -240,20 +240,20 @@ public class BotI extends Bot {
     private void insideDangerRegion(Move move, Board board) {
         // function serves to tell if a piece is in danger of being captured after a
         // move is made
-        /*int row = move.getDest().getRow();
+        int row = move.getDest().getRow();
         int col = move.getDest().getCol();
         int enemyDir = this.color ? -1 : 1;
 
         return canBeAttackedFrom(row, col, row + enemyDir, col -1, board) ||
-                canBeAttackedFrom(row, col, row + enemyDir, col +1, board);*/
+                canBeAttackedFrom(row, col, row + enemyDir, col +1, board);
     }
 
     private void canBeAttackedFrom(int targetRow, int targetCol, int attackerRow, int attackerCol, Board board) {
-        /*if (!isInsideBoard(attackerRow, attackerCol))
+        if (!isInsideBoard(attackerRow, attackerCol))
             return false;
         
         Square attacker = board.getSquare(attackerRow, attackerCol);
-        return attacker.hasPiece() && attacker.getColor() != this.color;*/
+        return attacker.hasPiece() && attacker.getColor() != this.color;
     }
 
     // Utility method to check board boundaries
