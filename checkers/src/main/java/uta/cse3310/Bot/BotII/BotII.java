@@ -21,8 +21,8 @@ public class BotII extends Bot {
      * @param color - the color the bot will be playing as (true for black, false
      *              for white)
      */
-    public BotII(boolean color) {
-        super(color); // Call the constructor of the parent class (Bot)
+    public BotII() {
+        super(); // Call the constructor of the parent class (Bot)
     }
 
     /**
@@ -378,18 +378,16 @@ public class BotII extends Bot {
 
         if (strategy)
         {
-            possibleMoves.sort(Comparator.comparing(pair->pair.getValue().getFirst().getElo()).reversed());
+            possibleMoves.sort(Comparator.comparing((Pair<Square, LinkedList<MoveRating>> pair) -> pair.getValue().getFirst().getEloRating()).reversed());
         }
         if (!strategy) 
         {
-            possibleMoves.sort(Comparator.comparing(pair->pair.getValue().getFirst().getElo()));
+            possibleMoves.sort(Comparator.comparing((Pair<Square, LinkedList<MoveRating>> pair) -> pair.getValue().getFirst().getEloRating()));
         }
 
         // after set isMoves , add move to Move obj
-
-
-        Move m = possibleMoves.getFirst().getValue().getMove();
-        this.Move.addNext(m);
+        Move m = possibleMoves.getFirst().getValue().getFirst().getMove();
+        this.moves.addNext(m);
         
 
     }

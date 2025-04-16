@@ -11,8 +11,8 @@ import java.util.LinkedList;
 
 public class BotI extends Bot {
 
-    public BotI(boolean color) {
-        super(color); // Call the constructor of the parent class (Bot)
+    public BotI() {
+        super(); // Call the constructor of the parent class (Bot)
     }
 
     @Override
@@ -43,7 +43,7 @@ public class BotI extends Bot {
 
     private boolean isAggressive(Board board) {
         int botPieces = countallPieces(board, color);
-        int playerPieces = countallPieces(board, !color);
+        int playerPieces = countallPieces(board, color);
 
         boolean isAggressive = botPieces < playerPieces;
         return isAggressive;
@@ -142,8 +142,8 @@ public class BotI extends Bot {
         Square end = move.getDest();
 
         if (start.getRow() - end.getRow() == 2) {
-            int jumpedRow = ((start.getRow() + end.getRow()) / 2);
-            int jumpedColumn = ((start.getCol() + end.getCol()) / 2);
+            int jumpedRow = (start.getRow() + end.getRow() / 2);
+            int jumpedColumn = (start.getCol() + end.getCol() / 2);
 
             Square jumpedSquare = board.getSquare(jumpedRow, jumpedColumn);
 

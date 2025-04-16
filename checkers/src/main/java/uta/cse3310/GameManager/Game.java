@@ -26,22 +26,22 @@ public class Game
         board = new Board();
         board.initializeBoard();
         if(player1id == 0){
-            bot1 = new BotI(player1color);
+            bot1 = new BotI();
             player1 = new Player(player1id, player1color);
         }
         else if(player1id == 1){
-            bot2 = new BotII(player1color);
+            bot2 = new BotII();
             player1 = new Player(player1id, player1color);
         }
         else{
             player1 = new Player(player1id, player1color);
         }
         if(player2id == 0){
-            bot1 = new BotI(player2color);
+            bot1 = new BotI();
             player2 = new Player(player2id, player2color);
         }
         else if(player2id == 1){
-            bot2 = new BotII(player2color);
+            bot2 = new BotII();
             player2 = new Player(player2id, player2color);
         }
         else{

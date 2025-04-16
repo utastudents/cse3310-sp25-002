@@ -29,22 +29,8 @@ public abstract class Bot {
      * 
      * @param None
      */
-    private Bot() {
+    public Bot() {
         this.moves = new Moves();
-    }
-
-    /**
-     * Constructor for the Bot class with a color parameter.
-     * 
-     * This constructor will call the default constructor and set the color of what
-     * it is playing as.
-     * 
-     * @param color - the color the bot will be playing as (true for black, false
-     *              for white)
-     */
-    public Bot(boolean color) {
-        this();
-        this.color = color;
     }
 
     /**
@@ -116,6 +102,19 @@ public abstract class Bot {
      */
     protected void setMoves(Moves moves) {
         this.moves = moves;
+    }
+
+    /**
+     * Sets the color of the bot. This is used to determine which color pieces the
+     * bot can move.Set by the {@link GameManager} when the bot is created or when the bot
+     * has a new game.
+     * 
+     * @param color
+     * 
+     * @see GameManager
+     */
+    public void setColor(boolean color) {
+        this.color = color;
     }
 
     /**
