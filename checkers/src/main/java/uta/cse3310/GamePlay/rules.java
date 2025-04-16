@@ -33,37 +33,110 @@ public class rules
     // - the move is either a regular 1-step diagonal move
     // - OR a 2-step jump over an opponent's piece
     //returns false in all other cases
-    static protected boolean isLegal(Move move, Board board, boolean playerColor) {
+    // During testing, make methods for repetetive lines to reduce file length
+    static protected boolean isLegal(Move move, Game game) {
+        boolean legality = false;
         Square start = move.getStart(); // starting square
         Square dest = move.getDest();   // destination square
 
         // check if move is out of bounds or destination is occupied
-        if (dest == null || !inBounds(move) || dest.hasPiece()) {
-            return false;
-        }
+        if (!(dest == null || !inBounds(move) || dest.hasPiece()))
+        {
+            Board board = game.getBoard();
+            Player player = game.getCurrentTurn();
+            boolean playerColor = player.getColor();
+            int rowDiff = Math.abs(dest.getRow() - start.getRow());
+            int colDiff = Math.abs(dest.getCol() - start.getCol());
 
-        int rowDiff = Math.abs(dest.getRow() - start.getRow());
-        int colDiff = Math.abs(dest.getCol() - start.getCol());
+            if(playerColor)
+            {
+                // isLegal for white pieces
+            }
+            else
+            {
+                // isLegal for black pieces
+                if(start.isKing())
+                {
+                    // Regular move
+                    if (rowDiff == 1 && colDiff == 1)
+                    {
+                        legality = true;
+                    }
+                    // Capture piece
+                    else if (rowDiff == 2 && colDiff == 2)
+                    {
+                        int middleRow = start.getRow();
+                        int middleCol = start.getCol();
 
-        // Case 1: Regular 1-step diagonal move
-        if (rowDiff == 1 && colDiff == 1) {
-            return true;
-        }
+                        // Determine if the move is to the left or right
+                        if(middleCol < dest.getCol())
+                        {
+                            middleCol++;
+                        }
+                        else
+                        {
+                            middleCol--;
+                        }
 
-        // Case 2: 2-step jump move — must have opponent piece in the middle
-        if (rowDiff == 2 && colDiff == 2) {
-            int middleRow = (start.getRow() + dest.getRow()) / 2;
-            int middleCol = (start.getCol() + dest.getCol()) / 2;
-            Square middleSquare = board.getSquare(middleRow, middleCol);
+                        // Determine if the move is up or down
+                        if(middleRow < dest.getRow())
+                        {
+                            middleRow++;
+                        }
+                        else
+                        {
+                            middleRow--;
+                        }
 
-            // middle square must exist, have a piece, and be of the opposite color
-            if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor) {
-                return true;
+                        Square middleSquare = board.getSquare(middleRow, middleCol);
+
+                        // middle square must exist, have a piece, and be of the opposite color
+                        if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
+                        {
+                            legality = true;
+                        }
+                    }
+                }
+                else
+                {
+                    if(start.getRow() < dest.getRow())
+                    {
+                        // Regular move
+                        if (rowDiff == 1 && colDiff == 1)
+                        {
+                            legality = true;
+                        }
+                        // Capture piece
+                        else if (rowDiff == 2 && colDiff == 2)
+                        {
+                            int middleRow = start.getRow() + 1;
+                            int middleCol = start.getCol();
+
+                            // Determine if the move is to the left or right
+                            if(middleCol < dest.getCol())
+                            {
+                                middleCol++;
+                            }
+                            else
+                            {
+                                middleCol--;
+                            }
+
+                            Square middleSquare = board.getSquare(middleRow, middleCol);
+
+                            // Middle square must exist, have a piece, and be of the opposite color
+                            if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
+                            {
+                                legality = true;
+                            }
+                        }
+                    }
+                }
             }
         }
 
         // Any other move is illegal
-        return false;
+        return legality;
     }
 
     //checks how many spots moved up to compared to number of pieces
@@ -143,7 +216,7 @@ public class rules
             }
             else if(columnDistance == 2)
             {
-                
+
             }
         }
 
