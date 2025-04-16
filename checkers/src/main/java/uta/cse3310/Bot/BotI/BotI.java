@@ -211,6 +211,23 @@ public class BotI extends Bot {
 
             prefernceScore += 1;
 
+            if (!move.getStart().isKing()) {
+                int startRow = move.getStart().getRow();
+                int destRow = move.getDest().getRow();
+
+                if (!this.color && destRow < startRow)
+                    prefernceScore += 1;
+                else if (this.color && destRow > startRow)
+                    prefernceScore += 1;
+            }
+
+            int col = move.getDest().getCol();
+            if (col == 3 || col == 4) {
+                prefernceScore += 2;
+            } else if (col == 2 || col == 5) {
+                prefernceScore += 1;
+            }
+
             if (hasBackupAfterMove(move, board)) {
                 prefernceScore += 1;
             }
