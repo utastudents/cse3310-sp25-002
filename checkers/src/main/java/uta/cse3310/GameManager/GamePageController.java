@@ -24,7 +24,7 @@ public class GamePageController {
     }
 
     //returns the moves list of the player
-    public Moves processMoves(int playerID, Move move){
+    public Moves processMove(int playerID, Move move){
         Moves moves = new Moves();
         moves.addNext(move);
         gameManager.processMove(playerID, move);
