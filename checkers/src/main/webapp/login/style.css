@@ -15,7 +15,7 @@ body{
   justify-content: center;
   align-items: center;
   background-color: burlywood;
-  background: url('CheckersImage-2.jpg') no-repeat center center fixed;
+  background: url('Checkers3.png') no-repeat center center fixed;
   font-family: Garamond, serif;
 }
 
@@ -40,7 +40,7 @@ body{
 }
 
 .wrapper h1{
-  font-size: 18px;
+  font-size: 22px;
   color: #4b2e1e;
 }
 
@@ -97,7 +97,7 @@ article.mascot{
   width: 250px;
   padding: 12px;
   margin-top: 15px;
-  font-size: 16px;
+  font-size: 18px;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
@@ -105,7 +105,7 @@ article.mascot{
 button {
   margin-top: 15px;
   padding: 10px 20px; 
-  font-size: 14px;
+  font-size: 16px;
   background-color: #975930;
   color: white;
   border: none;
