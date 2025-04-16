@@ -86,7 +86,7 @@ public class DB
 		
 		return leaderboard;
 	}
-/*
+
 	public static void updatePlayer(String username, int newRank )			
 	{
 		String updatePlayer = "UPDATE USERS SET rank = ? WHERE username = ?";  		
@@ -108,7 +108,7 @@ public class DB
 		{
 			System.err.println("Error updating user: " + e.getMessage());
 		}
-*/
 
+	}
 }
 
