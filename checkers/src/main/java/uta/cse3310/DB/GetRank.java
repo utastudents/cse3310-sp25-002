@@ -43,12 +43,12 @@ public class GetRank
             // run query and store the result in resultSet
             ResultSet resultSet = preppedStatement.executeQuery();
 
-            // declare ints for player's rank and the rank for his opp too
+            // declare ints for player's rank and the rank for their opp too
             // set them both to -1 to error check later
             int playerRank = -1;
             int oppRank = -1;
 
-            // run through each row and assign the correct rank to the player and his opp
+            // run through each row and assign the correct rank to the player and their opp
             while(resultSet.next())
             {
                 String currUsername = resultSet.getString("username");
@@ -105,10 +105,5 @@ public class GetRank
         }
 
     }
-    // public List<String> getLeaderboard()
-    // {
-    //     // This method will be used to get the leaderboard from the database.
-    //     // It will return a list of players and their ranks.
-    //     return List.of("user1", "user2", "user3"); // Placeholder for actual database logic
-    // }
+
 }
