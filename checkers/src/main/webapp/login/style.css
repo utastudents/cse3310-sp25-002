@@ -43,6 +43,11 @@ body{
   color: rgb(67,0,134);
 }
 
+.mascot{
+  width: 60px;
+  height: 60px;
+}
+
 .input-box input {
   width: 250px;
   padding: 12px;
