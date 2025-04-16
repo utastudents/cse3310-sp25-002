@@ -206,8 +206,8 @@ public class BotI extends Bot {
         for (Move move : possibleMoves) {
 
             // Skip risky moves
-            /*if (insideDangerRegion(move, board))
-            continue;*/
+            if (insideDangerRegion(move, board))
+            continue;
 
             int prefernceScore = 0;
 
