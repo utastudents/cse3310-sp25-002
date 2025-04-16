@@ -48,6 +48,17 @@ body{
   height: 60px;
 }
 
+article.mascot{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1;
+  background: transparent;
+  transform: none;
+  top: auto;
+  left: auto;
+}
+
 .input-box input {
   width: 250px;
   padding: 12px;
