@@ -168,9 +168,9 @@ public class BotI extends Bot {
             int score = 1;
 
             //incremement for being a better move
-            if (isCapturingMove(move)) {
+            /*if (isCapturingMove(move)) {
                 score +=1; 
-            }
+            }*/
 
             if (score > bestScore) {
                 bestScore = score;
