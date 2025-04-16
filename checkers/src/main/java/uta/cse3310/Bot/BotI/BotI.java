@@ -139,8 +139,22 @@ public class BotI extends Bot {
         }
     }
 
-    private void isCapturingMove(Move move) {
-        
+    private boolean isCapturingMove(Move move, Board board) {
+        Square start = move.getStart();
+        Square end = move.getDest();
+
+        if (start.getRow() - end.getRow() == 2) {
+            int jumpedRow = (start.getRow() + end.getRow() / 2);
+            int jumpedColumn = (start.getCol() + end.getCol() / 2);
+
+            Square jumpedSquare = board.getSquare(jumpedRow, jumpedColumn);
+
+            if ((jumpedSquare.getColor() != null) && (jumpedSquare.getColor() != end.getColor())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private Moves aggressiveStrategyImplementation(LinkedList<Move> possibleMoves, Board board) {
