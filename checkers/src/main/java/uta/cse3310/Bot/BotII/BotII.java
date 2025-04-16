@@ -372,8 +372,9 @@ public class BotII extends Bot {
             LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves) {
         // ORDER OF HOW TO WRITE THIS FUNC
         // determine strategy
-        // if passive , sort by ELo and use lowest
         // if aggr , sort by ELO and use highest
+        // // if passive , sort by ELo and use lowest
+        
 
         if (strategy)
         {
@@ -387,8 +388,8 @@ public class BotII extends Bot {
         // after set isMoves , add move to Move obj
 
 
-        Move m = possibleMoves.getFirst().getValue().getMove()
-        this.Move.addNext(m)
+        Move m = possibleMoves.getFirst().getValue().getMove();
+        this.Move.addNext(m);
         
 
     }
