@@ -11,8 +11,8 @@ import java.util.Map;
 import com.google.gson.JsonObject;
 
 import uta.cse3310.DB.DB;
-import uta.cse3310.PairUp.PairUp;
 import uta.cse3310.GameManager.GameManager;
+import uta.cse3310.PairUp.PairUp;
 
 public class PageManager {
     DB db;
@@ -34,7 +34,7 @@ public class PageManager {
         try
         {
             //temporary url for database for now
-            String sqlURL = "jdbc:sqlite:userDB.db";
+            String sqlURL = "jdbc:sqlite:checkers.db";
             //from the documentation, drivermanager is able to get the connection
             //via the url
             Connection connection = DriverManager.getConnection(sqlURL);
