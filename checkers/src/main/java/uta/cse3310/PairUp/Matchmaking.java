@@ -1,6 +1,7 @@
 package uta.cse3310.PairUp;
 
 import uta.cse3310.GameManager.GamePairController;
+import uta.cse3310.GameManager.Game;
 import java.util.LinkedHashMap;
 import java.util.Random;
 import java.util.ArrayList;
@@ -25,21 +26,21 @@ public class Matchmaking {
     }
 
     // Pairs two players
-    public void pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2) {
+    public Game pair(PlayerInMatchmaking p1, PlayerInMatchmaking p2) {
         Random coinflip = new Random();
         boolean p1Color = coinflip.nextBoolean();
         boolean p2Color = !p1Color;
         Match match = new Match(p1.getPlayerID(), p2.getPlayerID(), p1.getPlayerName(), p2.getPlayerName(), false, gameId++, p1Color, p2Color);
-        gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
+        return gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
     }
 
     // Pairs a plyer and bot
-    public void pair(PlayerInMatchmaking p1, int botID) {
+    public Game pair(PlayerInMatchmaking p1, int botID) {
         Random coinflip = new Random();
         boolean p1Color = coinflip.nextBoolean();
         boolean botColor = !p1Color;
         Match match = new Match(p1.getPlayerID(), botID, p1.getPlayerName(), "Bot", true, gameId++, p1Color, botColor);
-        gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
+        return gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
     }
 
     public void addPlayer(int PlayerID, PlayerInMatchmaking newPlayer) {
