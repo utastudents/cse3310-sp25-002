@@ -47,7 +47,7 @@ function joinGame()
        
 
 
-        function recieveFromPageManager(msg)
+        function  receiveFromPageManager(msg)
         {
 
 

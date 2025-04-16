@@ -1,6 +1,71 @@
-body{
-    padding: 25px;
-  }
-  .title {
-      color: #000000;
-  }
+/* General Layout */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header, footer {
+    background-color: #004466;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+}
+
+main {
+    padding: 20px;
+    max-width: 900px;
+    margin: auto;
+}
+
+section {
+    margin-bottom: 30px;
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Buttons */
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: #0077cc;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #005fa3;
+}
+
+/* Waitlist Styling */
+#waitlist {
+    list-style-type: none;
+    padding: 0;
+}
+
+#waitlist li {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Notification Styling */
+#notification-section {
+    border-top: 2px solid #ccc;
+    padding-top: 15px;
+}
+
+#notification {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #e7f3fe;
+    border: 1px solid #b3d4fc;
+    border-radius: 4px;
+    min-height: 40px;
+}

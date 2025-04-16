@@ -14,7 +14,7 @@ public class DB
 	{
 		String createStatement = "CREATE TABLE IF NOT EXISTS USERS (\n"
                 + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                + " username TEXT NOT NULL UNIQUE,\n"
+                + " username varchar(30) NOT NULL,\n"
                 + "rank INTEGER NOT NULL DEFAULT 0)"; //here the schema is to be established and create statement 
 		
 		try(Connection connection = SQLiteConnector.connect();

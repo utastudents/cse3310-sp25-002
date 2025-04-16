@@ -1,8 +1,12 @@
-class Matchmaker {
-    constructor() {
+class Matchmaking {
+    constructor(communication, data, notification, playerWaitlist, botWaitlist) {
         this.queue = []; // Queue for players waiting for a match
-        this.dataManager = new DataManager(); // Created an instance of the data manager class
-        this.communication = new Communication(this.dataManager); // Created an instance of the communication class
+        this.data = new Data(); // Created an instance of the data manager class
+        this.communication = new Communication(this.data); // Created an instance of the communication class
+        this.notification = notification;
+        this.playerWaitlist = playerWaitlist;
+        this.botWaitlist = botWaitlist;
+
     }
 
     addToQueue(playerID) {
@@ -15,9 +19,15 @@ class Matchmaker {
         // Handles when a player clicks the "Challenge Player" button.
         // Should be a button
 
-        this.communication.sendJoinGameRequest(playerID, "Human"); //Send the request to Join Game - Communication.js
-        console.log("Player" + playerID + "requested a match against another player");
-        this.removeFromQueue(playerID);
+        const player = this.data.getPlayer();
+        if (!player) {
+            this.notification.displayNotification("No player data available");
+            return;
+        }
+
+        this.playerWaitlist.remove(player.getID());
+        this.communication.sendPlayerAttributes(this.data.getGameMode());
+        this.notification.displayNotification("Finding player match...");
     }
 
     requestBotMatch(playerID) {
@@ -25,19 +35,24 @@ class Matchmaker {
         // Handles when a player clicks the "Challenge Bot" button.
         // Should be a button
 
-        this.communication.sendJoinGameRequest(playerID, "Bot"); //Send the request to Join Game - Communication.js
-        console.log("Player" + playerID + "requested a match against a Bot");
-        this.removeFromQueue(playerID);
+        const player = this.data.getPlayer();
+        if (!player) {
+            this.notification.displayNotification("No player data available");
+            return;
+        }
+
+        this.botWaitlist.remove(player.getID());
+        this.communication.sendPlayerAttributes(this.data.getGameMode());
+        this.notification.displayNotification("Starting bot match...");
     }
+    
 
 
     requestSpectateBotVsBot(playerID) {
         // Called when a player wants to spectate a match between two bots.
         // Should be a button
-
-        this.communication.sendJoinGameRequest(playerID, "Spectate"); // Ensure Page Manager is aware that "Spectate" is an option
-        console.log("Setting up a bot vs bot match to spectate");
-        this.removeFromQueue(playerID);
+        this.communication.sendPlayerAttributes(this.data.getGameMode());
+        this.notification.displayNotification("Loading bot vs bot match...");
     }
 
     removeFromQueue(playerID) {
