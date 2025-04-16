@@ -8,7 +8,7 @@ public class JoinGameHandler {
     }
 
     public Result processJoinGame(Map<String, String> joinData) {
-        int clientID = Integer.parseInt(joinData.get("ClientID));  
+        int clientID = Integer.parseInt(joinData.get("ClientID"));  
         String gameMode = joinData.get("gameMode");
         boolean playAgainstBot = "Bot".equalsIgnoreCase(gameMode);
         

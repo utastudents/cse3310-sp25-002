@@ -94,6 +94,14 @@ public class PageManager {
                 return displayConnector.sendShowGameDisplayTest(U);
             }
 
+            case "cancel": {
+                System.out.println("Received cancel request from ClientID: " + U.id);
+                handlePlayerRemoval(U.id);  // Removes the player from matchmaking
+                ret.status.type = "cancel_status";
+                ret.status.msg = "cancelled";
+                break;
+    }
+
             default: {
                 ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
                 break;
