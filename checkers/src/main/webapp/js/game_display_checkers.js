@@ -130,9 +130,12 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             return;
         };
 
-        if (data.type==="valid_moves" && data.legal_moves.length > 0) {
+        if (data.type==="valid_moves") {
             // assuming that websocket sends the json string {"type":"valid_moves", "legal_moves":[[x1,y1],[x2,y2],...]}
-            checkerBoard.received_coords = data.legal_moves;
+
+            if (checkerBoard && checkerBoard.last_requested_moves) {
+                checkerBoard.handle_valid_move_received_from_websocket(data);
+            }
 
         } else if(data.type === "move_made_by_other_player_or_bot") {
             // assuming that websocket sends the json string {"type":"move_made_by_other_player_or_bot", "game_id": "GAME_ID_IF_PROVIDED", "player":"NAME OF PLAYER THAT MADE THE MOVE (STRING),"from": [move_from_x, move_from_y],"to": [move_to_x, move_to_y]"}
@@ -195,12 +198,13 @@ class CheckersBoard {
         this.current_player = starting_player;
         // this is used to keep track of the last clicked coordinate to 1) prevent user from clicking on the same square twice 2) to keep track of from and to coordinates when a piece is moved
         this.last_clicked_coordinate = null;
-        this.received_coords = [];
         // the player who is currently playing the game
         this.player = player;
         // the color of the player who is currently playing the game
         this.player_color = player_color;
         this.player_id = player_id;
+        // flags for handling valid moves and the last clicked coordinate
+        this.last_requested_moves = null;
     }
 
 
@@ -230,7 +234,7 @@ class CheckersBoard {
         handle_checkers_piece_click()
         Rules referenced from: https://en.wikipedia.org/wiki/English_draughts
     */
-    handle_checkers_piece_click(x, y) {
+    async handle_checkers_piece_click(x, y) {
         try{
 
             // if it's not the player's turn, do nothing. Note: We added this to prevent the user from clicking on the board when it's not their turn. Or when a bot or opponent makes a move which shouldn't be registered as the user's move.
@@ -245,7 +249,7 @@ class CheckersBoard {
             if (!this.selected_piece && checkers_piece_type !== ".") {
                 this.selected_piece = {x, y, type: checkers_piece_type};
                 this.last_clicked_coordinate = {x, y};
-                this.show_possible_moves(x, y);
+                await this.show_possible_moves(x, y);
             }
             // if a piece is already selected and the user clicks on another square
             else if (this.selected_piece) {
@@ -255,7 +259,7 @@ class CheckersBoard {
                     this.hide_possible_moves();
                 }
                 // if user has clicked on a valid move
-                else if (this.is_valid_move(this.selected_piece.x, this.selected_piece.y, x, y)) {
+                else if (await this.is_valid_move(this.selected_piece.x, this.selected_piece.y, x, y)) {
                     this.move_checkers_piece(this.selected_piece.x, this.selected_piece.y, x, y);
                     // reset piece selection
                     this.selected_piece = null;
@@ -269,7 +273,7 @@ class CheckersBoard {
                     if (checkers_piece_type !== ".") {
                         this.selected_piece = {x, y, type: checkers_piece_type};
                         this.last_clicked_coordinate = {x, y};
-                        this.show_possible_moves(x, y);
+                        await this.show_possible_moves(x, y);
                     }
                 }
 
@@ -325,7 +329,7 @@ class CheckersBoard {
                 //Does not send a move request to the backend if it is the opponent's turn
                 if(this.player !== this.current_player){
                     this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, id: this.player_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
-                } 
+                }
             }
 
         } catch (error) {
@@ -340,7 +344,7 @@ class CheckersBoard {
                 // rotate the entire game board container
                 const gameBoard = document.querySelector(".game");
                 gameBoard.style.transform = "rotate(180deg)";
-                
+
                 // rotate each piece in the opposite direction to keep them upright
                 this.checkers_board.forEach(square => {
                     const piece = square.el.querySelector('.piece');
@@ -348,7 +352,7 @@ class CheckersBoard {
                         piece.style.transform = "rotate(180deg)";
                     }
                 });
-                
+
                 // also rotate the king text to keep it readable
                 const kings = document.querySelectorAll('.King');
                 kings.forEach(king => {
@@ -362,7 +366,77 @@ class CheckersBoard {
     }
 
 
+    /*
+    Reference:
+        create_checkers_board()
+        -Inspired by: https://github.com/renerpdev/checkers/blob/master/src/js/game-controller.js (Inspiration, in this case, is the idea of using two for loops to create the board)
+        -License: MIT (https://github.com/renerpdev/checkers?tab=MIT-1-ov-file)
+        -Author: renerpdev
+        -The logic for generating an 8x8 checkers board and placing pieces is based on this source.
+        -However, this implementation is entirely rewritten with a different structure and approach.
 
+        Key Differences:
+        -A board array (`this.checkers_board`) to track pieces dynamically.
+        -Uses `data-piece` attributes to store piece types for easy DOM manipulation.
+        -Click event handlers are attached differently.
+        -The only part reused directly is the basic structure of the `for` loops that iterate over the board rows and squares (inspiration is the idea of using for loops to dynamicall create divs/rows). This excludes the logic to add css styles, event listeners, and the logic to determine the piece type for each square.
+    */
+        async create_checkers_board() {
+            try{
+
+                // this function creates the checkers board using two for loops and custom css styles directly attached to each squares using standard css styles.
+                const checkers_board_ = document.querySelector(".game");
+                checkers_board_.innerHTML = '';
+                this.checkers_board = [];
+
+                checkers_board_.style.display = "flex";
+                checkers_board_.style.flexDirection = "column";
+
+                for (let x = 0; x < 8; x++) {
+                    let checkers_board_row = document.createElement("div");
+                    checkers_board_row.style.display = "flex";
+                    checkers_board_row.style.height = "41px";
+                    checkers_board_.appendChild(checkers_board_row);
+
+                    for (let y = 0; y < 8; y++) {
+                        let checkers_board_square = document.createElement("div");
+                        checkers_board_square.style.border = "1px solid #333";
+                        checkers_board_square.style.width = "41px";
+                        checkers_board_square.style.height = "41px";
+                        checkers_board_square.style.position = "relative";
+                        checkers_board_square.style.cursor = "pointer";
+                        checkers_board_square.style.boxSizing = "border-box";
+
+                        // create the game squares with alternating color
+                        const is_dark_square = (x + y) % 2 !== 0;
+                        checkers_board_square.style.background = is_dark_square ? "#866442" : "#EEE";
+                        checkers_board_square.dataset.originalBackground = is_dark_square ? "#866442" : "#EEE";
+
+                        // data-piece will store the type of piece on the square
+                        if (x < 3 && is_dark_square) {
+                            checkers_board_square.setAttribute("data-piece", "b"); // black checker piece
+                        } else if (x > 4 && is_dark_square) {
+                            checkers_board_square.setAttribute("data-piece", "w"); // white checker piece
+                        } else {
+                            checkers_board_square.setAttribute("data-piece", "."); // empty square
+                        }
+                        // this piece will turn into a king once it reaches the end of the board. Until then I have kept it hidden
+                        checkers_board_square.innerHTML = "<div class='piece'><div class='King'>K</div></div>";
+                        let handle_square_click = (e) => this.handle_checkers_piece_click(x, y);
+                        checkers_board_square.addEventListener("click", handle_square_click);
+
+                        checkers_board_row.appendChild(checkers_board_square);
+                        this.checkers_board.push({ el: checkers_board_square, x, y });
+                    };
+                };
+                // sanitize the board to remove any previous styles and make sure that each piece is displayed correctly
+                this.update_board_style();
+                this.rotateBoardIfBlack();
+            } catch (error) {
+                console.error("Error in game_display_checkers.js: ", error);
+                game_display_popup_messages(`(gd) create_checkers_board: An error occurred while handling the game display. Please check the console.`);
+            }
+        }
 
 
     // custom css styling for the checkers board. We use this function to update the style of the board after every move. This function uses standard css styles and the design (colors, size, shape) was custom made by us.
@@ -420,14 +494,13 @@ class CheckersBoard {
     }
 
 
-
     /*
         show_possible_moves() relies on the return_allowed_moves() function to determine if a move is valid.
         This function is custom implemented.
     */
-    show_possible_moves(x, y) {
+    async show_possible_moves(x, y) {
         try{
-            let valid_moves = this.return_allowed_moves(x, y);
+            let valid_moves = await this.return_allowed_moves(x, y);
             this.checkers_board.forEach((square) => {
                 let check_valid_move = valid_moves.some(move => move.x === square.x && move.y === square.y);
                 if (check_valid_move) {
@@ -440,7 +513,6 @@ class CheckersBoard {
             game_display_popup_messages(`(gd) show_possible_moves: An error occurred while handling the game display. Please check the console.`);
         }
     }
-
 
 
     /*
@@ -460,129 +532,32 @@ class CheckersBoard {
         }
     }
 
-
-
-
     /*
         is_valid_move() relies on the return_allowed_moves() function (which relies on the java backend) to determine if a move is valid.
         This function is custom implemented. It simply displays all possible moves for a clicked checkers pieces.
     */
-    is_valid_move(move_from_x, move_from_y, move_to_x, move_to_y) {
+    async is_valid_move(move_from_x, move_from_y, move_to_x, move_to_y) {
         try{
-            const valid_moves = this.return_allowed_moves(move_from_x, move_from_y);
+            const valid_moves = await this.return_allowed_moves(move_from_x, move_from_y);
             return valid_moves.some(move => move.x === move_to_x && move.y === move_to_y);
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
             game_display_popup_messages(`(gd) is_valid_move: An error occurred while handling the game display. Please check the console.`);
+            return false;
         }
     }
 
 
+    handle_valid_move_received_from_websocket(data) {
+        if (data.type === "valid_moves" && this.last_requested_moves) {
+            const { resolver } = this.last_requested_moves;
 
-
-
-    /*
-    Reference:
-        create_checkers_board()
-        -Inspired by: https://github.com/renerpdev/checkers/blob/master/src/js/game-controller.js (Inspiration, in this case, is the idea of using two for loops to create the board)
-        -License: MIT (https://github.com/renerpdev/checkers?tab=MIT-1-ov-file)
-        -Author: renerpdev
-        -The logic for generating an 8x8 checkers board and placing pieces is based on this source.
-        -However, this implementation is entirely rewritten with a different structure and approach.
-
-        Key Differences:
-        -A board array (`this.checkers_board`) to track pieces dynamically.
-        -Uses `data-piece` attributes to store piece types for easy DOM manipulation.
-        -Click event handlers are attached differently.
-        -The only part reused directly is the basic structure of the `for` loops that iterate over the board rows and squares (inspiration is the idea of using for loops to dynamicall create divs/rows). This excludes the logic to add css styles, event listeners, and the logic to determine the piece type for each square.
-    */
-    async create_checkers_board() {
-        try{
-
-            // this function creates the checkers board using two for loops and custom css styles directly attached to each squares using standard css styles.
-            const checkers_board_ = document.querySelector(".game");
-            checkers_board_.innerHTML = '';
-            this.checkers_board = [];
-
-            checkers_board_.style.display = "flex";
-            checkers_board_.style.flexDirection = "column";
-
-            for (let x = 0; x < 8; x++) {
-                let checkers_board_row = document.createElement("div");
-                checkers_board_row.style.display = "flex";
-                checkers_board_row.style.height = "41px";
-                checkers_board_.appendChild(checkers_board_row);
-
-                for (let y = 0; y < 8; y++) {
-                    let checkers_board_square = document.createElement("div");
-
-                    checkers_board_square.style.border = "1px solid #333";
-                    checkers_board_square.style.width = "41px";
-                    checkers_board_square.style.height = "41px";
-                    checkers_board_square.style.position = "relative";
-                    checkers_board_square.style.cursor = "pointer";
-                    checkers_board_square.style.boxSizing = "border-box";
-
-                    // create the game squares with alternating color
-                    const is_dark_square = (x + y) % 2 !== 0;
-                    checkers_board_square.style.background = is_dark_square ? "#866442" : "#EEE";
-                    checkers_board_square.dataset.originalBackground = is_dark_square ? "#866442" : "#EEE";
-
-                    // data-piece will store the type of piece on the square
-                    if (x < 3 && is_dark_square) {
-                        checkers_board_square.setAttribute("data-piece", "b"); // black checker piece
-                    } else if (x > 4 && is_dark_square) {
-                        checkers_board_square.setAttribute("data-piece", "w"); // white checker piece
-                    } else {
-                        checkers_board_square.setAttribute("data-piece", "."); // empty square
-                    }
-
-                    // this piece will turn into a king once it reaches the end of the board. Until then I have kept it hidden
-                    checkers_board_square.innerHTML = "<div class='piece'><div class='King'>K</div></div>";
-
-                    let handle_square_click = (e) => this.handle_checkers_piece_click(x, y);
-                    checkers_board_square.addEventListener("click", handle_square_click);
-
-                    checkers_board_row.appendChild(checkers_board_square);
-                    this.checkers_board.push({ el: checkers_board_square, x, y });
-                };
-            };
-            // sanitize the board to remove any previous styles and make sure that each piece is displayed correctly
-            this.update_board_style();
-            this.rotateBoardIfBlack();
-        } catch (error) {
-            console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) create_checkers_board: An error occurred while handling the game display. Please check the console.`);
+            // store the move as an object. I have added this mechanism to prevent the javascript thread from blocking the ui
+            const move_object = (data.legal_moves || []).map(move => ({x: move[0], y: move[1] }));
+            // handle empty array which means this piece has no valid moves
+            resolver(move_object);
+            this.last_requested_moves = null;
         }
-    }
-
-
-
-
-    //This function checks an array to make sure that it is a valid set of co-ordinates for the board
-    allowed_moves_validation(moves){
-        try{
-            // initially the moves array is empty, so this function returns true unless we return false when the array is empty. This causes the while loop to fail. Adding this if statement at the begining, makes sure that the while loop is running until the moves array is filled with data.
-            if (!moves || moves?.length==0){
-                return false;
-            };
-
-            for(let i=0;i<moves.length;i++){
-                if(moves[i].length!=2){
-                    return false;
-                };
-                for(let j=0;j<2;i++){
-                    if(!Number.isInteger(moves[i][j]) || !(0<=moves[i]<8)){
-                        return false;
-                    };
-                };
-            };
-            return true;
-        } catch (error) {
-            console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) allowed_moves_validation: An error occurred while handling the game display. Please check the console.`);
-        }
-
     }
 
 
@@ -591,29 +566,36 @@ class CheckersBoard {
         This function is custom implemented.
     */
     return_allowed_moves(x, y) {
-        try{
-            const square = this.checkers_board.find(sq => sq.x === x && sq.y === y);
-            if (!square) return [];
+        return new Promise((resolve) => {
+            try {
+                const square = this.checkers_board.find(sq => sq.x === x && sq.y === y);
+                if (!square) {
+                    resolve([]);
+                    return;
+                }
 
-            // const checkers_piece_type = square.el.getAttribute("data-piece");
-            // let moves = [];
-            // checkers_piece_type = "b" or "w"
-            // TODO: This needs to be handled by the java backend since this involves making game logic
-            this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, id: this.player_id, player: this.current_player, square: [x, y]}));
+                this.last_requested_moves = { resolver: resolve };
 
-            // this function waits for the ws to provide the allowed moves for a piece at a given position.
-            while(!this.allowed_moves_validation(this.received_coords)){
-                //this loop waits for this.received_coords to be filled with data
-            };
+                // TODO: This needs to be handled by the java backend since this involves making game logic
+                this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, id: this.player_id, player: this.current_player, square: [x, y] }));
+                // we do not receive a response from the request to the websocket, so i prevented a non thread blocking mechanism.
+                // wait for 7 seconds until we get the valid moves
+                setTimeout(() => {
+                    if (this.last_requested_moves) {
+                        console.log("waiting for valid moves....");
+                        resolve([]);
+                        this.last_requested_moves = null;
+                    }
+                }, 7000);
 
-            //Returns an array of possible moves and resets the class-level variable in preparation for the next call.
-            moves = this.received_coords;
-            this.received_coords = [];
-            return moves;
+            } catch (error) {
+                console.error("Error in game_display_checkers.js: ", error);
+                game_display_popup_messages(`(gd) return_allowed_moves: An error occurred while handling the game display. Please check the console.`);
+                resolve([]);
+            }
+        });
+    }
 
-        } catch (error) {
-            console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) return_allowed_moves: An error occurred while handling the game display. Please check the console.`);
-        }
-    };
+
 }
+
