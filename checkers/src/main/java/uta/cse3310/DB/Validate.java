@@ -8,7 +8,7 @@ public class Validate
     
     public static void ValidateUser(String username)
     {   
-        // String [] databaseUsername = new String[10];
+        String [] databaseUsername = new String[10];
         // DB db = new Db();
         // String databaseUsername = db.getLeaderboard();
         for (String users : databaseUsername)
