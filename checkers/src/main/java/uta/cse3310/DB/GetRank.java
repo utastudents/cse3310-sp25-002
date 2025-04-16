@@ -90,16 +90,6 @@ public class GetRank
             }
             int newRank = (int) Math.round(playerRank + K * (W - We));
 
-            // the next block is where the player's score ( rank ) is finally updated
-            //String update = "UPDATE USERS SET rank = ? WHERE username = ?";
-            //try(PreparedStatement updatedPreppedStatement = connection.prepareStatement(update))
-            //{
-            //    updatedPreppedStatement.setInt(1, newRank);
-            //    updatedPreppedStatement.setString(2, playerUsername);
-            //    updatedPreppedStatement.executeUpdate();
-           // }
-            // print successful message
-            //System.out.println("Updated" + playerUsername + "'s rank to " + newRank);
             return newRank;
         } catch(SQLException e) {
             System.err.println("Error updating score: " + e.getMessage());
