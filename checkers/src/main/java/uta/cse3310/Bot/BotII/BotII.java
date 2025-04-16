@@ -375,21 +375,16 @@ public class BotII extends Bot {
         // if aggr , sort by ELO and use highest
         // // if passive , sort by ELo and use lowest
         
+        possibleMoves.sort(Comparator.comparing((Pair<Square, LinkedList<MoveRating>> pair) -> pair.getValue().getFirst().getEloRating()));
 
+        // if strategy is aggressive, reverse the order of the list (highest elo first)
         if (strategy)
-        {
-            possibleMoves.sort(Comparator.comparing((Pair<Square, LinkedList<MoveRating>> pair) -> pair.getValue().getFirst().getEloRating()).reversed());
-        }
-        if (!strategy) 
-        {
-            possibleMoves.sort(Comparator.comparing((Pair<Square, LinkedList<MoveRating>> pair) -> pair.getValue().getFirst().getEloRating()));
-        }
-
+            Collections.reverse(possibleMoves);
+        
         // after set isMoves , add move to Move obj
         Move m = possibleMoves.getFirst().getValue().getFirst().getMove();
         this.moves.addNext(m);
         
-
     }
 
     /**
