@@ -211,10 +211,9 @@ public class BotI extends Bot {
 
             prefernceScore += 1;
 
-            // hasBackupAfterMove — +1 if protected
-            // if (hasBackupAfterMove(move, board)) {
-            // prefernceScore += 1;
-            // }
+            if (hasBackupAfterMove(move, board)) {
+                prefernceScore += 1;
+            }
 
             if (prefernceScore > bestPreference) {
                 bestPreference = prefernceScore;
@@ -254,7 +253,7 @@ public class BotI extends Bot {
         return attacker.hasPiece() && attacker.getColor() != this.color;
     }
 
-// Checks if the move ends on a square protected by an ally
+    // Checks if the move ends on a square protected by an ally
     private boolean hasBackupAfterMove(Move move, Board board) {
         int row = move.getDest().getRow();
         int col = move.getDest().getCol();
