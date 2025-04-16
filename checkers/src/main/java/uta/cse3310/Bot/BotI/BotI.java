@@ -254,8 +254,13 @@ public class BotI extends Bot {
         return attacker.hasPiece() && attacker.getColor() != this.color;
     }
 
+// Checks if the move ends on a square protected by an ally
     private boolean hasBackupAfterMove(Move move, Board board) {
-        return true; /* Place holder for now */
+        int row = move.getDest().getRow();
+        int col = move.getDest().getCol();
+        int friendDir = this.color ? -1 : 1;
+
+        return hasSupportAt(row + friendDir, col - 1, board) || hasSupportAt(row + friendDir, col + 1, board);
     }
 
     private boolean hasSupportAt(int row, int col, Board board) {
