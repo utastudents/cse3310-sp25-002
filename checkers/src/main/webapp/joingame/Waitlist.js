@@ -5,7 +5,7 @@ class Waitlist{
     }
 	
 	add(playerInfo){	//Add a player's info onto the waitlist
-		player = new Player(playerInfo.username, playerInfo.id); // Create a new Player object with given data
+		const player = new Player(playerInfo.username, playerInfo.id); // Create a new Player object with given data
 		player.waitlistStatus = true; // Update the flag to true to indicate player is on the waitlist
 		this.waitlist.push(player); // Add the Player object to the waitlist
 		this.displayWaitlist(); // Update/display the waitlist again with the new Player
@@ -27,7 +27,7 @@ class Waitlist{
 	}
 
 	displayWaitlist(){	//Displays the updated waitlist
-		const list = document.getElementById(waitlist);
+		const list = document.getElementById("waitlist"); // Get the HTML element for the waitlist
 
 		list.innerHTML = "";
 
