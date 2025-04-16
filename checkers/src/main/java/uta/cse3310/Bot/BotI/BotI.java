@@ -161,20 +161,33 @@ public class BotI extends Bot {
         // similar implementation to passive strategy BUT...
         // bot's goal is so maximize the number of capture moves
 
-        // initialize a variable which starts with no move (make in null)
-        // loop through all possible moves
-        // increment a variable that judges how good the move is (higher score = better
-        // move)
-        // every move should be initialized to 1
-        // (this is all from a defensive POV)
+        Move bestMove = null;
+        int bestScore = -1;
 
-        // if the move has a better score than the current best move, update the best
-        // move variable to the move that has a better score
-        // if no move was safe for the bot && there are no possible moves -> pick the
-        // first move to make game continue
-        // put the resulting move into a Moves object and return it
+        for (Move move : possibleMoves) {
+            int score = 1;
 
-        return null;
+            //incremement for being a better move??
+            /*if (isCapturingMove(move)) {
+                score +=1; 
+            }*/
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = move;
+            }
+        }
+
+        //if no move selected, pick the first
+        if (bestMove == null && !possibleMoves.isEmpty()) {
+            bestMove = possibleMoves.getFirst();
+        }
+
+        Moves result = new Moves();
+        if (bestMove != null) {
+            result.addNext(bestMove);
+        }
+        return result;
     }
 
     /**
