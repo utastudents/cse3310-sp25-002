@@ -1,46 +1,124 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join Game Page</title>
-    <link rel="stylesheet" href="styles.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Lobby</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎮</text></svg>">
 </head>
 <body>
-    <header>
-        <h1>Welcome to the Game Lobby</h1>
-    </header>
+  <header>
+    <h1>Game Lobby</h1>
+  </header>
 
-    <main>
-        <!-- Game Mode Selection -->
-        <section id="game-options">
-          <h2>Choose Game Mode</h2>
-          <button id="vsPlayer">Play vs Player</button>
-          <button id="vsBot">Play vs Bot</button>
-          <button id="spectate">Spectate Bot vs Bot</button>
-        </section>
-    
-        <!-- Waitlist Section -->
-        <section id="waitlist-section">
-          <h2>Current Waitlist</h2>
-          <ul id="waitlist">
-            <!-- Populated by Waitlist.displayWaitlist() -->
-          </ul>
-        </section>
-    
-        <!-- Notification Section (bottom) -->
-        <section id="notification-section">
-          <h2>Notifications</h2>
-          <div id="notification"></div>
-        </section>
-    </main>
-    
+  <main>
+    <section id="game-options">
+      <h2>Choose a Game Mode</h2>
+      <div class="button-group">
+        <button id="play-vs-player">Play vs Player</button>
+        <button id="play-vs-bot">Play vs Bot</button>
+        <button id="spectate-bots">Spectate Bot vs Bot</button>
+      </div>
+    </section>
 
+    <section id="waitlists-section">
+      <h2>Current Waitlists</h2>
+      <div class="waitlist-container">
+        <h3>Player vs Player</h3>
+        <ul id="player-waitlist" class="waitlist">
+          <!-- Will be populated by JavaScript -->
+        </ul>
+      </div>
+      <div class="waitlist-container">
+        <h3>Player vs Bot</h3>
+        <ul id="bot-waitlist" class="waitlist">
+          <!-- Will be populated by JavaScript -->
+        </ul>
+      </div>
+    </section>
 
-    <script src="Data.js"></script>
-    <script src="Waitlist.js"></script>
-    <script src="DisplayNotification.js"></script>
-    <script src="MatchMaker.js"></script>
-    <script src="Communication.js"></script>
+    <section id="notification-section">
+      <h2>Notifications</h2>
+      <div id="notification">Ready to play!</div>
+    </section>
+  </main>
+
+  <!-- JavaScript Files -->
+  <script src="Data.js"></script>
+  <script src="Waitlist.js"></script>
+  <script src="Displaynotification.js"></script>
+  <script src="Communication.js"></script>
+  <script src="MatchMaking.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      console.log("Game lobby initialized");
+      
+      // Initialize components
+      const dataManager = new Data();
+      const playerWaitlist = new Waitlist("player-waitlist");
+      const botWaitlist = new Waitlist("bot-waitlist");
+      const notification = new DisplayNotification();
+      const communication = new Communication(dataManager);
+      const matchmaker = new Matchmaking(
+        communication, 
+        dataManager, 
+        notification, 
+        playerWaitlist, 
+        botWaitlist
+      );
+
+      // Set initial player data
+      const currentPlayer = {
+        id: "P1",
+        username: "Ash",
+        avatar: "player.jpg"
+      };
+      dataManager.setPlayer(currentPlayer);
+      
+      // Initialize with sample data
+      const samplePlayers = [
+        { id: "P2", username: "Ashir" },
+        { id: "P3", username: "Mark" },
+        { id: "B1", username: "Bot1" },
+        { id: "B2", username: "Bot2" }
+      ];
+
+      // Add sample players to waitlists
+      samplePlayers.slice(0, 2).forEach(player => {
+        playerWaitlist.add(player);
+      });
+      
+      samplePlayers.slice(2).forEach(player => {
+        botWaitlist.add(player);
+      });
+
+      // Add current player to Player vs Player waitlist by default
+      playerWaitlist.add(currentPlayer);
+
+      // Button event handlers
+      document.getElementById("play-vs-player").addEventListener("click", () => {
+        dataManager.setGameMode("Human");
+        matchmaker.requestPlayerMatch();
+        notification.displayNotification("Searching for player match...");
+      });
+
+      document.getElementById("play-vs-bot").addEventListener("click", () => {
+        dataManager.setGameMode("Bot");
+        matchmaker.requestBotMatch();
+        notification.displayNotification("Starting bot match...");
+      });
+
+      document.getElementById("spectate-bots").addEventListener("click", () => {
+        dataManager.setGameMode("Spectate");
+        matchmaker.requestSpectateBotVsBot();
+        notification.displayNotification("Preparing bot vs bot match...");
+      });
+
+      // Initial notification
+      notification.displayNotification(`Welcome ${currentPlayer.username}!`);
+    });
+  </script>
 </body>
 </html>
