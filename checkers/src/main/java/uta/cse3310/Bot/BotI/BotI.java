@@ -28,7 +28,7 @@ public class BotI extends Bot {
             playMove = aggressiveStrategyImplementation(possibleMoves, board);
         }
         else{
-            playMoves = passiveStrategyImplementation(possibleMoves, board);
+            playMove = passiveStrategyImplementation(possibleMoves, board);
         }
 
         this.moves = playMove;
