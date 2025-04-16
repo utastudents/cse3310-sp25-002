@@ -68,6 +68,26 @@ article.mascot{
   box-shadow: 4px 0px 0px #c2a889, 6px 0px 5px rgba(0, 0, 0, 0.2);
 }
 
+.Face{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  height: 80%;
+  background:
+    radial-gradient(circle at 29% 48%, #fff 3%, #0000 3.25%),
+    radial-gradient(circle at 69% 48%, #fff 3%, #0000 3.25%),
+    radial-gradient(circle at 27% 52%, #fff 1%, #0000 1.25%),
+    radial-gradient(circle at 67% 52%, #fff 1%, #0000 1.25%),
+    radial-gradient(circle at 30% 50%, #000 9%, #0000 9.25%),         
+    radial-gradient(circle at 70% 50%, #000 9%, #0000 9.25%),
+    radial-gradient(farthest-side at 50% 0, #0000 70%, #000 0 99.9%, #0000 0) 50% 72% / 25% 12% no-repeat,
+    radial-gradient(80% 40% at 20% 63%, #FFD6E8 15%, #0000 0),
+    radial-gradient(80% 40% at 80% 63%, #FFD6E8 15%, #0000 0);
+}
+
+
 .input-box input {
   width: 250px;
   padding: 12px;
