@@ -92,6 +92,7 @@ public class rules
                         if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                         {
                             legality = true;
+                            game.newCapture();
                         }
                     }
                 }
@@ -128,6 +129,7 @@ public class rules
                             if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                             {
                                 legality = true;
+                                game.newCapture();
                             }
                         }
                     }
@@ -142,6 +144,7 @@ public class rules
                     if (rowDiff == 1 && colDiff == 1)
                     {
                         legality = true;
+                        game.lastCapture();
                     }
                     // Capture piece
                     else if (rowDiff == 2 && colDiff == 2)
@@ -175,6 +178,7 @@ public class rules
                         if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                         {
                             legality = true;
+                            game.newCapture();
                         }
                     }
                 }
@@ -186,6 +190,7 @@ public class rules
                         if (rowDiff == 1 && colDiff == 1)
                         {
                             legality = true;
+                            game.lastCapture();
                         }
                         // Capture piece
                         else if (rowDiff == 2 && colDiff == 2)
@@ -209,6 +214,7 @@ public class rules
                             if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                             {
                                 legality = true;
+                                game.newCapture();
                             }
                         }
                     }
