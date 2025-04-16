@@ -28,7 +28,7 @@ public class GetRank
         // Placeholder for actual database logic
 
     }
-    public static void updateScore(String playerUsername, String oppUsername, double W)
+    public static int updateScore(String playerUsername, String oppUsername, double W)
     {
         // This query gets username and rank of the player and his opp
         String getRanks = "SELECT username, rank FROM USERS WHERE username IN (?,?)";
@@ -68,7 +68,7 @@ public class GetRank
             if(playerRank == -1 || oppRank == -1)
             {
                 System.err.println("ERROR: Could not find one or both users!");
-                return;
+                return -1;
             }
 
             // This next part is where the rank is calculated using the 
@@ -91,17 +91,19 @@ public class GetRank
             int newRank = (int) Math.round(playerRank + K * (W - We));
 
             // the next block is where the player's score ( rank ) is finally updated
-            String update = "UPDATE USERS SET rank = ? WHERE username = ?";
-            try(PreparedStatement updatedPreppedStatement = connection.prepareStatement(update))
-            {
-                updatedPreppedStatement.setInt(1, newRank);
-                updatedPreppedStatement.setString(2, playerUsername);
-                updatedPreppedStatement.executeUpdate();
-            }
+            //String update = "UPDATE USERS SET rank = ? WHERE username = ?";
+            //try(PreparedStatement updatedPreppedStatement = connection.prepareStatement(update))
+            //{
+            //    updatedPreppedStatement.setInt(1, newRank);
+            //    updatedPreppedStatement.setString(2, playerUsername);
+            //    updatedPreppedStatement.executeUpdate();
+           // }
             // print successful message
-            System.out.println("Updated" + playerUsername + "'s rank to " + newRank);
+            //System.out.println("Updated" + playerUsername + "'s rank to " + newRank);
+            return newRank;
         } catch(SQLException e) {
             System.err.println("Error updating score: " + e.getMessage());
+            return -1;
         }
 
     }
