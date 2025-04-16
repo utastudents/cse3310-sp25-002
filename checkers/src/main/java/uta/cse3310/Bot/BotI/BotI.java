@@ -74,16 +74,6 @@ public class BotI extends Bot {
         return count;
     }
 
-    private void implementStrategy(Board board, boolean isAggresive, LinkedList<Move> possibleMoves) {
-        // change void to Moves
-        if (isAggresive) {
-            // aggressiveStrategyImplementation(LinkedList<Move> possibleMoves);
-        } else {
-            // passiveStrategyImplementation(possibleMoves,board);
-        }
-
-    }
-
     /**
      * determineMoves(Board board)
      * This method finds all valid moves for the current player.
@@ -155,6 +145,10 @@ public class BotI extends Bot {
         }
     }
 
+    private void isCapturingMove(Move move) {
+        
+    }
+
     private Moves aggressiveStrategyImplementation(LinkedList<Move> possibleMoves, Board board) {
         // similar implementation to passive strategy BUT...
         // bot's goal is so maximize the number of capture moves
@@ -175,7 +169,15 @@ public class BotI extends Bot {
         return null;
     }
 
-    /* Adding the skeleton for Passive and Aggressive Strategy */
+    /**
+     * Chooses a move using a basic passive strategy.
+     * Prefers safer moves with minimal risk.
+     *
+     * @param possibleMoves A list of possible moves the player can make.
+     * @param board         The current state of the game board.
+     * @return A Moves object containing the selected move (or first move if none
+     *         preferred).
+     */
     private Moves passiveStrategyImplementation(LinkedList<Move> possibleMoves, Board board) {
         Move bestMove = null;
         int bestPreference = -1;
@@ -215,7 +217,8 @@ public class BotI extends Bot {
     /* Helper Methods for passiveStrategyImplementation */
 
     private void insideDangerRegion(Move move, Board board) {
-        // function serves to tell if a piece is in danger of being captured after a move is made
-        
+        // function serves to tell if a piece is in danger of being captured after a
+        // move is made
+
     }
 }

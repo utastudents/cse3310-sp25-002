@@ -35,15 +35,15 @@ public class DB
 		}
 	}
 
-	public static void insertUser(String username)
+	public static void insertUser(String username)				//assumes username is already validated 
 	{
-		String insertStatement = "INSERT INTO users (username) VALUES(?)";
+		String insertStatement = "INSERT INTO users (username) VALUES(?)";	
 		try(Connection connection = SQLiteConnector.connect();
 			PreparedStatement pstmt = connection.prepareStatement(insertStatement)) 
 		{
 			if(connection != null)
 			{
-				pstmt.setString(0, username);
+				pstmt.setString(1, username); 			//inserts the username into the placeholder 
 				pstmt.executeUpdate();
 			}
 			else
@@ -55,15 +55,6 @@ public class DB
 		{
 			System.err.println("Error inserting user: " + e.getMessage());
 		}
-		/*string url;
-
-		string Attributes; // will parse attributes from other interfaces
-
-		string Checkstmt; // will be used to chekc if user is in db already 
-
-		string InsertStatement; //here the insert statement created
-
-		string pstmt; */ //here we will parse through the data and set the 
 	}
 
 	public static void getLeaderboard()
@@ -74,13 +65,29 @@ public class DB
 		//try (Connection connection = SQLiteConnector.connect();
 			 //leaderboardQuery )
 	}
-
-	public static void UpdatePlayer()
+/*
+	public static void updatePlayer(String username, int newRank )			
 	{
-		//   string updateStatement;
-	}
-	
-
+		String updatePlayer = "UPDATE USERS SET rank = ? WHERE username = ?";  		
+		try(Connection connection = SQLiteConnector.connect();
+			PreparedStatement pstmt = connection.prepareStatement(updatePlayer)) 
+		{
+			if(connection != null)
+			{
+				pstmt.setInt(1, newRank); 			//sets the newRank into the placeholder
+				pstmt.setString(2, username);				
+				pstmt.executeUpdate();
+			}
+			else
+			{
+				System.err.println("Failed to connect to database in Update User command");
+			}
+		}
+		catch(SQLException e)
+		{
+			System.err.println("Error updating user: " + e.getMessage());
+		}
+*/
 
 }
 
