@@ -1,4 +1,4 @@
-package uta.cse3310.GameTermination;
+package cse3310.uta.GameTerminationUnitTests;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
