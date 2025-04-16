@@ -18,7 +18,7 @@ public class PairUp {
   
     public PairUp() 
     {
-        Mmaker = new MatchMaking();
+        Mmaker = new Matchmaking();
     }
 
 
