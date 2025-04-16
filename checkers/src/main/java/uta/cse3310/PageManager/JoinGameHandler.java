@@ -3,21 +3,18 @@ package uta.cse3310.PageManager;
 import java.util.Map;
 
 public class JoinGameHandler {
-
-    private GameDisplayConnector displayConnector;
-
-    public JoinGameHandler(GameDisplayConnector displayConnector) {
-        this.displayConnector = displayConnector;
+    
+    public JoinGameHandler() {
     }
 
     public Result processJoinGame(Map<String, String> joinData) {
-
-        
-        int clientID = Integer.parseInt(joinData.get("ClientID"));// client Id should be int
-        
+        int clientID = Integer.parseInt(joinData.get("ClientID));  
+        String username = joinData.get("username");
         String gameMode = joinData.get("gameMode");
-
         boolean playAgainstBot = "Bot".equalsIgnoreCase(gameMode);
+
+        sendDataToGameDisplay(clientID, username, playAgainstBot);
+
         
         if (playAgainstBot) 
         {
@@ -26,9 +23,11 @@ public class JoinGameHandler {
         {
             sendAvailabilityToDB(clientID);
         }
-
-
          return new Result(clientID, playAgainstBot);// sends data to pairup_subsys
+    }
+
+     public void cancelJoinRequest(int clientID) {
+        System.out.println("Cancelling join request for ClientID: " + clientID);
     }
 
     private void sendAvailabilityToDB(int ClientID) {
@@ -39,6 +38,20 @@ public class JoinGameHandler {
     private void sendToPairUpForBot(int ClientID) {
         System.out.println("Sending request to PairUp for bot match...");
         System.out.println("ClientID: " + ClientID);
+    }
+
+    private void sendDataToGameDisplay(int clientID, String username, boolean playAgainstBot) {
+        JsonObject gameData = new JsonObject();
+        gameData.addProperty("type", "join_display");
+        gameData.addProperty("clientID", clientID);
+        gameData.addProperty("username", username);
+        gameData.addProperty("playAgainstBot", playAgainstBot);
+
+        if (displayConnector != null) {
+            displayConnector.sendGameDisplayData(gameData);
+        } else {
+            System.out.println("Warning: GameDisplayConnector not initialized.");
+        }
     }
 
 
