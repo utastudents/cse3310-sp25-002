@@ -58,6 +58,7 @@ public class GameManager {
             Moves moves = new Moves();
             moves.addNext(move);
             gp.returnBoard(game, moves); // from GamePlay.java
+            game.switchTurn();
         } else {
             System.out.println("Invalid move: game not found or inactive.");
         }
