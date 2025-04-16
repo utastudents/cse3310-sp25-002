@@ -207,33 +207,33 @@ public class BotI extends Bot {
             if (insideDangerRegion(move, board))
                 continue;
 
-            int prefernceScore = 0;
+            int preferenceScore = 0;
 
-            prefernceScore += 1;
+            preferenceScore += 1;
 
             if (!move.getStart().isKing()) {
                 int startRow = move.getStart().getRow();
                 int destRow = move.getDest().getRow();
 
                 if (!this.color && destRow < startRow)
-                    prefernceScore += 1;
+                    preferenceScore += 1;
                 else if (this.color && destRow > startRow)
-                    prefernceScore += 1;
+                    preferenceScore += 1;
             }
 
             int col = move.getDest().getCol();
             if (col == 3 || col == 4) {
-                prefernceScore += 2;
+                preferenceScore += 2;
             } else if (col == 2 || col == 5) {
-                prefernceScore += 1;
+                preferenceScore += 1;
             }
 
             if (hasBackupAfterMove(move, board)) {
-                prefernceScore += 1;
+                preferenceScore += 1;
             }
 
-            if (prefernceScore > bestPreference) {
-                bestPreference = prefernceScore;
+            if (preferenceScore > bestPreference) {
+                bestPreference = preferenceScore;
                 bestMove = move;
             }
 
