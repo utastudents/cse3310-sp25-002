@@ -46,6 +46,9 @@ public class PlayerInMatchmaking {
     public int getWins() {
         return wins;
     }
-    
+
+    int getQueueTime() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
 }

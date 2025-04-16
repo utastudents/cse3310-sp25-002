@@ -60,16 +60,54 @@ public class Matchmaking {
     }
 
     public void matching() {
-        List<Map.Entry<Integer, PlayerInMatchmaking>> entries = new ArrayList<>(players.entrySet());
-        for (int i = 0; i < entries.size(); i++) {
-            for (int j = i + 1; j < entries.size(); j++) {
-                PlayerInMatchmaking p1 = entries.get(i).getValue();
-                PlayerInMatchmaking p2 = entries.get(j).getValue();
-                // TO-DO: implement matchmaking algorithm
+    List<Map.Entry<Integer, PlayerInMatchmaking>> entries = new ArrayList<>(players.entrySet());
+    for (int i = 0; i < entries.size(); i++) {
+        PlayerInMatchmaking p1 = entries.get(i).getValue();
+        
+        // Skip if player has already been matched
+        if (!players.containsKey(entries.get(i).getKey())) {
+            continue;
+        }
 
-                // Put this line into when a match is made between two humans
+        boolean matched = false;
+        
+        // First try to match with players within +/- 1 win
+        for (int j = i + 1; j < entries.size() && !matched; j++) {
+            PlayerInMatchmaking p2 = entries.get(j).getValue();
+            
+            // Skip if player has already been matched
+            if (!players.containsKey(entries.get(j).getKey())) {
+                continue;
+            }
+
+            int winDifference = Math.abs(p1.getWins() - p2.getWins());
+ 
+            if (winDifference <= 1) {
                 pair(p1, p2);
+                players.remove(p1.getPlayerID());
+                players.remove(p2.getPlayerID());
+                matched = true;
             }
         }
-    }
+
+        // If no match found and player has been waiting > 60 seconds, match with next available player
+        if (!matched && p1.getQueueTime() > 60000) { // 60000 milliseconds = 60 seconds
+            for (int j = i + 1; j < entries.size() && !matched; j++) {
+                PlayerInMatchmaking p2 = entries.get(j).getValue();
+                
+                
+                if (!players.containsKey(entries.get(j).getKey())) {
+                    continue;
+                }
+
+                pair(p1, p2);
+                players.remove(p1.getPlayerID());
+                players.remove(p2.getPlayerID());
+                matched = true;
+             }
+            }
+        
+       
+}
+}
 }
