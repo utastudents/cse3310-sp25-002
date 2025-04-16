@@ -9,12 +9,8 @@ public class JoinGameHandler {
 
     public Result processJoinGame(Map<String, String> joinData) {
         int clientID = Integer.parseInt(joinData.get("ClientID));  
-        String username = joinData.get("username");
         String gameMode = joinData.get("gameMode");
         boolean playAgainstBot = "Bot".equalsIgnoreCase(gameMode);
-
-        sendDataToGameDisplay(clientID, username, playAgainstBot);
-
         
         if (playAgainstBot) 
         {
@@ -39,25 +35,8 @@ public class JoinGameHandler {
         System.out.println("Sending request to PairUp for bot match...");
         System.out.println("ClientID: " + ClientID);
     }
-
-    private void sendDataToGameDisplay(int clientID, String username, boolean playAgainstBot) {
-        JsonObject gameData = new JsonObject();
-        gameData.addProperty("type", "join_display");
-        gameData.addProperty("clientID", clientID);
-        gameData.addProperty("username", username);
-        gameData.addProperty("playAgainstBot", playAgainstBot);
-
-        if (displayConnector != null) {
-            displayConnector.sendGameDisplayData(gameData);
-        } else {
-            System.out.println("Warning: GameDisplayConnector not initialized.");
-        }
-    }
-
-
+    
     // helper return class to extract data in pairup_subsys
-
-
     public static class Result 
     {
         public int clientID; 
