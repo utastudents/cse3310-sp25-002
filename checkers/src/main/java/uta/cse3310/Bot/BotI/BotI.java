@@ -42,8 +42,8 @@ public class BotI extends Bot {
     }
 
     private boolean isAggressive(Board board) {
-        int botPieces = countallPieces(board, color);
-        int playerPieces = countallPieces(board, color);
+        int botPieces = countallPieces(board, this.color);
+        int playerPieces = countallPieces(board, !(this.color));
 
         boolean isAggressive = botPieces < playerPieces;
         return isAggressive;
@@ -57,7 +57,7 @@ public class BotI extends Bot {
             for (int col = 0; col < 8; col++) {
                 Square selectsquare = board.getSquare(row, col);
 
-                if (selectsquare.getColor() && selectsquare.hasPiece() == color) {
+                if (selectsquare.hasPiece() && selectsquare.getColor() == color) {
                     count++;
                 }
             }
@@ -142,8 +142,8 @@ public class BotI extends Bot {
         Square end = move.getDest();
 
         if (start.getRow() - end.getRow() == 2) {
-            int jumpedRow = (start.getRow() + end.getRow() / 2);
-            int jumpedColumn = (start.getCol() + end.getCol() / 2);
+            int jumpedRow = ((start.getRow() + end.getRow()) / 2);
+            int jumpedColumn = ((start.getCol() + end.getCol()) / 2);
 
             Square jumpedSquare = board.getSquare(jumpedRow, jumpedColumn);
 
