@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
 public class Test4 
 {
     @Test
-    public void TestPairWithPlayers()
+    public void TestPairAgainstBot()
     {
         PlayerInMatchmaking p1 = new PlayerInMatchmaking(171328890285L,451, "Alice",true,9);
 
