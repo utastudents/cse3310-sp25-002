@@ -8,24 +8,24 @@ import java.util.Map;
 public class GameResult {
 
     // Stores scores for each player by their ID
-    private Map<String, Integer> playerScores;
+    private Map<Integer, Integer> playerScores;
     
-    private String winningPlayerId;
+    private Integer winningPlayerId;
 
     // Stores all game results
     private List<GameResult> gameHistory = new ArrayList<>();
 
     // Constructor to initialize scores
-    public GameResult(Map<String, Integer> playerScores) {
+    public GameResult(Map<Integer, Integer> playerScores) {
         this.playerScores = playerScores;
         this.winningPlayerId = null; //no winner yet
     }
 
-    public Map<String, Integer> getPlayerScores() {
+    public Map<Integer, Integer> getPlayerScores() {
         return playerScores;
     }
 
-    public String getWinningPlayerId() {
+    public Integer getWinningPlayerId() {
         return winningPlayerId;
     }
 
@@ -33,13 +33,13 @@ public class GameResult {
         return winningPlayerId == null;
     }
 
-    public List<String> getPlayerIds() {
+    public List<Integer> getPlayerIds() {
         return new ArrayList<>(playerScores.keySet());
     }
     
     //to call player's id anywhere later
     public void setWinner(Player player) {
-        this.winningPlayerId = String.valueOf(player.getPlayerId());
+        this.winningPlayerId = player.getPlayerId();
     }
     //match is drawn
     public void setDraw() {
@@ -82,12 +82,12 @@ public class GameResult {
 
     // This method updates the current score of a player after a move.
     public void updateScores(Player player, int score) {
-        String id = String.valueOf(player.getPlayerId());
+        int id = player.getPlayerId();
         playerScores.put(id, score);
     }
 
     // This is for unit testing support to verify the scores updates.
-    public int getScore(String playerId) {
+    public int getScore(int playerId) {
         return playerScores.getOrDefault(playerId, -1);
     }
 
