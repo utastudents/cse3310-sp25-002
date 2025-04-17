@@ -111,7 +111,7 @@ public class BotI extends Bot {
     }
 
     /* Play a normal non capturing move if the sqaure is empty */
-    private void playNormalMove(LinkedList<Move> moves, Square square, int toRow, int toCol, Board board) {
+    protected void playNormalMove(LinkedList<Move> moves, Square square, int toRow, int toCol, Board board) {
         if (toRow >= 0 && toRow < 8 && toCol >= 0 && toCol < 8) {
             Square newPosition = board.getSquare(toRow, toCol);
             if (!newPosition.hasPiece()) {
