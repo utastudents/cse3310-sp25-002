@@ -73,7 +73,7 @@ public class GameManager {
     Once those changes are made, these sections will be uncommented and used as intended.
     */
     
-    Terminate a game and notify GameTermination
+    //Terminate a game and notify GameTermination
     public void terminateGame(int gameNumber){
         if(gameNumber >= 0 && gameNumber < MAXIMUM_GAMES && games.get(gameNumber) != null){
             gt.endGame(games.get(gameNumber)); // Implement in GameTermination.java
@@ -201,7 +201,7 @@ public class GameManager {
         }
     }
 
-    Player requests to quit and ends game
+    //Player requests to quit and ends game
     public void playerQuit(int playerId){
         Game game = findGameByPlayerId(playerId); // Local method
         if(game == null){
