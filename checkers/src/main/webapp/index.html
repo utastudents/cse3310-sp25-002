@@ -10,37 +10,42 @@
 </head>
 <body>
   <div id = "new_account">
-   <!-- Container of the login page -->
-    
-    <div class ="wrapper">
-      <div class="header">
+
+  <div class="container">
+
+    <div class="left-panel">
       <article class="mascot">
         <div class="Piece">
           <div class="Face"></div>
         </div>
       </article>
-      <h1>CHECKERS WITH CSE3310002</h1>
+        <h1>
+          <span class="title-top">CHECKERS WITH</span><br>
+          <span class="title-bottom">CSE 3310-002</span>
+        </h1>
+      </div>
+  
+<div class="right-panel">
+  <form onsubmit="joinGame(); return false;">
+    <div class="input-box">
+      <input type="text" placeholder="Enter Username" id="username" 
+        pattern="(?=.*\d)(?=.*[A-Za-z])(?=.*[!@#$%^&*]).{8,}" required />
     </div>
 
-      <form onsubmit="joinGame(); return false;">
-      <div class="input-box">
-        <input type="text" placeholder="Enter Username" id="username" 
-          pattern="(?=.*\d)(?+.*[A-Za-z])(?=.*[!@#$%^&*]).{8,}" required />
-      </div>
+    <div id="message">
+      <h3>Username must contain:</h3>
+      <p id="letter" class="invalid">A <b>Letter</b></p>
+      <p id="num" class="invalid">A <b>Number</b></p>
+      <p id="special" class="invalid">A <b>Special Character</b></p>
+      <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+    </div>
 
-      <div id="message">
-        <h3>Username must contain:</h3>
-        <p id="letter" class="invalid">A <b>Letter</b></p>
-        <p id="num" class="invalid">A <b>Number</b></p>
-        <p id="special" class="invalid">A <b>Special Character</b></p>
-        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
-      </div>
-
+    <div class="button-container">
       <button type="submit">Join Game</button>
-    </form>
-  </div>
-        <!--form onsubmit = "joinGame(); return false;"--> 
-        <!--button type="submit">Join Game</button--> 
+    </div>
+  </form>
+</div>
+
 
 <div> id="game_lobby"
     <header>
