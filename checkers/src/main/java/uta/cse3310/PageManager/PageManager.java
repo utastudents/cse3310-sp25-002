@@ -100,7 +100,7 @@ public class PageManager {
                 ret.status.type = "cancel_status";
                 ret.status.msg = "cancelled";
                 break;
-    }
+            } 
 
             default: {
                 ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
