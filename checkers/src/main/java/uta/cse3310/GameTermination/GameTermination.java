@@ -15,18 +15,18 @@ public class GameTermination
     //player 1 lost
     public Map<Integer, Integer> getPlayerPieceCounts() 
     {
-        Map<String, Integer> pieceCounts = new java.util.HashMap<>();
-        pieceCounts.put("player1", 0);  
-        pieceCounts.put("player2", 5);
+        Map<Integer, Integer> pieceCounts = new java.util.HashMap<>();
+        pieceCounts.put(1, 0);  
+        pieceCounts.put(2, 5);
         return pieceCounts;
     }
 
     //has any legal moves
-    public Map<String, Boolean> getPlayerHasLegalMoves() 
+    public Map<Integer, Boolean> getPlayerHasLegalMoves() 
     {
-        Map<String, Boolean> legalMoves = new java.util.HashMap<>();
-        legalMoves.put("player1", false);
-        legalMoves.put("player2", true);
+        Map<Integer, Boolean> legalMoves = new HashMap<>();
+        legalMoves.put(1, false);
+        legalMoves.put(2, true);
         return legalMoves;
     }
 
