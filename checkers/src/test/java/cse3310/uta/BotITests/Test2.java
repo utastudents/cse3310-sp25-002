@@ -14,6 +14,16 @@ public class Test2 extends BotI {
     /* Testing playNormalMove */
     @Test
     public void testingPlayNormalMove() {
+        Board board = new Board();
+        this.setColor(true);
 
+        Square fromPosition = board.getSquare(1, 1);
+        fromPosition.placeWhite();
+        LinkedList<Move> moves = new LinkedList<>();
+        this.playNormalMove(moves, fromPosition, 2, 2, board);
+
+        assertTrue(moves.size() == 1); // One Move added check
+        assertTrue(moves.get(0).getStart() == fromPosition); // check start position
+        assertTrue(moves.get(0).getDest() == board.getSquare(2, 2)); // check the jump position
     }
 }
