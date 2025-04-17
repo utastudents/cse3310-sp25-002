@@ -2,6 +2,7 @@ package uta.cse3310.GameTermination;
 import uta.cse3310.GameManager.Player;
 import uta.cse3310.GamePlay.GamePlay;
 import java.util.Map;
+import java.util.HashMap;
 
 public class GameTermination 
 {
@@ -12,7 +13,7 @@ public class GameTermination
 
     //hardcoded methods for unit testing
     //player 1 lost
-    public Map<String, Integer> getPlayerPieceCounts() 
+    public Map<Integer, Integer> getPlayerPieceCounts() 
     {
         Map<String, Integer> pieceCounts = new java.util.HashMap<>();
         pieceCounts.put("player1", 0);  
