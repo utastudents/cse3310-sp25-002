@@ -22,10 +22,10 @@ public class Test2 {
 
         p1moves.addNext(p1moves.makeMove(board, board.getSquare(2, 1), false, false, false));
         board.execute(p1moves.getFirst(), false);
-        //System.out.print(board.toString());
+        System.out.print(board.toString());
         //assertTrue("");
         p2moves.addNext(p2moves.makeMove(board, board.getSquare(5, 2), true, true, false));
         board.execute(p2moves.getFirst(), false);
-        //System.out.print(board.toString());
+        System.out.print(board.toString());
     }
 }
