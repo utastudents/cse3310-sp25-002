@@ -31,11 +31,11 @@ public class GameTermination
     }
 
     //get scores
-    public Map<String, Integer> getPlayerScores() 
+    public Map<Integer, Integer> getPlayerScores() 
     {
-        Map<String, Integer> scores = new java.util.HashMap<>();
-        scores.put("player1", 6);
-        scores.put("player2", 9);
+        Map<Integer, Integer> scores = new HashMap<>();
+        scores.put(1, 6);
+        scores.put(2, 9);
         return scores;
     }
 
