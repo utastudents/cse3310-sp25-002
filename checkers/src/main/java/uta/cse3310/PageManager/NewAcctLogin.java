@@ -8,11 +8,12 @@
 // This will ensure no duplicate usernames while providing immediate feedback to users during registration.
 
 package uta.cse3310.PageManager;
+import java.sql.Connection;
 
-import java.sql.Connection;// database connection
-
-import com.google.gson.JsonObject;
+import com.google.gson.JsonObject;// database connection
 import com.google.gson.JsonParser;
+
+import uta.cse3310.DB.DB;
 
 public class NewAcctLogin
 {
@@ -62,17 +63,14 @@ public class NewAcctLogin
         }
 
         //SQLite for DataBase
-        String addUserSQL = "INSERT INTO users WHERE username = ?";
+        String addUserSQL = "INSERT INTO users (username) WHERE VALUES(?)";
 
         //try with resources again
         //to insert the user name into the database
-        try(var nameConn = userDB.prepareStatement(addUserSQL))
+        try
         {
-            //This will grab the username and
-            //replace the ?
-            nameConn.setString(1, username);
-            //Actually run the SQL query here
-            nameConn.executeUpdate();
+            //Using the database team's method
+            DB.insertUser(username);
             //Success!
             return true;            
         }
@@ -83,9 +81,6 @@ public class NewAcctLogin
             //returns false since error happened
             return false;
         }
-
-        //otherwise, return true to add user
-        //return true;
     }
 
     //Beging to process the input of the usernames
