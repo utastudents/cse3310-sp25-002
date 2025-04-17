@@ -10,12 +10,12 @@ import java.util.LinkedList;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-public class Test3 extends BotI{
+public class Test3 extends BotI {
     @Test
-    protected void isAggressiveTest() {
+    public void isAggressiveTest() {
         Board board = new Board();
 
-        //init white bot area & pieces
+        // init white bot area & pieces
         this.setColor(true);
         board.getSquare(1, 1).placeBlack();
         board.getSquare(2, 2).placeBlack();
@@ -25,4 +25,3 @@ public class Test3 extends BotI{
         assertTrue(outcome);
     }
 }
-
