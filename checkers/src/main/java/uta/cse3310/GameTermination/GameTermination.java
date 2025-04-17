@@ -40,7 +40,7 @@ public class GameTermination
     }
 
     // Method to handle the end of the game and declare the winner
-    public void endGame(Map<String, Integer> playerScores, int winningPlayer) 
+    public void endGame(Map<Integer, Integer> playerScores, int winningPlayer) 
     {
         if (gameOver) 
         {
