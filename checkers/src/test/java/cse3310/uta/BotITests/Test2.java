@@ -8,9 +8,11 @@ import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Square;
 import java.util.LinkedList;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class Test2 {
     /* Testing playNormalMove */
+    @Test
     public void testingPlayNormalMove() {
         /* Placeholder for now */
     }
