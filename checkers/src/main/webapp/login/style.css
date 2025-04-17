@@ -102,6 +102,46 @@ article.mascot{
   border-radius: 5px;
 }
 
+/* Style for the username input */
+#message {
+  display:none;
+  background: #f1f1f1;
+  color: #000;
+  position: relative;
+  padding: 6px;
+  margin-top: 6px;
+}
+
+#message p {
+  padding: 4px 4px;
+  font-size: 12px;
+  text-align: justify;
+  margin: 0px 75px;
+}
+
+/* Green text and Check when valid */
+.valid {
+  color: green;
+}
+
+.valid:before {
+  position: relative;
+  left: -20px;
+  content: "✔";
+}
+
+/* Red text and X when invalid */
+.invalid {
+  color: red;
+}
+
+.invalid:before {
+  position: relative;
+  left: -20px;
+  content: "✖";
+}
+
+
 button {
   margin-top: 15px;
   padding: 10px 20px; 
