@@ -11,7 +11,7 @@ import uta.cse3310.GameManager.Move;
 import uta.cse3310.GamePlay.rules;
 
 
-public class isLegalTest extends rules 
+public class Test2 extends rules 
 {
     
     
