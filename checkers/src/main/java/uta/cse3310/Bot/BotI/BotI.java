@@ -41,7 +41,7 @@ public class BotI extends Bot {
         return this.moves;
     }
 
-    private boolean isAggressive(Board board) {
+    protected boolean isAggressive(Board board) {
         int botPieces = countallPieces(board, this.color);
         int playerPieces = countallPieces(board, !(this.color));
 
