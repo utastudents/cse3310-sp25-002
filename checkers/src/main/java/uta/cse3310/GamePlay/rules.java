@@ -92,6 +92,7 @@ public class rules
                         if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                         {
                             legality = true;
+                            middleSquare.remove();
                             game.newCapture();
                         }
                     }
@@ -129,6 +130,7 @@ public class rules
                             if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                             {
                                 legality = true;
+                                middleSquare.remove();
                                 game.newCapture();
                             }
                         }
@@ -178,6 +180,7 @@ public class rules
                         if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                         {
                             legality = true;
+                            middleSquare.remove();
                             game.newCapture();
                         }
                     }
@@ -214,6 +217,7 @@ public class rules
                             if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                             {
                                 legality = true;
+                                middleSquare.remove();
                                 game.newCapture();
                             }
                         }
