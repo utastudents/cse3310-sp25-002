@@ -287,33 +287,6 @@ public class rules
         return true;
     }
 
-    static protected boolean canCapture(Game game, Move move)
-    {
-        boolean capturable = false;
-
-        Square startSquare = move.getStart();
-        Square destinationSquare = move.getDest();
-
-        int rowDistance = Math.abs(startSquare.getRow() - destinationSquare.getRow());
-        int columnDistance = Math.abs(startSquare.getCol() - destinationSquare.getCol());
-
-        boolean isKing = startSquare.isKing();
-
-        if(isKing)
-        {
-            if(rowDistance == 2)
-            {
-
-            }
-            else if(columnDistance == 2)
-            {
-
-            }
-        }
-
-        return capturable;
-    }
-
     //Check to see if current player can move selected piece
     //Does the color of the player match the color of the piece
     static protected boolean canMovePiece(Board board, Square square, Game game)
