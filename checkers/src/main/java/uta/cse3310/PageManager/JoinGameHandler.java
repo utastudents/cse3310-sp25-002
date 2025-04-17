@@ -35,6 +35,20 @@ public class JoinGameHandler {
         System.out.println("Sending request to PairUp for bot match...");
         System.out.println("ClientID: " + ClientID);
     }
+
+    // This method is for sending feedback back to PageManager for frontend display
+    public game_status createGameStatusMessage(int clientID, boolean playAgainstBot) {
+        game_status status = new game_status();
+        status.type = "join_response";
+    
+        if (playAgainstBot) {
+            status.msg = "Matched with Bot!";
+        } else {
+            status.msg = "Waiting for another player...";
+        }
+    
+        return status;
+    }
     
     // helper return class to extract data in pairup_subsys
     public static class Result 
