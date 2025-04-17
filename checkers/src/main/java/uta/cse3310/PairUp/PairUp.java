@@ -40,6 +40,11 @@ public class PairUp {
 
     }
 
+    public boolean searchPlayer(int PlayerID)
+    {
+        return Mmaker.getPlayer(PlayerID);
+    }
+
     public void pair(int p1ID, String p1Name, int p2ID, String p2Name)
     {
         // Directly establishes match between two players
