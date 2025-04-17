@@ -1,6 +1,7 @@
 package uta.cse3310.PageManager;
 
 import java.util.Map;
+import uta.cse3310.PageManager.game_status;
 
 public class JoinGameHandler {
     
@@ -33,12 +34,6 @@ public class JoinGameHandler {
     private void sendToPairUpForBot(int clientID) {
         System.out.println("Sending request to PairUp for bot match...");
         System.out.println("ClientID: " + clientID);
-    }
-
-    // Feedback structure to send back to PageManager/frontend
-    public static class game_status {
-        public String type;
-        public String msg;
     }
 
     public game_status createGameStatusMessage(int clientID, boolean playAgainstBot) {
