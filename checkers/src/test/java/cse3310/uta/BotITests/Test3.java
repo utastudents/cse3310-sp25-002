@@ -17,7 +17,7 @@ public class Test3 extends BotI {
 
         // init white bot area & pieces
         this.setColor(true);
-        board.getSquare(1, 1).placeBlack();
+        board.getSquare(1, 1).placeWhite();
         board.getSquare(2, 2).placeBlack();
         board.getSquare(3, 3).placeBlack();
 
