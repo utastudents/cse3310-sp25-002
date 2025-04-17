@@ -4,22 +4,27 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class game_status {
-    // this is just a made up example to demonstrate data flow
+    // user data
     Integer turn;
     Float score;
-    public Integer gameID;
-    // game state flags
+    public int clientID;
+    public String player;
+    public int game_id;
+    public String playerName;
+
+    // game state data
     public boolean gameOver = false;
     public Integer winner = null;
     public Integer loser = null;
     public boolean draw = false;
-    public String msg;
     public String type;
     public String player_color;       
     public String starting_player;    
-    public int game_id;
-    public String player;
     public List<Integer> from;
     public List<Integer> to;
+    public List<List<Integer>> legal_moves;
+
+    //debugging msg
+    public String msg;
 
 }

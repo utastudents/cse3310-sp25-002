@@ -7,7 +7,7 @@ import uta.cse3310.GamePlay.GamePlay;
 public class GamePageController {
     private GameManager gameManager;
 
-    GamePageController(GameManager gameManager){
+    public GamePageController(GameManager gameManager){
         this.gameManager = gameManager;
     }
 

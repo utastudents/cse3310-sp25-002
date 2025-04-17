@@ -12,6 +12,7 @@ import com.google.gson.JsonObject;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.GameManager.GameManager;
+import uta.cse3310.GameManager.GamePageController;
 import uta.cse3310.PairUp.PairUp;
 
 public class PageManager {
@@ -31,7 +32,9 @@ public class PageManager {
         db = new DB();
         pu = new PairUp();
 
-        displayConnector = new GameDisplayConnector(new GameManager());
+        GameManager gameManager = new GameManager(); // instantiate GameManager
+        GamePageController controller = new GamePageController(gameManager); // pass it to GamePageController
+        displayConnector = new GameDisplayConnector(controller); // pass controller to connector
 
         try
         {

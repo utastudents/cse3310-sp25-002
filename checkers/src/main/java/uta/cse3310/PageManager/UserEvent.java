@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 
 public class UserEvent {
 
-    // System-assigned user ID
-    public Integer id;
-
+    // System-assigned client ID
+    public Integer id; 
+    
     // User account info
     public String playerName;
     public String password;
