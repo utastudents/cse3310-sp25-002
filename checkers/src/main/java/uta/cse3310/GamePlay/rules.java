@@ -230,63 +230,6 @@ public class rules
         return legality;
     }
 
-    //checks how many spots moved up to compared to number of pieces
-    //0 pieces = 1, 1 piece = 2, 2 pieces = 4 etc...
-    static protected boolean pieceToMoves(Moves moves, Board board)
-    {
-        int index = moves.size() - 1;
-        Square squareDest = moves.getDest(index);
-        Square squareStart = moves.getStart(index);
-
-        int dist = Math.abs(squareDest.getRow() - squareStart.getRow());
-
-        //if negative, piece moved left, if positive, piece moved right
-        int xDirection = squareDest.getCol() - squareStart.getCol();
-        //if negative, piece moved down, if positive, piece moved up
-        int yDirection = squareDest.getRow() - squareStart.getRow();
-        
-        if (dist == 1)
-            return true;
-
-        int x = 0, y = 0;
-        int numPieces = 0;
-        //find pieces on the way to the destination
-        for (int i = dist; i > 0; --i) 
-        {
-            if (xDirection > 0)
-                ++x;
-            else if (xDirection < 0)
-                --x;
-            /*
-            //for exception handling
-            else
-                throw new RuntimeException("piece did not move\n");
-            */
-
-            if (yDirection > 0)
-                ++y;
-            else if (yDirection < 0)
-                --y;
-            /*
-            //for exception handling
-            else
-                throw new RuntimeException("piece did not move\n");
-            */
-
-            Square currSquare = board.getSquare(squareStart.getCol() + x, squareStart.getRow() + y);
-            if (currSquare.hasPiece())
-                ++numPieces;
-
-        }
-        
-        //if 0 pieces != 1 dist, 1 piece != 2 dist, 2 pieces != 4 dist etc...
-        //return false
-        if (dist / numPieces != 2)
-            return false;
-
-        return true;
-    }
-
     //Check to see if current player can move selected piece
     //Does the color of the player match the color of the piece
     static protected boolean canMovePiece(Board board, Square square, Game game)
