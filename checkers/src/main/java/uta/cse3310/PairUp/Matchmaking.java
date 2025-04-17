@@ -17,12 +17,15 @@ import java.util.*;
 public class Matchmaking {
     public LinkedHashMap<Integer, PlayerInMatchmaking> players;
     private int gameId;
-    GamePairController gameManagerCommunication;
+    private GamePairController gameManagerCommunication;
+    private MatchmakingScheduler scheduler;
 
     public Matchmaking() {
         players = new LinkedHashMap<>();
         gameId = 0;
         gameManagerCommunication = new GamePairController();
+        scheduler = new MatchmakingScheduler();
+        scheduler.start();
     }
 
     // Pairs two players
@@ -70,7 +73,7 @@ public class Matchmaking {
         }
     }
 
-    public void matching() {
+    public synchronized void matching() {
     List<Map.Entry<Integer, PlayerInMatchmaking>> entries = new ArrayList<>(players.entrySet());
     for (int i = 0; i < entries.size(); i++) {
         PlayerInMatchmaking p1 = entries.get(i).getValue();
