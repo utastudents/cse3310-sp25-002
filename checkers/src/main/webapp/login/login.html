@@ -22,8 +22,20 @@
     
     <form action="">
       <div class="input-box">
-        <input type="text" placeholder="Enter Username" id="username" />
+        <label for="username">Username</label>
+        <input type="text" placeholder="Enter Username" id="username" 
+          pattern="(?=.*\d)(?+.*[A-Za-z])(?=.*[!@#$%^&*]).{8,}" required />
       </div>
+
+      //Username validation message
+      <div id="message">
+        <h3>Username must contain:</h3>
+        <p id="letter" class="invalid">A <b>Letter</b></p>
+        <p id="num" class="invalid">A <b>Number</b></p>
+        <p id="special" class="invalid">A <b>Special Character</b></p>
+        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+      </div>
+
       <button onclick="joinGame()">Join Game</button>
     </form>
   </div>
