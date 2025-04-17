@@ -10,10 +10,10 @@ import java.util.LinkedList;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
-public class Test2 {
+public class Test2 extends BotI {
     /* Testing playNormalMove */
     @Test
     public void testingPlayNormalMove() {
-        /* Placeholder for now */
+
     }
 }
