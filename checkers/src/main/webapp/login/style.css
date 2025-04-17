@@ -108,13 +108,13 @@ article.mascot{
   background: #f1f1f1;
   color: #000;
   position: relative;
-  padding: 6px;
-  margin-top: 6px;
+  padding: 2px;
+  margin-top: 2px;
 }
 
 #message p {
-  padding: 4px 4px;
-  font-size: 12px;
+  padding: 0px 0px;
+  font-size: 10px;
   text-align: justify;
   margin: 0px 75px;
 }
