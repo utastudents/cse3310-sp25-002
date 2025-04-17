@@ -46,6 +46,11 @@ public class PairUp {
         return Mmaker.getPlayer(PlayerID);
     }
 
+    public void clearPlayers()
+    {
+        Mmaker.players.clear();
+    }
+
     public void ping()
     {
         Mmaker.matching();

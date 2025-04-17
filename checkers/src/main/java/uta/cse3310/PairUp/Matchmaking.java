@@ -52,12 +52,14 @@ public class Matchmaking {
             pair(newPlayer, botID);
         }
         else {
+            System.out.println("Before:");
             for (Map.Entry<Integer, PlayerInMatchmaking> entry : players.entrySet()) {
-                System.out.println("Before:" + entry.getKey() + " => " + entry.getValue());
+                System.out.println(entry.getKey() + " => " + entry.getValue());
             }
             players.put(PlayerID, newPlayer);
+            System.out.println("After:");
             for (Map.Entry<Integer, PlayerInMatchmaking> entry : players.entrySet()) {
-                System.out.println("After:" + entry.getKey() + " => " + entry.getValue());
+                System.out.println(entry.getKey() + " => " + entry.getValue());
             }
             matching();
         }

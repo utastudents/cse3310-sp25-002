@@ -15,7 +15,7 @@ public class Test3
     
         assertEquals(true, pairUp.searchPlayer(451));
         
-        
+        pairUp.clearPlayers();
 
     }
 }
