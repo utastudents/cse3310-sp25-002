@@ -2,7 +2,6 @@ package cse3310.uta.PairUpTests;
 
 import org.junit.Test;
 import uta.cse3310.PairUp.*;
-import uta.cse3310.GameManager.GamePairController;
 import uta.cse3310.GameManager.Game;
 import static org.junit.Assert.*;
 
