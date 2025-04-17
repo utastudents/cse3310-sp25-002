@@ -140,16 +140,19 @@ public class BotI extends Bot {
     private boolean isCapturingMove(Move move, Board board) {
         Square start = move.getStart();
         Square end = move.getDest();
+        int distdifferenceRow = Math.abs(start.getRow() - end.getRow());
+        int distdifferenceColumn = Math.abs(start.getCol() - end.getCol());
 
-        if (start.getRow() - end.getRow() == 2) {
+        // Piece moves 2 space; 1 of them over opponent piece
+        if (distdifferenceRow - distdifferenceColumn == 2) {
             int jumpedRow = ((start.getRow() + end.getRow()) / 2);
             int jumpedColumn = ((start.getCol() + end.getCol()) / 2);
 
             Square jumpedSquare = board.getSquare(jumpedRow, jumpedColumn);
+            Boolean movingPiece = start.getColor();
+            Boolean jumpedpieceColor = jumpedSquare.getColor();
 
-            if ((jumpedSquare.getColor() != null) && (jumpedSquare.getColor() != end.getColor())) {
-                return true;
-            }
+            return ((jumpedpieceColor != null && jumpedSquare.hasPiece()) && (!jumpedpieceColor == movingPiece));
         }
 
         return false;
