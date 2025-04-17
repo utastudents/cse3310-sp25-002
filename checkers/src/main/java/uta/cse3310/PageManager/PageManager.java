@@ -1,8 +1,5 @@
 package uta.cse3310.PageManager;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,18 +32,14 @@ public class PageManager {
 
         try
         {
-            //temporary url for database for now
-            String sqlURL = "jdbc:sqlite:checkers.db";
-            //from the documentation, drivermanager is able to get the connection
-            //via the url
-            Connection connection = DriverManager.getConnection(sqlURL);
-            //if successful it should make this connection to use
-            accountHandler = new NewAcctLogin(connection);
+            //need to use NewAcctLogin here
+            //for username processing
+            accountHandler = new NewAcctLogin();
         }
-        catch(SQLException e)
+        catch(Exception e)
         {
             //if not, then error handle it
-            System.out.println("Fail: No database connection: " + e.getMessage());
+            System.out.println("Could not create the user account: " + e.getMessage());
         }
     }
 
@@ -61,18 +54,41 @@ public class PageManager {
     }
 
     // Username validation logic
-    public JsonObject handleUsernameValidation(String username) {
+    public JsonObject handleUsernameValidation(String username)
+    {
+        //using the DB validation:
         JsonObject responseMsg = new JsonObject();
 
-        if (accountHandler.usernameExists(username)) {
+        if(accountHandler.usernameExists(username))
+        {
             responseMsg.addProperty("type", "username_status");
             responseMsg.addProperty("accepted", false);
-        } else if (accountHandler.addUser(username)) {
-            responseMsg.addProperty("type", "username_status");
-            responseMsg.addProperty("accepted", true);
-        } else {
-            responseMsg.addProperty("type", "username_status");
-            responseMsg.addProperty("accepted", false);
+        }
+        else
+        {
+            try
+            {
+                uta.cse3310.DB.Validate.ValidateUser(username);
+
+                //Making sure the username was added
+                if(accountHandler.usernameExists(username))
+                {
+                    responseMsg.addProperty("type","username_status");
+                    responseMsg.addProperty("accepted",true);
+                }
+                else
+                {
+                    responseMsg.addProperty("type","username_status");
+                    responseMsg.addProperty("accepted",false);
+                }
+            }
+            catch(Exception e)
+            {
+                //Error handling
+                System.out.println("Could not validate the username: " + e.getMessage());
+                responseMsg.addProperty("type","username_status");
+                responseMsg.addProperty("accepted",false);
+            }
         }
 
         return responseMsg;
