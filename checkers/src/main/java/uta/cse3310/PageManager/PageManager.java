@@ -25,6 +25,8 @@ public class PageManager {
 
     private final PairUp pairUp = new PairUp();
 
+    private final JoinGameHandler joinGameHandler = new JoinGameHandler();
+
     public PageManager() {
         db = new DB();
         pu = new PairUp();
@@ -92,6 +94,19 @@ public class PageManager {
 
             case "test": {
                 return displayConnector.sendShowGameDisplayTest(U);
+            }
+
+            case "join_game": {
+                Map<String, String> joinData = new HashMap<>();
+                joinData.put("ClientID", String.valueOf(U.id));
+                joinData.put("gameMode", U.msg);
+
+                JoinGameHandler.Result result = joinGameHandler.processJoinGame(joinData);
+                game_status feedback = joinGameHandler.createGameStatusMessage(result.clientID, result.playAgainstBot);
+
+                ret.status.type = feedback.type;
+                ret.status.msg = feedback.msg;
+                break;
             }
 
             case "cancel": {

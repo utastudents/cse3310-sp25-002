@@ -41,7 +41,7 @@ public class BotI extends Bot {
         return this.moves;
     }
 
-    private boolean isAggressive(Board board) {
+    protected boolean isAggressive(Board board) {
         int botPieces = countallPieces(board, this.color);
         int playerPieces = countallPieces(board, !(this.color));
 
@@ -111,7 +111,7 @@ public class BotI extends Bot {
     }
 
     /* Play a normal non capturing move if the sqaure is empty */
-    private void playNormalMove(LinkedList<Move> moves, Square square, int toRow, int toCol, Board board) {
+    protected void playNormalMove(LinkedList<Move> moves, Square square, int toRow, int toCol, Board board) {
         if (toRow >= 0 && toRow < 8 && toCol >= 0 && toCol < 8) {
             Square newPosition = board.getSquare(toRow, toCol);
             if (!newPosition.hasPiece()) {
@@ -125,7 +125,7 @@ public class BotI extends Bot {
      * Play a capture move if the middle square has an opponent's piece and the
      * target is empty
      */
-    private void playCapture(LinkedList<Move> moves, Square square, int toRow, int toCol, int midRow, int midCol,
+    protected void playCapture(LinkedList<Move> moves, Square square, int toRow, int toCol, int midRow, int midCol,
             Board board) {
         if (toRow >= 0 && toRow < 8 && toCol >= 0 && toCol < 8) {
             Square newPosition = board.getSquare(toRow, toCol);
@@ -140,16 +140,19 @@ public class BotI extends Bot {
     private boolean isCapturingMove(Move move, Board board) {
         Square start = move.getStart();
         Square end = move.getDest();
+        int distdifferenceRow = Math.abs(start.getRow() - end.getRow());
+        int distdifferenceColumn = Math.abs(start.getCol() - end.getCol());
 
-        if (start.getRow() - end.getRow() == 2) {
+        // Piece moves 2 space; 1 of them over opponent piece
+        if (distdifferenceRow - distdifferenceColumn == 2) {
             int jumpedRow = ((start.getRow() + end.getRow()) / 2);
             int jumpedColumn = ((start.getCol() + end.getCol()) / 2);
 
             Square jumpedSquare = board.getSquare(jumpedRow, jumpedColumn);
+            Boolean movingPiece = start.getColor();
+            Boolean jumpedpieceColor = jumpedSquare.getColor();
 
-            if ((jumpedSquare.getColor() != null) && (jumpedSquare.getColor() != end.getColor())) {
-                return true;
-            }
+            return ((jumpedpieceColor != null && jumpedSquare.hasPiece()) && (!jumpedpieceColor == movingPiece));
         }
 
         return false;

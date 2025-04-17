@@ -2,14 +2,13 @@ package cse3310.uta.PairUpTests;
 
 import org.junit.Test;
 import uta.cse3310.PairUp.*;
-import uta.cse3310.GameManager.GamePairController;
 import uta.cse3310.GameManager.Game;
 import static org.junit.Assert.*;
 
 public class Test4 
 {
     @Test
-    public void TestPairWithPlayers()
+    public void TestPairAgainstBot()
     {
         PlayerInMatchmaking p1 = new PlayerInMatchmaking(171328890285L,451, "Alice",true,9);
 

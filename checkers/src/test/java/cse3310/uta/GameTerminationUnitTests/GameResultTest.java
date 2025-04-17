@@ -9,9 +9,9 @@ import java.util.Map;
 import uta.cse3310.GameManager.Player;
 
 public class GameResultTest {
-
+    //test for the updateScores() and getScore() method from GameResult
     @Test
-    public void testUpdateAndGetScore() {
+    public void testUpdateScoresAndGetScore() {
         Map<String, Integer> scores = new HashMap<>();
         //GameResult result = new GameResult(scores);
 

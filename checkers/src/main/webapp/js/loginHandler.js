@@ -81,60 +81,62 @@ function joinGame()
     
   }
 }
-        
-        function sendUsername()
-        {
-            const username = document.getElementById("username").value.trim();
-            const errorDiv = document.getElementById("username_error");
-        if(!username)
-            {
-                errorDiv.innerText = "Please enter a username."
-                errorDiv.style.display = "block"
-                return;
-            }
-            const userData = 
-            {
-                type: "join",
-                username: username
-            }
-            // Sending data through WebSocket
-            if(connection === WebSocket.OPEN)
-            {
-                connection.send(JSON.stringify(userData));
-            }
-            else
-            {
-                errorDiv.innerText = "Connection to server not available.";
-                errorDiv.style.display = "block";
-            }
-        }
-       
 
+function sendUsername()
+{
+  //Take username and remove whitespace
+    const username = document.getElementById("username").value.trim();
+    const errorDiv = document.getElementById("username_error");
+  
+  //if username field is empty, show an error and stop the function.
+    if(!username) 
+    {
+      errorDiv.innerText = "Please enter a username";
+      errorDiv.style.display = "block";
+      return; //exit function since the usename is invalid.
+    }
+    const userData = 
+  {
+    type: "join", 
+    username: username
+  };
 
-        function  receiveFromPageManager(msg)
-        {
+  //Sending name through WebSocket
 
+  if (connection.readyState === WebSocket.OPEN) {
+    connection.send(JSON.stringify(userData)); //Sending JSON
+  } else {
+    errorDiv.innerText = "Connection to server not available.";
+    errorDiv.style.display = "block";
+  }
+}
+        
+function receiveFromPageManager(msg) {
+  if (typeof msg === "string") 
+  {
+    try {
+      msg = JSON.parse(msg);
+    } catch (e) {
+      console.log("Failed to parse backend message:", e);
+      return;
+    }
+  }
 
-            if(msg.type ==="username_status")
-                {
-                    /* If username is valid (not taken) we hide the current (new_account)
-                    and show the next, possibly (join_game) section */
-                    if (msg.accepted === true)  
-                    {
-                        document.getElementById("new_account").style.display = "none"
-                        document.getElementById("join_game").style.display = "block"
-                    }
-                    else
-                    {
-                        console.log("Username is already taken"); //If not ask for another username.
-        
-                    }
-        
-                }
-                else
-                {
-                    console.log("Unkonown message type", msg.type);
-                }
-        
-        }
-       
+  // Handling backend message structure
+  if (msg.Status === "Success") 
+  {
+    /*If the username is valid and user is added in DB, 
+    hide the current login section*/
+    document.getElementById("new_account").style.display = "none";
+    document.getElementById("join_game").style.display = "block";
+  } 
+  else if (msg.Status === "Error") //If username exists or input is invalid.
+  {
+    console.log("Username is already taken or invalid:", msg.Message);
+    alert(msg.Message || "Username not accepted.");
+  } 
+  else //if the recieved msg isn't valid (wrong msg)
+  {
+    console.log("Unknown message type:", msg);
+  }
+}

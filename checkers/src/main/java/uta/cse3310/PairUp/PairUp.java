@@ -1,3 +1,4 @@
+
 // -- Import Dependencies --
 package uta.cse3310.PairUp;
 
@@ -13,12 +14,12 @@ package uta.cse3310.PairUp;
 
 public class PairUp {
     //
-    private Matchmaking Mmaker;
+    private static final Matchmaking Mmaker = new Matchmaking();
 
   
     public PairUp() 
     {
-        Mmaker = new Matchmaking();
+
     }
 
 
@@ -40,6 +41,21 @@ public class PairUp {
 
     }
 
+    public boolean searchPlayer(int PlayerID)
+    {
+        return Mmaker.getPlayer(PlayerID);
+    }
+
+    public void clearPlayers()
+    {
+        Mmaker.players.clear();
+    }
+
+    public void ping()
+    {
+        Mmaker.matching();
+    }
+
     public void pair(int p1ID, String p1Name, int p2ID, String p2Name)
     {
         // Directly establishes match between two players
@@ -47,5 +63,7 @@ public class PairUp {
         PlayerInMatchmaking p2 = new PlayerInMatchmaking(0, p2ID, p2Name, false, 0);
         Mmaker.pair(p1, p2);
     }
+
+    
 
 }

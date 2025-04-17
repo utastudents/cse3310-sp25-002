@@ -11,7 +11,7 @@ import org.junit.Test;
 import uta.cse3310.DB.DB;
 
 
-public class Test1
+public class Test3
 {
     private Connection connection;
     @Before
@@ -22,12 +22,10 @@ public class Test1
         DB.createTable();
     }
 
-    @Test
-    public void testInsertUser() throws SQLException
+    @Test //tests if the update is happening in the DB
+    public void testUpdateUser() throws SQLException
     {
-
-
-        DB.insertUser("prabin280"); // Change username every test
+        DB.updatePlayer("prabin280", 3); // Change new rank
 
         List<String> leaderboard = DB.getLeaderboard();
 

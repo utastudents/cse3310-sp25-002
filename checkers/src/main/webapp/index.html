@@ -6,41 +6,80 @@
   <title>Game Page</title>
   <link rel="icon" type="image/png" href="login/Tokens.png">
   <link rel = "stylesheet" href="login/style.css">
+  <link rel = "stylesheet" href="styles.css">
 </head>
 <body>
   <div id = "new_account">
-   <!-- Container of the login page -->
-    
-    <div class ="wrapper">
-      <div class="header">
+
+  <div class="container">
+
+    <div class="left-panel">
       <article class="mascot">
         <div class="Piece">
           <div class="Face"></div>
         </div>
       </article>
-      <h1>CHECKERS WITH CSE3310002</h1>
+        <h1>
+          <span class="title-top">CHECKERS WITH</span><br>
+          <span class="title-bottom">CSE 3310-002</span>
+        </h1>
+      </div>
+  
+<div class="right-panel">
+  <form onsubmit="joinGame(); return false;">
+    <div class="input-box">
+      <input type="text" placeholder="Enter Username" id="username" 
+        pattern="(?=.*\d)(?=.*[A-Za-z])(?=.*[!@#$%^&*]).{8,}" required />
     </div>
 
-      <form onsubmit="joinGame(); return false;">
-      <div class="input-box">
-        <input type="text" placeholder="Enter Username" id="username" 
-          pattern="(?=.*\d)(?+.*[A-Za-z])(?=.*[!@#$%^&*]).{8,}" required />
-      </div>
+    <div id="message">
+      <h3>Username must contain:</h3>
+      <p id="letter" class="invalid">A <b>Letter</b></p>
+      <p id="num" class="invalid">A <b>Number</b></p>
+      <p id="special" class="invalid">A <b>Special Character</b></p>
+      <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+    </div>
 
-      <div id="message">
-        <h3>Username must contain:</h3>
-        <p id="letter" class="invalid">A <b>Letter</b></p>
-        <p id="num" class="invalid">A <b>Number</b></p>
-        <p id="special" class="invalid">A <b>Special Character</b></p>
-        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
-      </div>
-
+    <div class="button-container">
       <button type="submit">Join Game</button>
-    </form>
-  </div>
-        <!--form onsubmit = "joinGame(); return false;"--> 
+    </div>
+  </form>
+</div>
 
-          <!--button type="submit">Join Game</button--> 
+
+<div> id="game_lobby"
+    <header>
+      <h1>Game Lobby</h1>
+    </header>
+    <main>
+      <section id="game-options">
+        <h2>Choose a Game Mode</h2>
+        <div class="button-group">
+          <button id="play-vs-player">Play vs Player</button>
+          <button id="play-vs-bot">Play vs Bot</button>
+          <button id="spectate-bots">Spectate Bot vs Bot</button>
+        </div>
+      </section>
+          <section id="waitlists-section">
+            <h2>Current Waitlists</h2>
+            <div class="waitlist-container">
+              <h3>Player vs Player</h3>
+              <ul id="player-waitlist" class="waitlist">
+                <!-- Will be populated by JavaScript -->
+              </ul>
+            </div>
+            <div class="waitlist-container">
+              <h3>Player vs Bot</h3>
+              <ul id="bot-waitlist" class="waitlist">
+                <!-- Will be populated by JavaScript -->
+              </ul>
+            </div>
+        </section>
+        <section id="notification-section">
+          <h2>Notifications</h2>
+          <div id="notification">Ready to play!</div>
+        </section>
+      </main>
  </div>
   
     <div id="join_game">

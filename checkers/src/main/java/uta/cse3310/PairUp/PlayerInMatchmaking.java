@@ -48,7 +48,11 @@ public class PlayerInMatchmaking {
     }
 
     int getQueueTime() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return (int) (System.currentTimeMillis() - timeOfEntry);
     }
 
+    @Override
+    public String toString() {
+        return this.playerName;
+    }
 }

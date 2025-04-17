@@ -415,22 +415,19 @@ public class BotII extends Bot {
      * Square.getColor()). If the piece belongs to
      * the bot (using this bot's color stored in this.color), it increments the
      * bot's count;
-     * otherwise, it increments the opponent's count.*
-     * 
+     * otherwise, it increments the opponent's count.
      * @param None
-     * 
      * @return true if the bot is at a numerical disadvantage (suggesting an
      *         aggressive
      *         strategy), or false if not (suggesting a more passive strategy).
-     * 
      */
     private boolean playStyle() {
         int bot_piece_cnt = 0;
         int op_piece_cnt = 0;
 
         // Iterate over the 8x8 board.
-        for (int row = 0; row <= 7; row++) {
-            for (int col = 0; col <= 7; col++) {
+        for (int row = 0; row < 8 ; row++) {
+            for (int col = 0; col < 8; col++) {
                 Square square = this.currentGameBoard.getSquare(row, col);
                 if (square.hasPiece()) { // Only count if there is a piece on the square.
                     if (square.getColor() == this.color) {
@@ -446,6 +443,3 @@ public class BotII extends Bot {
         return bot_piece_cnt > op_piece_cnt;
     }
 }
-/**
-
-*/

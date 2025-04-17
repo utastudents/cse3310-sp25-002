@@ -15,14 +15,17 @@ import java.util.*;
     find a match, or if they quit matchmaking.
 */
 public class Matchmaking {
-    private LinkedHashMap<Integer, PlayerInMatchmaking> players;
+    public LinkedHashMap<Integer, PlayerInMatchmaking> players;
     private int gameId;
-    GamePairController gameManagerCommunication;
+    private GamePairController gameManagerCommunication;
+    private MatchmakingScheduler scheduler;
 
     public Matchmaking() {
         players = new LinkedHashMap<>();
         gameId = 0;
         gameManagerCommunication = new GamePairController();
+        scheduler = new MatchmakingScheduler();
+        scheduler.start();
     }
 
     // Pairs two players
@@ -49,7 +52,15 @@ public class Matchmaking {
             pair(newPlayer, botID);
         }
         else {
+            /*System.out.println("Before:");
+            for (Map.Entry<Integer, PlayerInMatchmaking> entry : players.entrySet()) {
+                System.out.println(entry.getKey() + " => " + entry.getValue());
+            }*/
             players.put(PlayerID, newPlayer);
+            /*System.out.println("After:");
+            for (Map.Entry<Integer, PlayerInMatchmaking> entry : players.entrySet()) {
+                System.out.println(entry.getKey() + " => " + entry.getValue());
+            }*/
             matching();
         }
     }
@@ -59,7 +70,18 @@ public class Matchmaking {
         matching();
     }
 
-    public void matching() {
+    public Boolean getPlayer(int playerId)
+    {
+        if (players.get(playerId) != null) {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public synchronized void matching() {
     List<Map.Entry<Integer, PlayerInMatchmaking>> entries = new ArrayList<>(players.entrySet());
     for (int i = 0; i < entries.size(); i++) {
         PlayerInMatchmaking p1 = entries.get(i).getValue();

@@ -92,6 +92,7 @@ public class rules
                         if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                         {
                             legality = true;
+                            middleSquare.remove();
                             game.newCapture();
                         }
                     }
@@ -129,6 +130,7 @@ public class rules
                             if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                             {
                                 legality = true;
+                                middleSquare.remove();
                                 game.newCapture();
                             }
                         }
@@ -178,6 +180,7 @@ public class rules
                         if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                         {
                             legality = true;
+                            middleSquare.remove();
                             game.newCapture();
                         }
                     }
@@ -214,6 +217,7 @@ public class rules
                             if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                             {
                                 legality = true;
+                                middleSquare.remove();
                                 game.newCapture();
                             }
                         }
@@ -224,90 +228,6 @@ public class rules
 
         // Any other move is illegal
         return legality;
-    }
-
-    //checks how many spots moved up to compared to number of pieces
-    //0 pieces = 1, 1 piece = 2, 2 pieces = 4 etc...
-    static protected boolean pieceToMoves(Moves moves, Board board)
-    {
-        int index = moves.size() - 1;
-        Square squareDest = moves.getDest(index);
-        Square squareStart = moves.getStart(index);
-
-        int dist = Math.abs(squareDest.getRow() - squareStart.getRow());
-
-        //if negative, piece moved left, if positive, piece moved right
-        int xDirection = squareDest.getCol() - squareStart.getCol();
-        //if negative, piece moved down, if positive, piece moved up
-        int yDirection = squareDest.getRow() - squareStart.getRow();
-        
-        if (dist == 1)
-            return true;
-
-        int x = 0, y = 0;
-        int numPieces = 0;
-        //find pieces on the way to the destination
-        for (int i = dist; i > 0; --i) 
-        {
-            if (xDirection > 0)
-                ++x;
-            else if (xDirection < 0)
-                --x;
-            /*
-            //for exception handling
-            else
-                throw new RuntimeException("piece did not move\n");
-            */
-
-            if (yDirection > 0)
-                ++y;
-            else if (yDirection < 0)
-                --y;
-            /*
-            //for exception handling
-            else
-                throw new RuntimeException("piece did not move\n");
-            */
-
-            Square currSquare = board.getSquare(squareStart.getCol() + x, squareStart.getRow() + y);
-            if (currSquare.hasPiece())
-                ++numPieces;
-
-        }
-        
-        //if 0 pieces != 1 dist, 1 piece != 2 dist, 2 pieces != 4 dist etc...
-        //return false
-        if (dist / numPieces != 2)
-            return false;
-
-        return true;
-    }
-
-    static protected boolean canCapture(Game game, Move move)
-    {
-        boolean capturable = false;
-
-        Square startSquare = move.getStart();
-        Square destinationSquare = move.getDest();
-
-        int rowDistance = Math.abs(startSquare.getRow() - destinationSquare.getRow());
-        int columnDistance = Math.abs(startSquare.getCol() - destinationSquare.getCol());
-
-        boolean isKing = startSquare.isKing();
-
-        if(isKing)
-        {
-            if(rowDistance == 2)
-            {
-
-            }
-            else if(columnDistance == 2)
-            {
-
-            }
-        }
-
-        return capturable;
     }
 
     //Check to see if current player can move selected piece
@@ -329,7 +249,7 @@ public class rules
         Moves canJump = new Moves();
         if(square.isKing()) //checks to see if there is anyway for the player to jump legally
         {
-            canJump = rules.kingJump(board, new Moves(), -1, -1, square);
+            canJump = rules.kingJump(board, new Moves(), -1, -1, square, currentPlayerColor);
         }
         else
         {
@@ -363,8 +283,8 @@ public class rules
 
     // recursive function for moveList
     // finds all jump chains for a given king piece
-    // this may not work as intended depending on the behavior reguarding the moves obj. 
-    static protected Moves kingJump(Board board, Moves moves, int rowSkip, int colSkip, Square square)
+    // 4/17/2024: added color to prevent a piece from jumping over its own color
+    static protected Moves kingJump(Board board, Moves moves, int rowSkip, int colSkip, Square square, boolean color)
     {
         int row = square.getRow();
         int col = square.getCol();
@@ -383,15 +303,16 @@ public class rules
             Square temp = board.getSquare(row+rowAdd, col+colAdd);
 
             if(temp.hasPiece()){
-                if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7 || (row == rowSkip && col == rowSkip)){
+                if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7 
+                    || (row == rowSkip && col == rowSkip) || temp.getColor() == color){
                     colAdd = colAdd*(-1);
-                    continue;
+                    continue; // if the diagonal square is on any edge, break
                 }
                 else{
                     temp = board.getSquare(row+(rowAdd*2), col+(colAdd*2));
                     if(!temp.hasPiece()){
                         moves.addNext(square, temp);
-                        kingJump(board, moves, row+rowAdd, col+colAdd, temp);
+                        kingJump(board, moves, row+rowAdd, col+colAdd, temp, color);
                     }
                 }
 
@@ -423,9 +344,9 @@ public class rules
 
             Square temp = board.getSquare(row+rowAdd, col+colAdd);
 
-            if(temp.hasPiece()){
-                if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7){
-                    colAdd = colAdd*(-1);
+            if(temp.hasPiece()){ // this will break of temp or square have a color of type NULL, so make sure that never happens
+                if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7 || (temp.getColor() ? 1 : -1) == colorNum){
+                    colAdd = colAdd*(-1); // if the diagonal square is on any edge, or the piece is the same color, break
                     continue;
                 }
                 else{
@@ -445,17 +366,18 @@ public class rules
 
     // Generates a map of all move opportunities reguardless of color
     // This should include ALL moves, including jumps for mulipiece capture
+    // 4/17/2024: fixed color logic and added logic to prevent a piece from jumping over its own color
     static protected Map<Square, Moves> moveList(Board board, boolean color)
     {
         Map<Square, Moves> moveList = new HashMap<>();
         int colorNum;
         if(color){
-            colorNum = 1; // color is white
+            colorNum = -1; // color is white
         }
         else{
-            colorNum = -1; // color is black
+            colorNum = 1; // color is black
         }
-        //black on top; black == false
+
         ArrayList<Square> pieces = getAllPieces(board);
 
         for(int i = 0; i < pieces.size(); i++){
@@ -490,16 +412,16 @@ public class rules
                     Square temp = board.getSquare(row+rowAdd, col+colAdd);
 
                     if(temp.hasPiece()){
-                        if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7 || (row == rowSkip && col == colSkip)){
-                            colAdd = colAdd*(-1);
+                        if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7 
+                            || (row == rowSkip && col == colSkip || temp.getColor() == square.getColor())){
+                            colAdd = colAdd*(-1); // if the diagonal square is on any edge, or the piece is the same color, break
                             continue;
                         }
                         else{
                             temp = board.getSquare(row+(rowAdd*2), col+(colAdd*2));
                             if(!temp.hasPiece()){
                                 moves.addNext(squareDup, temp);
-                                kingJump(board, moves, row+rowAdd, col+colAdd, temp);
-                                //square = temp;
+                                kingJump(board, moves, row+rowAdd, col+colAdd, temp, color); // 
                             }
                         }
                     }
@@ -513,7 +435,10 @@ public class rules
                     colAdd = colAdd*(-1);
                     square = squareDup; // redundant (maybe)
                 }
-                moveList.put(squareDup, moves);
+
+                if (moves.size() > 0) {
+                    moveList.put(squareDup, moves); // if the moveList is not empty, add it to the map
+                }
             }
             else{ // king = false
                 Moves moves = new Moves();
@@ -522,7 +447,7 @@ public class rules
 
                 for(int j = 0; j < 2; j++){ // this checks all diag moves starting from the upper left and moving clockwise
                     if(j<0){
-                        rowAdd = -1;
+                        rowAdd = -1; // not used, remove at a later time
                     }
                     
                     int col = square.getCol();
@@ -536,8 +461,9 @@ public class rules
                     Square temp = board.getSquare(row+rowAdd, col+colAdd);
 
                     if(temp.hasPiece()){
-                        if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7){
-                            colAdd = colAdd*(-1);
+                        
+                        if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7 || temp.getColor() == square.getColor()){
+                            colAdd = colAdd*(-1); // if the diagonal square is on any edge, or the piece is the same color, break
                             continue;
                         }
                         else{
@@ -547,6 +473,7 @@ public class rules
                                 pieceJump(board, moves, temp, colorNum);
                             }
                         }
+                        
                     }
                     else{
                         moves.addNext(squareDup, temp);
@@ -558,7 +485,10 @@ public class rules
                     colAdd = colAdd*(-1);
                     square = squareDup; // redundant (maybe)
                 }
-                moveList.put(squareDup, moves);
+
+                if (moves.size() > 0) {
+                    moveList.put(squareDup, moves); // if the moveList is not empty, add it to the map
+                }
             }
         }
         return moveList;

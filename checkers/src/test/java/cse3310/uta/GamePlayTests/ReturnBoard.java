@@ -6,6 +6,7 @@ import org.junit.Test;
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.Game;
 import uta.cse3310.GamePlay.rules;
+import uta.cse3310.GameManager.Square;
 
 
 public class ReturnBoard extends rules 
@@ -24,4 +25,5 @@ public class ReturnBoard extends rules
         assertTrue(true);
 
     }
+
 }
