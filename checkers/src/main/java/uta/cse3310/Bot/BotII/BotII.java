@@ -446,6 +446,3 @@ public class BotII extends Bot {
         return bot_piece_cnt > op_piece_cnt;
     }
 }
-/**
-
-*/
