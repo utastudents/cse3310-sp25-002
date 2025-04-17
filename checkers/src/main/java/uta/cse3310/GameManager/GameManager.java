@@ -237,5 +237,5 @@ public class GameManager {
         games.set(game.gameNumber(), null); // gameNumber() in Game.java
         System.out.println("Player " + playerId + " quit. Game " + game.gameNumber() + " ended.");
 
-    }
-}*/
+    }*/
+}
