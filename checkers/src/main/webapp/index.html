@@ -6,6 +6,7 @@
   <title>Game Page</title>
   <link rel="icon" type="image/png" href="login/Tokens.png">
   <link rel = "stylesheet" href="login/style.css">
+  <link rel = "stylesheet" href="styles.css">
 </head>
 <body>
   <div id = "new_account">
@@ -39,8 +40,41 @@
     </form>
   </div>
         <!--form onsubmit = "joinGame(); return false;"--> 
+        <!--button type="submit">Join Game</button--> 
 
-          <!--button type="submit">Join Game</button--> 
+<div> id="game_lobby"
+    <header>
+      <h1>Game Lobby</h1>
+    </header>
+    <main>
+      <section id="game-options">
+        <h2>Choose a Game Mode</h2>
+        <div class="button-group">
+          <button id="play-vs-player">Play vs Player</button>
+          <button id="play-vs-bot">Play vs Bot</button>
+          <button id="spectate-bots">Spectate Bot vs Bot</button>
+        </div>
+      </section>
+          <section id="waitlists-section">
+            <h2>Current Waitlists</h2>
+            <div class="waitlist-container">
+              <h3>Player vs Player</h3>
+              <ul id="player-waitlist" class="waitlist">
+                <!-- Will be populated by JavaScript -->
+              </ul>
+            </div>
+            <div class="waitlist-container">
+              <h3>Player vs Bot</h3>
+              <ul id="bot-waitlist" class="waitlist">
+                <!-- Will be populated by JavaScript -->
+              </ul>
+            </div>
+        </section>
+        <section id="notification-section">
+          <h2>Notifications</h2>
+          <div id="notification">Ready to play!</div>
+        </section>
+      </main>
  </div>
   
     <div id="join_game">
