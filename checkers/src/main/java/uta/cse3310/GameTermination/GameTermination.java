@@ -15,7 +15,7 @@ public class GameTermination
     //player 1 lost
     public Map<Integer, Integer> getPlayerPieceCounts() 
     {
-        Map<Integer, Integer> pieceCounts = new java.util.HashMap<>();
+        Map<Integer, Integer> pieceCounts = new HashMap<>();
         pieceCounts.put(1, 0);  
         pieceCounts.put(2, 5);
         return pieceCounts;
