@@ -10,5 +10,8 @@ import java.util.LinkedList;
 import static org.junit.Assert.*;
 
 public class Test2 {
-
+    /* Testing playNormalMove */
+    public void testingPlayNormalMove() {
+        /* Placeholder for now */
+    }
 }
