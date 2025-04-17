@@ -12,13 +12,13 @@ package uta.cse3310.PairUp;
 public class PlayerInMatchmaking {
 
     private long timeOfEntry;
-    private String playerID;
+    private int playerID;
     private String playerName;
     private boolean playAgainstBot;
     private int wins;
 
     //  constructor
-    public PlayerInMatchmaking(long timeOfEntry, String playerID, String playerName, boolean playAgainstBot, int wins) {
+    public PlayerInMatchmaking(long timeOfEntry, int playerID, String playerName, boolean playAgainstBot, int wins) {
         this.timeOfEntry = timeOfEntry;
         this.playerID = playerID;
         this.playerName = playerName;
@@ -31,7 +31,7 @@ public class PlayerInMatchmaking {
         return timeOfEntry;
     }
     
-    public String getPlayerID() {
+    public int getPlayerID() {
         return playerID;
     }
     
@@ -46,6 +46,9 @@ public class PlayerInMatchmaking {
     public int getWins() {
         return wins;
     }
-    
+
+    int getQueueTime() {
+        return (int) (System.currentTimeMillis() - timeOfEntry);
+    }
 
 }

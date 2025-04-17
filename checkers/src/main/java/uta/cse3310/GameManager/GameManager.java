@@ -2,7 +2,10 @@ package uta.cse3310.GameManager;
 
 import uta.cse3310.GamePlay.GamePlay;
 import uta.cse3310.GameTermination.GameTermination;
+import uta.cse3310.PairUp.Match;
 import uta.cse3310.PairUp.PairUp; // For re-adding players to matchmaking
+import uta.cse3310.Bot.BotI.BotI;
+import uta.cse3310.Bot.BotII.BotII;
 import uta.cse3310.GameManager.Move;
 
 import java.util.ArrayList;
@@ -16,11 +19,13 @@ public class GameManager {
     private ArrayList<Game> games;
     private GamePlay gp;
     private GameTermination gt;
+    GamePageController ggc;
+    GamePairController grc;
 
     // Constructor to initialize components
-    public GameManager() {
+    public GameManager(){
         games = new ArrayList<>(MAXIMUM_GAMES);
-        for (int i = 0; i < MAXIMUM_GAMES; i++) {
+        for (int i = 0; i < MAXIMUM_GAMES; i++){
             games.add(null);
         }
         gp = new GamePlay(); // Handles game rules and moves
@@ -28,23 +33,22 @@ public class GameManager {
     }
 
     // Create a new game with two players
-    public boolean createGame(int player1id, int player2id, boolean player1color, boolean player2color) {
+    public boolean createGame(Match match){
         int availableSlot = getAvailableGameSlot();
-        if (availableSlot == -1) {
+        if(availableSlot == -1){
             System.out.println("No available game slots.");
             return false;
         }
-        Game newGame = new Game(player1id, player2id, player1color, player2color, availableSlot);
+        Game newGame = grc.newMatch(match);
         games.set(availableSlot, newGame);
-        System.out.println(
-                "Game created in slot " + availableSlot + " between Player " + player1id + " and Player " + player2id);
+        
         return true;
     }
 
     // Find first available game slot
-    private int getAvailableGameSlot() {
-        for (int i = 0; i < MAXIMUM_GAMES; i++) {
-            if (games.get(i) == null || !games.get(i).gameActive()) { // gameActive() is handled by Game.java
+    private int getAvailableGameSlot(){
+        for (int i = 0; i < MAXIMUM_GAMES; i++){
+            if(games.get(i) == null || !games.get(i).gameActive()){ // gameActive() is handled by Game.java
                 return i;
             }
         }
@@ -52,12 +56,13 @@ public class GameManager {
     }
 
     // Process a move from a player
-    public void processMove(int playerId, Move move) {
+    public void processMove(int playerId, Move move){
         Game game = findGameByPlayerId(playerId);
-        if (game != null && game.gameActive()) {
+        if(game != null && game.gameActive()){
             Moves moves = new Moves();
             moves.addNext(move);
             gp.returnBoard(game, moves); // from GamePlay.java
+            game.switchTurn();
         } else {
             System.out.println("Invalid move: game not found or inactive.");
         }
@@ -69,8 +74,8 @@ public class GameManager {
     */
     
     /* Terminate a game and notify GameTermination
-    public void terminateGame(int gameNumber) {
-        if (gameNumber >= 0 && gameNumber < MAXIMUM_GAMES && games.get(gameNumber) != null) {
+    public void terminateGame(int gameNumber){
+        if(gameNumber >= 0 && gameNumber < MAXIMUM_GAMES && games.get(gameNumber) != null){
             gt.endGame(games.get(gameNumber)); // Implement in GameTermination.java
 
             int player1Id = game.getPlayer1ID();
@@ -90,36 +95,67 @@ public class GameManager {
             System.out.println("Game " + gameNumber + " has been terminated.");
         }
     } */
-/*
-    // Restart a game by requeuing players
-    public void restartGame(int gameNumber) {
-        if (gameNumber >= 0 && gameNumber < MAXIMUM_GAMES) {
-            Game game = games.get(gameNumber);
-            if (game != null) {
-                gt.gameRestartReq(); // from GameTermination.java
 
-                // Extract info from players and requeue them
-                Player p1 = game.getPlayer1();
-                Player p2 = game.getPlayer2();
+    private Moves requestBotMoves(Game game, int botId){
+        if(botId == 0){
+            BotI bot = new BotI();
+            bot.setColor(game.getCurrentTurn().getColor());
+            return bot.requestMove(game.getBoard());
+        } else if(botId == 1){
+            BotII bot = new BotII();
+            bot.setColor(game.getCurrentTurn().getColor());
+            return bot.requestMove(game.getBoard());
+        }
+        return null;
+    }
 
-                if (p1 != null) {
-                    PairUp.AddPlayer(System.currentTimeMillis(), p1.getPlayerID(),p1.isPlayAgainstBot(), p1.getWins());
+    public void progressGame(int gameNumber){
+        Game game = games.get(gameNumber);
+        if(game == null || !game.gameActive()){
+            return;
+        }
+        
+        // Get current player
+        Player currentPlayer = game.getCurrentTurn();
+        int playerId = currentPlayer.getPlayerId();
+        
+        // Check if current player is a bot
+        boolean isBot = false;
+        if((playerId == game.getPlayer1ID() && game.isPlayer1Bot()) || 
+            (playerId == game.getPlayer2ID() && game.isPlayer2Bot())){
+            isBot = true;
+        }
+        
+        if(isBot){
+            // For bot players, request moves from the bot
+            Moves botMoves = requestBotMoves(game, playerId);
+            
+            if(botMoves != null && botMoves.size() > 0){
+                // Send moves to GamePlay and get updated board
+                Board updatedBoard = gp.returnBoard(game, botMoves);
+                
+                if(updatedBoard != null){
+                    // Valid move - update the board
+                    game.updateBoard(updatedBoard);
+                    
+                    // Let GameTermination check if the game is over
+                    boolean gameOver = false;//gt.isGameOver(game);
+                    if(!gameOver){
+                        // If not over, switch turns
+                        game.switchTurn();
+                    }
                 }
-
-                if (p2 != null) {
-                    PairUp.AddPlayer(System.currentTimeMillis(), p2.getPlayerID(), p2.isPlayAgainstBot(), p2.getWins());
-                }
-                games.set(gameNumber, null);
-                System.out.println("Game " + gameNumber + " restart requested.");
             }
         }
-    }   */
+        // For human players, we wait for input through processMove
+    }
+
 
     // Find a game by player ID
-    public Game findGameByPlayerId(int playerId) {
-        for (Game game : games) {
-            if (game != null){
-                if (game.getPlayer1ID()==playerId || game.getPlayer2ID()==playerId){
+    public Game findGameByPlayerId(int playerId){
+        for (Game game : games){
+            if(game != null){
+                if(game.getPlayer1ID()==playerId || game.getPlayer2ID()==playerId){
                     return game;
                 }
             }
@@ -128,25 +164,25 @@ public class GameManager {
     }
 
     // Check if any slot is free
-    public boolean hasAvailableSlot() {
+    public boolean hasAvailableSlot(){
         return getAvailableGameSlot() != -1;
     }
 
     // Returns all games (used by frontend or controller)
-    public ArrayList<Game> getGames() {
+    public ArrayList<Game> getGames(){
         return games;
     }
 
     // Check if a player is in any active game
-    public boolean isPlayerInGame(int playerId) {
+    public boolean isPlayerInGame(int playerId){
         return findGameByPlayerId(playerId) != null;
     }
 
     // Count active games
-    public int getActiveGameCount() {
+    public int getActiveGameCount(){
         int count = 0;
-        for (Game game : games) {
-            if (game != null && game.gameActive()) {
+        for (Game game : games){
+            if(game != null && game.gameActive()){
                 count++;
             }
         }
@@ -154,10 +190,10 @@ public class GameManager {
     }
 
     // Remove a player from a game (e.g., on disconnect)
-    public void removePlayer(int playerId) {
+    public void removePlayer(int playerId){
         Game game = findGameByPlayerId(playerId);
-        if (game != null) {
-            if (game.getPlayer1ID() == playerId) {
+        if(game != null){
+            if(game.getPlayer1ID() == playerId){
                 game.Player1Quit(); // Implemented in Game.java
             } else {
                 game.Player2Quit();
@@ -166,14 +202,14 @@ public class GameManager {
     }
 
     /* Player requests to quit and ends game
-    public void playerQuit(int playerId) {
+    public void playerQuit(int playerId){
         Game game = findGameByPlayerId(playerId); // Local method
-        if (game == null) {
+        if(game == null){
             System.out.println("Player " + playerId + " is not in any active game.");
             return;
         }
 
-        if (game.getPlayer1ID() == playerId) {
+        if(game.getPlayer1ID() == playerId){
             game.Player1Quit(); // Game.java
 
             int player1Id = game.getPlayer1ID();

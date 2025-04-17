@@ -1,129 +1,130 @@
 package uta.cse3310.PageManager;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import uta.cse3310.DB.DB;
+import uta.cse3310.GameManager.GameManager;
 import uta.cse3310.PairUp.PairUp;
-
 
 public class PageManager {
     DB db;
     PairUp pu;
-    Integer turn = 0; // TODO: need to call this from GameManager
+    public NewAcctLogin accountHandler;
+    private GameDisplayConnector displayConnector;
+    Integer turn = 0;
 
+    Map<String, List<Integer>> gamePlayers = new HashMap<>(); // key = gameId, value = player IDs
 
-    Map<String, List<Integer>> gamePlayers = new HashMap<>(); // this will store the game players for each game session, key is the game id, value is a list of player ids
-
-   
-    // To Use this method globally to parse and convert message please look at the example
-     
-
-    public class JSONConverter {
-
-    private static final Gson gson = new Gson();
-
-    public static <T> T parseJson(String jsonString, Class<T> target) 
-    {
-        return gson.fromJson(jsonString, target);
-    }
-
-    /*
-    * 
-     * EXAMPLE USE
-     * 
-     * UserEvent u = JSONConverter.parseJson(message, UserEvent.class);
-     * PlayerEntry p = JSONConverter.parseJson(message2, PlayerEntry.class);
-     * 
-     */
-
-
-    public static String convertObjectToJson(Object obj) 
-    {
-        return gson.toJson(obj);
-    }
-
-        /*
-        *
-        *EXAMPLE USE 
-        *
-        *String json = JSONConverter.convertObjectToJson(reply);
-        *System.out.println(json);
-        *
-        */
-        
-
-    }
-
-
-     // ------------------------------------------------------------------------
-    // PAIR UP SUBSYSTEM
-    // ------------------------------------------------------------------------
-
-    /**
-     * Handles initial user requests for matchmaking.
-     *
-     * @param  string from frontend containing user info
-     * @return JSON response with match info or error
-     */
-
-    
     private final PairUp pairUp = new PairUp();
 
-    public void handleNewPlayer(long timestamp, String ClientId, String UserName, boolean playAgainstBot, int wins) 
-    {
-        pairUp.AddPlayer(timestamp, ClientId, UserName, playAgainstBot, wins);
-    }
-    
-    public void handlePlayerRemoval(String ClientId) 
-    {
-        pairUp.removePlayer(ClientId);
-    }
-    
-    
-   
-
-    // ------------------------------------------------------------------------
-    // DEMO TEST METHOD (can be removed/replaced later)
-    // ------------------------------------------------------------------------
-    // TODO : add switch statement for controlling types of events
-    /**
-     * Placeholder method for testing input/output with the frontend.
-     * Simulates switching turns on each call.
-     *
-     * @param U The user event received
-     * @return A test reply with toggled turn
-     */
-    public UserEventReply ProcessInput(UserEvent U) {
-        UserEventReply ret = new UserEventReply();
-        ret.status = new game_status();
-        // fake data for the example
-        if (turn == 0) {
-            ret.status.turn = 1;
-            turn = 1;
-        } else {
-            ret.status.turn = 0;
-            turn = 0;
-        }
-
-        // for now, the idea is to send it back where it came from
-        // in the future, all of the id's that need the data will need to
-        // be added to this list
-        ret.recipients = new ArrayList<>();
-        ret.recipients.add(U.id);
-
-        return ret;
-
-    }
+    private final JoinGameHandler joinGameHandler = new JoinGameHandler();
 
     public PageManager() {
         db = new DB();
-        // pass over a pointer to the single database object in this system
         pu = new PairUp();
+
+        displayConnector = new GameDisplayConnector(new GameManager());
+
+        try
+        {
+            //temporary url for database for now
+            String sqlURL = "jdbc:sqlite:checkers.db";
+            //from the documentation, drivermanager is able to get the connection
+            //via the url
+            Connection connection = DriverManager.getConnection(sqlURL);
+            //if successful it should make this connection to use
+            accountHandler = new NewAcctLogin(connection);
+        }
+        catch(SQLException e)
+        {
+            //if not, then error handle it
+            System.out.println("Fail: No database connection: " + e.getMessage());
+        }
     }
 
+    // Add a new player to matchmaking
+    public void handleNewPlayer(long timestamp, int clientId, String playerName, boolean playAgainstBot, int wins) {
+        pairUp.AddPlayer(timestamp, clientId, playerName, playAgainstBot, wins);
+    }
+
+    // Remove a player from matchmaking
+    public void handlePlayerRemoval(int clientId) {
+        pairUp.removePlayer(clientId);
+    }
+
+    // Username validation logic
+    public JsonObject handleUsernameValidation(String username) {
+        JsonObject responseMsg = new JsonObject();
+
+        if (accountHandler.usernameExists(username)) {
+            responseMsg.addProperty("type", "username_status");
+            responseMsg.addProperty("accepted", false);
+        } else if (accountHandler.addUser(username)) {
+            responseMsg.addProperty("type", "username_status");
+            responseMsg.addProperty("accepted", true);
+        } else {
+            responseMsg.addProperty("type", "username_status");
+            responseMsg.addProperty("accepted", false);
+        }
+
+        return responseMsg;
+    }
+
+    // Main handler for all events sent from frontend
+    public UserEventReply ProcessInput(UserEvent U) {
+        UserEventReply ret = new UserEventReply();
+        ret.status = new game_status();
+        ret.recipients = new ArrayList<>();
+
+        switch (U.type) {
+            case "join": {
+                JsonObject result = handleUsernameValidation(U.playerName);
+                ret.status.type = result.get("type").getAsString();
+                ret.status.msg = result.get("accepted").getAsBoolean() ? "accepted" : "rejected";
+                break;
+            }
+
+            case "test": {
+                return displayConnector.sendShowGameDisplayTest(U);
+            }
+
+            case "join_game": {
+                Map<String, String> joinData = new HashMap<>();
+                joinData.put("ClientID", String.valueOf(U.id));
+                joinData.put("gameMode", U.msg);
+
+                JoinGameHandler.Result result = joinGameHandler.processJoinGame(joinData);
+                game_status feedback = joinGameHandler.createGameStatusMessage(result.clientID, result.playAgainstBot);
+
+                ret.status.type = feedback.type;
+                ret.status.msg = feedback.msg;
+                break;
+            }
+
+            case "cancel": {
+                System.out.println("Received cancel request from ClientID: " + U.id);
+                handlePlayerRemoval(U.id);  // Removes the player from matchmaking
+                ret.status.type = "cancel_status";
+                ret.status.msg = "cancelled";
+                break;
+            }
+
+            default: {
+                ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
+                break;
+            }
+        }
+
+        // Always send a response back to the sender
+        ret.recipients.add(U.id);
+        return ret;
+    }
 }

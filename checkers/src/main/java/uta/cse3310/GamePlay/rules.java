@@ -1,76 +1,229 @@
 package uta.cse3310.GamePlay;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.Map;
 
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.Game;
+import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
-import uta.cse3310.GameManager.Square;
 import uta.cse3310.GameManager.Player;
+import uta.cse3310.GameManager.Square;
+
 
 //class rules checks if the move is legal
 public class rules
 {   
     //checks if the move is within the bounds of the board
     //8x8 board
-    //assumption: program starts counting at 0
-    //assumption: gameManager waits until current move is processed
-    //and then processes the next move
-    static protected boolean inBounds(Moves moves)
+    static protected boolean inBounds(Move move)
     {
-        int index = moves.size() - 1;
-        Square square = moves.getDest(index);
+        Square square = move.getDest();
 
-        //assuming program starts counting at 0
         if (square.getCol() > 7 || square.getCol() < 0 ||
             square.getRow() > 7 || square.getRow() < 0)
             return false;
         return true;
     }
 
-    //checks if the piece moves diagonally up-right and up-left
-    //for king: moves diagonally down-right and down-left in addition to above
-    static protected boolean isDiagonal(LinkedList<Moves> moves, Board board)
-    {
-        /*if(isKing = true)
+    //checks if a move is legal based on checkers rules
+    //returns true if:
+    // - the destination square is unoccupied AND
+    // - the move is either a regular 1-step diagonal move
+    // - OR a 2-step jump over an opponent's piece
+    //returns false in all other cases
+    // During testing, make methods for repetetive lines to reduce file length
+    static protected boolean isLegal(Move move, Game game) {
+        boolean legality = false;
+        Square start = move.getStart(); // starting square
+        Square dest = move.getDest();   // destination square
+
+        // check if move is out of bounds or destination is occupied
+        if (!(dest == null || !inBounds(move) || dest.hasPiece()))
         {
-            allow the king to move forward/backwards along the diagonal
-        }
-        else{
-            the piece should not be allowed to move down-left or down-right
-        }*/
-        return false; //Default
-    }
+            Board board = game.getBoard();
+            Player player = game.getCurrentTurn();
+            boolean playerColor = player.getColor();
+            int rowDiff = Math.abs(dest.getRow() - start.getRow());
+            int colDiff = Math.abs(dest.getCol() - start.getCol());
 
+            if(playerColor)
+            {
+                // isLegal for white pieces
+                // King piece
+                if(start.isKing())
+                {
+                    // Regular move
+                    if (rowDiff == 1 && colDiff == 1)
+                    {
+                        legality = true;
+                        game.lastCapture();
+                    }
+                    // Capture piece
+                    else if (rowDiff == 2 && colDiff == 2)
+                    {
+                        int middleRow = start.getRow();
+                        int middleCol = start.getCol();
 
-    //checks if the square being moved to is occupied by a piece
-    static protected boolean occupied(Moves moves, Board board) {
-        // Return false if there are no moves provided
-        if (moves == null || moves.size() == 0) {
-            return false;
+                        // Determine if the move is to the left or right
+                        if(middleCol < dest.getCol())
+                        {
+                            middleCol++;
+                        }
+                        else
+                        {
+                            middleCol--;
+                        }
+
+                        // Determine if the move is up or down
+                        if(middleRow < dest.getRow())
+                        {
+                            middleRow++;
+                        }
+                        else
+                        {
+                            middleRow--;
+                        }
+
+                        Square middleSquare = board.getSquare(middleRow, middleCol);
+
+                        // middle square must exist, have a piece, and be of the opposite color
+                        if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
+                        {
+                            legality = true;
+                            game.newCapture();
+                        }
+                    }
+                }
+                else
+                {
+                    // Regular piece, not king
+                    if(start.getRow() > dest.getRow())
+                    {
+                        // Regular move
+                        if (rowDiff == 1 && colDiff == 1)
+                        {
+                            legality = true;
+                            game.lastCapture();
+                        }
+                        // Capture piece
+                        else if (rowDiff == 2 && colDiff == 2)
+                        {
+                            int middleRow = start.getRow() + 1;
+                            int middleCol = start.getCol();
+
+                            // Determine if the move is to the left or right
+                            if(middleCol < dest.getCol())
+                            {
+                                middleCol++;
+                            }
+                            else
+                            {
+                                middleCol--;
+                            }
+
+                            Square middleSquare = board.getSquare(middleRow, middleCol);
+
+                            // Middle square must exist, have a piece, and be of the opposite color
+                            if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
+                            {
+                                legality = true;
+                                game.newCapture();
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // isLegal for black pieces
+                if(start.isKing())
+                {
+                    // Regular move
+                    if (rowDiff == 1 && colDiff == 1)
+                    {
+                        legality = true;
+                        game.lastCapture();
+                    }
+                    // Capture piece
+                    else if (rowDiff == 2 && colDiff == 2)
+                    {
+                        int middleRow = start.getRow();
+                        int middleCol = start.getCol();
+
+                        // Determine if the move is to the left or right
+                        if(middleCol < dest.getCol())
+                        {
+                            middleCol++;
+                        }
+                        else
+                        {
+                            middleCol--;
+                        }
+
+                        // Determine if the move is up or down
+                        if(middleRow < dest.getRow())
+                        {
+                            middleRow++;
+                        }
+                        else
+                        {
+                            middleRow--;
+                        }
+
+                        Square middleSquare = board.getSquare(middleRow, middleCol);
+
+                        // middle square must exist, have a piece, and be of the opposite color
+                        if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
+                        {
+                            legality = true;
+                            game.newCapture();
+                        }
+                    }
+                }
+                else
+                {
+                    if(start.getRow() < dest.getRow())
+                    {
+                        // Regular move
+                        if (rowDiff == 1 && colDiff == 1)
+                        {
+                            legality = true;
+                            game.lastCapture();
+                        }
+                        // Capture piece
+                        else if (rowDiff == 2 && colDiff == 2)
+                        {
+                            int middleRow = start.getRow() + 1;
+                            int middleCol = start.getCol();
+
+                            // Determine if the move is to the left or right
+                            if(middleCol < dest.getCol())
+                            {
+                                middleCol++;
+                            }
+                            else
+                            {
+                                middleCol--;
+                            }
+
+                            Square middleSquare = board.getSquare(middleRow, middleCol);
+
+                            // Middle square must exist, have a piece, and be of the opposite color
+                            if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
+                            {
+                                legality = true;
+                                game.newCapture();
+                            }
+                        }
+                    }
+                }
+            }
         }
-    
-        // Get the destination square of the most recent move
-        int lastIdx = moves.size() - 1;
-        Square dest = moves.getDest(lastIdx);
-    
-        int row = dest.getRow();
-        int col = dest.getCol();
-    
-        // Retrieve the square from the board at the given coordinates
-        Square boardSquare = board.getSquare(row, col);
-    
-        // If the square doesn't exist, we can't move there
-        if (boardSquare == null) {
-            return false;
-        }
-    
-        // If the square has a piece on it, we return false (can't move there)
-        // So we return the opposite: true if it's empty, false if occupied
-        return !boardSquare.hasPiece();  // Now returns true only if square is EMPTY
+
+        // Any other move is illegal
+        return legality;
     }
 
     //checks how many spots moved up to compared to number of pieces
@@ -130,17 +283,31 @@ public class rules
         return true;
     }
 
-    //will call occupied to check if a square is occupied by another piece, then check 
-    //if the user can check that piece
-    static protected boolean canCapture(LinkedList<Moves> moves, Board board)
+    static protected boolean canCapture(Game game, Move move)
     {
-     
+        boolean capturable = false;
 
-        //call occupied, check if the square is occupied
-        //if the space is occupied and the following square is free you can capture that piece and move to the next free space
-        //return a map showing were the player can move
+        Square startSquare = move.getStart();
+        Square destinationSquare = move.getDest();
 
-        return false;//default
+        int rowDistance = Math.abs(startSquare.getRow() - destinationSquare.getRow());
+        int columnDistance = Math.abs(startSquare.getCol() - destinationSquare.getCol());
+
+        boolean isKing = startSquare.isKing();
+
+        if(isKing)
+        {
+            if(rowDistance == 2)
+            {
+
+            }
+            else if(columnDistance == 2)
+            {
+
+            }
+        }
+
+        return capturable;
     }
 
     //Check to see if current player can move selected piece
@@ -184,7 +351,7 @@ public class rules
             for (int j = 0; j < 8; j++)
             {
                 Square boardSquare = board.getSquare(i, j); 
-                if (boardSquare != null) 
+                if (boardSquare != null && boardSquare.hasPiece())
                 {
                     pieces.add(boardSquare);
                 }
@@ -192,13 +359,6 @@ public class rules
         }
 
         return pieces;
-    }
-
-    // removes captured pieces from the board 
-    // find out if this needs to report a piece as 'being captured'
-    static protected boolean removeCaptured(LinkedList<Moves> moves, Board board)
-    {
-        return false;
     }
 
     // recursive function for moveList

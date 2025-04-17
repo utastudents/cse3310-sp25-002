@@ -18,12 +18,12 @@ public class PairUp {
   
     public PairUp() 
     {
-        
+        Mmaker = new Matchmaking();
     }
 
 
     // Add a player to the Map
-    public void AddPlayer(long timeOfEntry, String playerID, String playerName, boolean playAgainstBot, int wins)
+    public void AddPlayer(long timeOfEntry, int playerID, String playerName, boolean playAgainstBot, int wins)
     {
         // Create a new instance of a player from the player in match making class
         PlayerInMatchmaking player = new PlayerInMatchmaking(timeOfEntry, playerID, playerName, playAgainstBot, wins);
@@ -32,13 +32,25 @@ public class PairUp {
         Mmaker.addPlayer(playerID, player);
 
     }
-
     
-    public void removePlayer(String PlayerID)
+    public void removePlayer(int PlayerID)
     {
         // Request a removal from Matchmaking
         Mmaker.removePlayer(PlayerID);
 
+    }
+
+    public boolean searchPlayer(int PlayerID)
+    {
+        return Mmaker.getPlayer(PlayerID);
+    }
+
+    public void pair(int p1ID, String p1Name, int p2ID, String p2Name)
+    {
+        // Directly establishes match between two players
+        PlayerInMatchmaking p1 = new PlayerInMatchmaking(0, p1ID, p1Name, false, 0);
+        PlayerInMatchmaking p2 = new PlayerInMatchmaking(0, p2ID, p2Name, false, 0);
+        Mmaker.pair(p1, p2);
     }
 
     

@@ -1,74 +1,63 @@
 class Communication {
-  constructor() {
-    this.updateCallback = null;
-    this.errorCallback = null;
+  constructor(dataManager) {
+    this.dataManager = dataManager;
+    this.setupMessageHandlers();
   }
 
-  /**
-   * Sends player attributes to Page Manager
-   * @param {Object} playerData - Player information
-   */
-  sendPlayerAttributes(playerData) {
-    // Validate input
-    if (
-      !playerData ||
-      typeof playerData.id !== 'string' ||
-      typeof playerData.username !== 'string' ||
-      playerData.username.length > 20
-    ) {
-      this._reportError(new Error('Invalid player data'));
-      return;
-    }
-    // Simulate sending to Page Manager
-    this._simulatePageManagerReceive({
-      type: 'PLAYER_JOINED',
-      data: { ...playerData }
+  setupMessageHandlers() {
+    // Listen for messages from Page Manager
+    window.addEventListener("message", (event) => {
+      // Security check - verify message origin if possible
+      // if (event.origin !== "expected-origin") return;
+      
+      const message = event.data;
+      
+      // Handle different message types from Page Manager
+      if (message.type === "playerData") {
+        console.log("Received player data:", message.payload);
+        this.handlePlayerData(message.payload);
+      } else if (message.type === "waitlistUpdate") {
+        console.log("Received waitlist update:", message.payload);
+        this.handleWaitlistUpdate(message.payload);
+      }
     });
   }
 
-  /**
-   * Receives messages from Page Manager
-   * @param {Object} message - Message payload
-   */
-  receiveFromPageManager(message) {
-    if (!message || typeof message.type !== 'string') {
-      this._reportError(new Error('Malformed message from Page Manager'));
+  handlePlayerData(playerData) {
+    // Process player data from Page Manager
+    this.dataManager.setPlayer(playerData);
+    
+    // Notify other components if needed
+    window.dispatchEvent(new CustomEvent("playerDataUpdated", {
+      detail: playerData
+    }));
+  }
+
+  handleWaitlistUpdate(waitlistData) {
+    // Process waitlist update from Page Manager
+    window.dispatchEvent(new CustomEvent("waitlistUpdated", {
+      detail: waitlistData
+    }));
+  }
+
+  sendPlayerAttributes(mode) {
+    const player = this.dataManager.getPlayer();
+    if (!player) {
+      console.error("No player data available to send");
       return;
     }
-    if (message.type === 'PLAYER_JOINED' || message.type === 'UPDATE') {
-      if (this.updateCallback) this.updateCallback(message);
-    } else if (message.type === 'ERROR') {
-      this._reportError(new Error(message.data?.error || 'Unknown error'));
-    } else {
-      this._reportError(new Error('Unknown message type: ' + message.type));
-    }
-  }
 
-  /**
-   * Registers update callback
-   * @param {function(Object)} callback
-   */
-  onUpdate(callback) {
-    this.updateCallback = callback;
-  }
+    const message = {
+      type: "matchRequest",
+      payload: {
+        playerID: player.id,
+        username: player.username,
+        mode: mode
+      }
+    };
 
-  /**
-   * Registers error callback
-   * @param {function(Error)} callback
-   */
-  onError(callback) {
-    this.errorCallback = callback;
-  }
-
-  // Private helpers 
-
-  _reportError(err) {
-    if (this.errorCallback) this.errorCallback(err);
-    else console.error(err);
-  }
-
-  // Simulate Page Manager integration for demo/testing
-  _simulatePageManagerReceive(message) {
-    setTimeout(() => this.receiveFromPageManager(message), 10);
+    // Send message to Page Manager
+    window.parent.postMessage(message, "*"); // Use specific origin in production
+    console.log("Sent match request:", message);
   }
 }

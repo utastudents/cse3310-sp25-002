@@ -1,15 +1,26 @@
 package uta.cse3310.DB;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class SQLiteConnector
 {
-	public static void main(String[] args)
+	private static final String URL = "jdbc:sqlite:checkers.db";
+
+	public static Connection connect()
 	{
-		//String url; // will be used to create a connection to Database
-		//var Database; //will be used to access the database
-		//var Connection; //will be used to create a connection to the database
-		//var Statement; //will be used to create a statement to execute SQL commands
+		Connection connection = null;
+		
+		try
+		{
+			connection = DriverManager.getConnection(URL);
+		}
+		catch (SQLException e)
+		{
+			System.err.println("Error connecting to SQLITE database " + e.getMessage());
+		}
+		return connection;
 	}
+	
 }

@@ -1,34 +1,28 @@
-class Displaynotification {
-    constructor() {
-        this.notifications = []; // stores all notifications
+class DisplayNotification {
+  constructor() {
+    this.notificationElement = document.getElementById("notification");
+    this.timeout = null;
+  }
+
+  displayNotification(message, type = "info") {
+    if (!this.notificationElement) {
+      console.error("Notification element not found");
+      return;
     }
 
-    // adds a new notification message
-    addNotification(message) {
-        const timestamp = new Date().toLocaleTimeString(); // this is done to get the time for the notification
-        const notification = `[${timestamp}] ${message}`;
-        this.notifications.push(notification);
-
-        // display the notification in the console
-        this.displayNotification(notification);
+    // Clear previous timeout if exists
+    if (this.timeout) {
+      clearTimeout(this.timeout);
     }
 
-    // this displays a notification in the console
-    displayNotification(notification) {
-        console.log(notification);
-    
-        const notifArea = document.getElementById("notification");
-        notifArea.textContent = notification;
-    
-        setTimeout(() => {
-            notifArea.textContent = '';
-        }, 5000);
-    }
-    
+    // Set message and styling
+    this.notificationElement.textContent = message;
+    this.notificationElement.className = "notification-" + type;
+    this.notificationElement.style.display = "block";
 
-    // return the notifications
-    getNotifications() {
-        return this.notifications;
-    }
-
+    // Auto-hide after 5 seconds
+    this.timeout = setTimeout(() => {
+      this.notificationElement.style.display = "none";
+    }, 5000);
+  }
 }

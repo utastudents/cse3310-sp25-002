@@ -52,11 +52,38 @@ body {
   margin-bottom: 20px;
 }
 
+.header{
+  padding: 5px;
+  max-height: 40px;
+  font-size: 20px;
+  display: flex;
+  justify-content:space-between;
+  width: 50%;
+  margin: auto;
+  
+}
+
+.hRank{
+  padding-left: 20px;
+}
+
+.hWin{
+  padding-left: 110px;
+}
+
+.hLoss{
+  padding-right: 0px;
+}
+
+.hTime{
+  padding-right: 40px;
+}
+
 .mainLB {
   background-color: #0a0a0a;
-  width: 80%;
+  width: 60%;
   margin: 0 auto;
-  padding: 20px;
+  padding: 30px;
   border-radius: 20px;
   max-height: 400px;
   overflow-y: auto;
@@ -72,7 +99,27 @@ body {
   background-color: #d3d3d3;
   color: black;
   margin: 10px 0;
-  padding: 15px;
+  padding: 10px;
   border-radius: 20px;
   font-weight: bold;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+li:first-of-type{
+  color: red;
+}
+
+.playerName{
+  width: 20%;
+  position: flex;
+}
+
+.playerWin{
+  width: 30px;
+  position: flex;
+}
+
+.playerLoss{
+  width: 30px;
 }

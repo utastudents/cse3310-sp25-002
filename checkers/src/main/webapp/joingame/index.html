@@ -13,14 +13,7 @@
   </header>
 
   <main>
-
-    <section id="current-player-section" aria-label="Current Player Information">
-      <h2>Your Profile</h2>
-      <div id="current-player-info">
-      </div>
-    </section>
-
-    <section id="game-options" aria-label="Game Mode Selection">
+    <section id="game-options">
       <h2>Choose a Game Mode</h2>
       <div class="button-group">
         <button id="play-vs-player">Play vs Player</button>
@@ -29,34 +22,39 @@
       </div>
     </section>
 
-    <section id="waitlists-section" aria-label="Current Waitlists">
+    <section id="waitlists-section">
       <h2>Current Waitlists</h2>
       <div class="waitlist-container">
         <h3>Player vs Player</h3>
-        <ul id="player-waitlist" class="waitlist"></ul>
+        <ul id="player-waitlist" class="waitlist">
+          <!-- Will be populated by JavaScript -->
+        </ul>
       </div>
       <div class="waitlist-container">
         <h3>Player vs Bot</h3>
-        <ul id="bot-waitlist" class="waitlist"></ul>
+        <ul id="bot-waitlist" class="waitlist">
+          <!-- Will be populated by JavaScript -->
+        </ul>
       </div>
     </section>
 
-    <section id="notification-section" aria-live="polite">
+    <section id="notification-section">
       <h2>Notifications</h2>
       <div id="notification">Ready to play!</div>
     </section>
   </main>
 
+  <!-- JavaScript Files -->
   <script src="Data.js"></script>
-  <script src="Player.js"></script>
-  <script src="GameOptions.js"></script>
   <script src="Waitlist.js"></script>
-  <script src="DisplayNotification.js"></script>
+  <script src="Displaynotification.js"></script>
   <script src="Communication.js"></script>
-  <script src="Matchmaking.js"></script>
+  <script src="MatchMaking.js"></script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      console.log("Game lobby initialized");
+      
       // Initialize components
       const dataManager = new Data();
       const playerWaitlist = new Waitlist("player-waitlist");
@@ -71,31 +69,27 @@
         botWaitlist
       );
 
-      // Create Player instance
-      const currentPlayer = new Player("P1", "Ash", "player.jpg");
+      // Set initial player data
+      const currentPlayer = {
+        id: "P1",
+        username: "Ash",
+        avatar: "player.jpg"
+      };
       dataManager.setPlayer(currentPlayer);
-
-      // Display current player information
-      const playerInfoDiv = document.getElementById("current-player-info");
-      if (playerInfoDiv) {
-        playerInfoDiv.innerHTML = `
-          <strong>Username:</strong> ${currentPlayer.getUsername()}<br>
-          <strong>ID:</strong> ${currentPlayer.getId()}<br>
-          <img src="${currentPlayer.getAvatar()}" alt="Player Avatar" width="50">
-        `;
-      }
-
-      // Initialize with sample data 
+      
+      // Initialize with sample data
       const samplePlayers = [
-        new Player("P2", "Ashir"),
-        new Player("P3", "Mark"),
-        new Player("B1", "Bot1"),
-        new Player("B2", "Bot2")
+        { id: "P2", username: "Ashir" },
+        { id: "P3", username: "Mark" },
+        { id: "B1", username: "Bot1" },
+        { id: "B2", username: "Bot2" }
       ];
 
+      // Add sample players to waitlists
       samplePlayers.slice(0, 2).forEach(player => {
         playerWaitlist.add(player);
       });
+      
       samplePlayers.slice(2).forEach(player => {
         botWaitlist.add(player);
       });
@@ -104,26 +98,26 @@
       playerWaitlist.add(currentPlayer);
 
       // Button event handlers
-      document.getElementById("play-vs-player")?.addEventListener("click", () => {
+      document.getElementById("play-vs-player").addEventListener("click", () => {
         dataManager.setGameMode("Human");
         matchmaker.requestPlayerMatch();
         notification.displayNotification("Searching for player match...");
       });
 
-      document.getElementById("play-vs-bot")?.addEventListener("click", () => {
+      document.getElementById("play-vs-bot").addEventListener("click", () => {
         dataManager.setGameMode("Bot");
         matchmaker.requestBotMatch();
         notification.displayNotification("Starting bot match...");
       });
 
-      document.getElementById("spectate-bots")?.addEventListener("click", () => {
+      document.getElementById("spectate-bots").addEventListener("click", () => {
         dataManager.setGameMode("Spectate");
         matchmaker.requestSpectateBotVsBot();
         notification.displayNotification("Preparing bot vs bot match...");
       });
 
       // Initial notification
-      notification.displayNotification(`Welcome ${currentPlayer.getUsername()}!`);
+      notification.displayNotification(`Welcome ${currentPlayer.username}!`);
     });
   </script>
 </body>

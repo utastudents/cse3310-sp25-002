@@ -1,91 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <style>
-            .hidden {
-                display: none;
-            }
-            .visible {
-                display: block;
-            }
-        </style>
-    </head>
-    <body>
-    <div id="new_account" class="hidden"
-    style =
-        "position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgba(255,255,255,0.9);
-        z-index: 100;">
-    New Account/Login 
-        <div id="login_container" 
-        style="width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-sizing: border-box;
-        outline: none;
-        transition: border-color 0.3s ease;">
-          <h2>Login</h2>
-          <div class="form-group">
-            <input type="text" placeholder="Enter your Username" id="username"  
-            style =
-            "width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.3s ease;">
-          </div>
-          <button onclick="sendUsername()" style="
-          padding: 12px 24px;
-          font-size: 16px;
-          background-color: #333;
-          color: #fff;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;">Join Game</button>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Page</title>
+  <link rel="icon" type="image/png" href="login/Tokens.png">
+  <link rel = "stylesheet" href="login/style.css">
+</head>
+<body>
+  <div id = "new_account">
+   <!-- Container of the login page -->
+    
+    <div class ="wrapper">
+      <div class="header">
+      <article class="mascot">
+        <div class="Piece">
+          <div class="Face"></div>
         </div>
-
-        <script>
-            function sendUsername()
-            {
-                const username = document.getElementById("username").value.trim();
-                const errorDiv = document.getElementById("username_error");
-            if(!username)
-                {
-                    errorDiv.innerText = "Please enter a username."
-                    errorDiv.style.display = "block"
-                    return;
-                }
-            }
-            const userData = 
-            {
-                type: "join",
-                username: username
-            }
-            // Sending data through websocket
-            if(connection === WebSocket.OPEN)
-            {
-                connection.send(JSON.stringify(userData));
-            }
-            else
-            {
-                errorDiv.innerText = "Connection to server not available.";
-                errorDiv.style.display = "block";
-            }
-
-        </script>
+      </article>
+      <h1>CHECKERS WITH CSE3310002</h1>
     </div>
+
+      <form onsubmit="joinGame(); return false;">
+      <div class="input-box">
+        <input type="text" placeholder="Enter Username" id="username" 
+          pattern="(?=.*\d)(?+.*[A-Za-z])(?=.*[!@#$%^&*]).{8,}" required />
+      </div>
+
+      <div id="message">
+        <h3>Username must contain:</h3>
+        <p id="letter" class="invalid">A <b>Letter</b></p>
+        <p id="num" class="invalid">A <b>Number</b></p>
+        <p id="special" class="invalid">A <b>Special Character</b></p>
+        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+      </div>
+
+      <button type="submit">Join Game</button>
+    </form>
+  </div>
+        <!--form onsubmit = "joinGame(); return false;"--> 
+
+          <!--button type="submit">Join Game</button--> 
+ </div>
+  
     <div id="join_game">
 
     join game
@@ -159,6 +116,8 @@
         // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
         game_display_handle_websocket_received_data(connection, data);
 
+        //Receiving from Page Manager (newAccount)
+        receiveFromPageManager(data);
     }
 
     // Note from Game Display: comment the line below to hide the game board
@@ -177,3 +136,4 @@
     }
 
 </script>
+<script src = "js/loginHandler.js"></script>

@@ -1,4 +1,5 @@
 // Data handling for Join Game component
+
 class Player
 {
     constructor(username, id) 
@@ -42,5 +43,27 @@ class GameOptions
     {
         return this.gameMode;
     }
-}
+} 
 
+class Data {
+    constructor() {
+        this.player = null;
+        this.gameOptions = new GameOptions();
+    }
+
+    setPlayer(playerInfo) {
+        this.player = new Player(playerInfo.username, playerInfo.id);
+    }
+
+    getPlayer() {
+        return this.player;
+    }
+
+    setGameMode(mode) {
+        this.gameOptions.setMode(mode);
+    }
+
+    getGameMode() {
+        return this.gameOptions.getMode();
+    }
+}

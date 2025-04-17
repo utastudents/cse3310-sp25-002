@@ -2,7 +2,7 @@
 var game_id;
 // keep track of current player name for functions that are outside of the CheckersBoard class.
 var game_display_current_player_name;
-
+var game_display_current_player_id;
 
 // this variable is used to check if the game board has been initialized
 let game_display_checkers_board_initialized = false;
@@ -23,7 +23,7 @@ const game_display_popup_messages = (message) =>{
 
 const handle_resign = () => {
     try{
-        connection.send(JSON.stringify({type: "resign", game_id: game_id, player: game_display_current_player_name}));
+        connection.send(JSON.stringify({type: "resign", game_id: game_id, id: game_display_current_player_id, player: game_display_current_player_name}));
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
         game_display_popup_messages(`(gd) handle_resign: An error occurred while handling the game display. Please check the console.`);
@@ -32,7 +32,7 @@ const handle_resign = () => {
 
 const offer_draw = () => {
     try{
-        connection.send(JSON.stringify({type: "draw", game_id: game_id, player: game_display_current_player_name}));
+        connection.send(JSON.stringify({type: "draw", game_id: game_id, id: game_display_current_player_id, player: game_display_current_player_name}));
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
         game_display_popup_messages(`(gd) offer_draw: An error occurred while handling the game display. Please check the console.`);
@@ -66,7 +66,7 @@ const add_game_display_user_control_event_listener = () => {
 
 
 
-const show_game_display = (connection, gameid, starting_player, player, player_color) => {
+const show_game_display = (connection, gameid, starting_player, player, player_color, player_id) => {
     // this element is used to display the game board
     let gameContainer = document.getElementById("game_display_container");
 
@@ -81,9 +81,10 @@ const show_game_display = (connection, gameid, starting_player, player, player_c
 
         game_id = gameid;
         game_display_current_player_name = starting_player;
+        game_display_current_player_id = player_id;
 
         // use the CheckersBoard class to create the game board and attach the class to the DOM
-        checkerBoard = new CheckersBoard(connection, gameid, starting_player, player, player_color);
+        checkerBoard = new CheckersBoard(connection, gameid, starting_player, player, player_color, player_id);
         // call the create_checkers_board method to create the game board
         checkerBoard.create_checkers_board();
         // attach all the event listeners to the game board. Note: this function is defined in the game_display_checkers.js file
@@ -149,7 +150,7 @@ const game_display_handle_websocket_received_data = (connection, data) => {
         } else if(data.type === "draw_offer") {
             // assuming that websocket sends the json string {"type":"draw_offer", "player":"NAME OF PLAYER THAT OFFERED THE DRAW (STRING)"}
             if(confirm(`${data.player} offered a draw, would you like to accept?`)) {
-                connection.send(JSON.stringify({type: "draw_accept", game_id: game_id, player: game_display_current_player_name}));
+                connection.send(JSON.stringify({type: "draw_accept", game_id: game_id, id: game_display_current_player_id, player: game_display_current_player_name}));
             };
         } else if(data.type === 'draw_accept'){
             // assuming that websocket sends the json string {"type":"draw_accept"}
@@ -157,7 +158,7 @@ const game_display_handle_websocket_received_data = (connection, data) => {
 
         } else if(data.type === 'player_name_update'){
             // assuming that websocket sends the json string {"type":"player_name_update", "current_move":"NAME OF PLAYER THAT WILL MAKE NEXT MOVE (STRING)"}
-            checkerBoard.update_player_name(data.current_move);
+            checkerBoard.update_current_player(data.current_move, data.id);
 
         } else if(data.type === 'notify_players'){
             // assuming that websocket sends the json string {"type":"notify_players", "message":"Game won/ Game Draw/ Connection issue/ Error message"}
@@ -165,7 +166,7 @@ const game_display_handle_websocket_received_data = (connection, data) => {
 
         } else if(data.type === 'show_game_display') {
             // this function is used to show the game display. It is called when the game is started.
-            show_game_display(connection, data.gameid, data.starting_player, data.player, data.player_color);
+            show_game_display(connection, data.game_id, data.starting_player, data.player, data.player_color, data.id);
 
         } else if(data.type === 'hide_game_display') {
             hide_game_display();
@@ -184,7 +185,7 @@ class CheckersBoard {
     /*
         We have put the game display logic under the CheckersBoard class to handle all logic related to displaying the board. This will help in creating as many instances of checker board as needed.
     */
-    constructor(conn, g_id, starting_player, player, player_color) {
+    constructor(conn, g_id, starting_player, player, player_color, player_id) {
         this.checkers_board = [];
         this.selected_piece = null;
         // pass the websocket connection instance
@@ -199,23 +200,30 @@ class CheckersBoard {
         this.player = player;
         // the color of the player who is currently playing the game
         this.player_color = player_color;
-        this.opponents_turn=false;
+        this.player_id = player_id;
     }
 
 
-    update_current_player(player) {
+    update_current_player(player, player_id) {
         // Update the UI to show whose turn it is
+
         try{
             this.current_player = player;
+            this.player_id = player_id;
             game_display_current_player_name = player;
-            document.getElementById("current-player").innerText = `Current Player: ${player}`;
-        } catch (error) {
-            console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) update_current_player: An error occurred while handling the game display. Please check the console.`);
+            game_display_current_player_id = player_id;
+
+            if (this.current_player === this.player){
+                document.getElementById("current-player").innerText = "It's your turn to make a move!";
+            } else{
+                document.getElementById("current-player").innerText = `Your opponent (${this.current_player}) is going to make a move.`;
+            }
         }
-
+        catch (error){
+            console.error("Error in game_display_checkers.js: ", error);
+            game_display_popup_messages('(gd) update_current_player: An error occurred while handling the game display. Please check the console.');
+        }
     }
-
 
 
     /*
@@ -274,7 +282,6 @@ class CheckersBoard {
 
     //move_made_by_other_player_or_bot() sets a flag to call move_checkers_piece() without sending a move request to the backend.
     move_made_by_other_player_or_bot(move_from_x, move_from_y, move_to_x, move_to_y){
-        this.opponents_turn = true;
         this.move_checkers_piece(move_from_x, move_from_y, move_to_x, move_to_y);
     }
 
@@ -316,14 +323,41 @@ class CheckersBoard {
                 // relay the move to the backend through the ws connection
                 console.log({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
                 //Does not send a move request to the backend if it is the opponent's turn
-                if(!this.opponents_turn){
-                    this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
-                } else {this.opponents_turn=false;}
+                if(this.player !== this.current_player){
+                    this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, id: this.player_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
+                } 
             }
 
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
             game_display_popup_messages(`(gd) move_checkers_piece: An error occurred while handling the game display. Please check the console.`);
+        }
+    }
+
+    rotateBoardIfBlack() {
+        try {
+            if (this.player_color === "B") {
+                // rotate the entire game board container
+                const gameBoard = document.querySelector(".game");
+                gameBoard.style.transform = "rotate(180deg)";
+                
+                // rotate each piece in the opposite direction to keep them upright
+                this.checkers_board.forEach(square => {
+                    const piece = square.el.querySelector('.piece');
+                    if (piece) {
+                        piece.style.transform = "rotate(180deg)";
+                    }
+                });
+                
+                // also rotate the king text to keep it readable
+                const kings = document.querySelectorAll('.King');
+                kings.forEach(king => {
+                    king.style.transform = "rotate(180deg)";
+                });
+            }
+        } catch (error) {
+            console.error("Error in game_display_checkers.js: ", error);
+            game_display_popup_messages(`(gd) rotateBoardIfBlack: An error occurred while rotating the board. Please check the console.`);
         }
     }
 
@@ -378,6 +412,7 @@ class CheckersBoard {
                 }
 
             });
+            this.rotateBoardIfBlack();
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
             game_display_popup_messages(`(gd) update_board_style: An error occurred while handling the game display. Please check the console.`);
@@ -514,6 +549,7 @@ class CheckersBoard {
             };
             // sanitize the board to remove any previous styles and make sure that each piece is displayed correctly
             this.update_board_style();
+            this.rotateBoardIfBlack();
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
             game_display_popup_messages(`(gd) create_checkers_board: An error occurred while handling the game display. Please check the console.`);
@@ -563,7 +599,7 @@ class CheckersBoard {
             // let moves = [];
             // checkers_piece_type = "b" or "w"
             // TODO: This needs to be handled by the java backend since this involves making game logic
-            this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, player: this.current_player, square: [x, y]}));
+            this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, id: this.player_id, player: this.current_player, square: [x, y]}));
 
             // this function waits for the ws to provide the allowed moves for a piece at a given position.
             while(!this.allowed_moves_validation(this.received_coords)){
@@ -581,5 +617,3 @@ class CheckersBoard {
         }
     };
 }
-
-
