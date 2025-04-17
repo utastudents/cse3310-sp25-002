@@ -125,7 +125,7 @@ public class BotI extends Bot {
      * Play a capture move if the middle square has an opponent's piece and the
      * target is empty
      */
-    private void playCapture(LinkedList<Move> moves, Square square, int toRow, int toCol, int midRow, int midCol,
+    protected void playCapture(LinkedList<Move> moves, Square square, int toRow, int toCol, int midRow, int midCol,
             Board board) {
         if (toRow >= 0 && toRow < 8 && toCol >= 0 && toCol < 8) {
             Square newPosition = board.getSquare(toRow, toCol);
