@@ -25,6 +25,8 @@ public class PageManager {
 
     private final PairUp pairUp = new PairUp();
 
+    private final JoinGameHandler joinGameHandler = new JoinGameHandler();
+
     public PageManager() {
         db = new DB();
         pu = new PairUp();
@@ -97,7 +99,7 @@ public class PageManager {
             case "join_game": {
                 Map<String, String> joinData = new HashMap<>();
                 joinData.put("ClientID", String.valueOf(U.id));
-                joinData.put("gameMode", U.gameMode);
+                joinData.put("gameMode", U.msg);
 
                 JoinGameHandler.Result result = joinGameHandler.processJoinGame(joinData);
                 game_status feedback = joinGameHandler.createGameStatusMessage(result.clientID, result.playAgainstBot);
