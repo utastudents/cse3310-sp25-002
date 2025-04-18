@@ -5,7 +5,7 @@ var letter = document.getElementById("letter");
 var num = document.getElementById("num");
 var special = document.getElementById("special");
 var length = document.getElementById("length");
-
+var space = document.getElementById("space");
 
 // User Clicks in input field
 uInput.onfocus = function() {
@@ -61,6 +61,16 @@ uInput.onkeyup = function() {
     length.classList.remove("valid");
     length.classList.add("invalid");
   }
+
+  //No spaces
+  var hasSpace = /\s/;
+  if (!hasSpace.test(uInput.value)) {
+    space.classList.remove("invalid");
+    space.classList.add("valid");
+  } else {
+    space.classList.remove("valid");
+    space.classList.add("invalid");
+  }
 }
 
 
@@ -68,7 +78,7 @@ uInput.onkeyup = function() {
     function joinGame() 
     {
       const username = document.getElementById('username').value;
-      const pattern = /^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+      const pattern = /^(?=.\d)(?=.[!@#$%^&])(?=.[A-Za-z])(?!.*\s).{8,}$/;
       if (!username) {
         alert('Please enter a username.');
       } else if (!pattern.test(username)) {
