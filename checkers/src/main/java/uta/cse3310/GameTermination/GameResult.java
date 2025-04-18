@@ -14,7 +14,7 @@ public class GameResult {
 
     // Stores scores for each player by their ID
     private Map<Integer, Integer> playerScores;
-    
+
     private Integer winningPlayerId;
 
     // Stores all game results
@@ -41,7 +41,7 @@ public class GameResult {
     public List<Integer> getPlayerIds() {
         return new ArrayList<>(playerScores.keySet());
     }
-    
+
     //to call player's id anywhere later
     public void setWinner(Player player) {
         this.winningPlayerId = player.getPlayerId();
@@ -108,15 +108,15 @@ public class GameResult {
         return playerScores.getOrDefault(playerId, -1);
     }
 
-    //used for testing 
+    //used for testing
     @Override
-    public String toString() 
+    public String toString()
     {
-        if (isDraw()) 
+        if (isDraw())
         {
             return "Game ended in a draw.\nScores: " + playerScores.toString();
-        } 
-        else 
+        }
+        else
         {
             return "Winner: " + winningPlayerId + "\nScores: " + playerScores.toString();
         }
