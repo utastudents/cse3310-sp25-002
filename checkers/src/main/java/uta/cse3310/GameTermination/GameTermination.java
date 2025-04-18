@@ -48,19 +48,38 @@ public class GameTermination
             return;
         }
 
-        String winnerId = null;
+        Integer winnerId = null;
         boolean isDraw = false;
-        
-        
-        
-        
-        
-        
-        
-        
-        
+        Map<Integer, Integer> pieceCounts = getPlayerPieceCounts(); //temp till we get the real one
+
+        for (Map.Entry<Integer, Integer> entry : pieceCounts.entrySet()) 
+        {
+            if (entry.getValue() == 0) 
+            {
+                for (Integer otherPlayer : pieceCounts.keySet()) 
+                {
+                    if (!otherPlayer.equals(entry.getKey())) 
+                    {
+                        winnerId = otherPlayer;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
         // Mark the game as over
-        //gameOver = true;
+        gameOver = true;
+
+        if (winnerId != null) 
+        {
+            finalWinner = "Player " + winnerId; 
+            System.out.println("Game Over! Player " + winnerId + " has won");
+        }
+        else 
+        {
+            finalWinner = "Draw";
+            System.out.println("Game Over! It's a draw!");
+        }
 
     // NOTE: this was causing compile error 
     //     // Check if there's a winner or a draw

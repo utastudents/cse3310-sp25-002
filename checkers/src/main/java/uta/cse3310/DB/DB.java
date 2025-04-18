@@ -12,7 +12,7 @@ public class DB
 {
 	public static void createTable()
 	{
-		String createStatement = "CREATE TABLE IF NOT EXISTS users (\n"
+		String createStatement = "CREATE TABLE IF NOT EXISTS USERS (\n"
                 + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
                 + " username varchar(30) NOT NULL,\n"
                 + "rank INTEGER NOT NULL DEFAULT 0)"; //here the schema is to be established and create statement 
@@ -37,7 +37,7 @@ public class DB
 
 	public static void insertUser(String username)				//assumes username is already validated 
 	{
-		String insertStatement = "INSERT INTO users (username) VALUES(?)";	
+		String insertStatement = "INSERT INTO USERS (username) VALUES(?)";
 		try(Connection connection = SQLiteConnector.connect();
 			PreparedStatement pstmt = connection.prepareStatement(insertStatement)) 
 		{

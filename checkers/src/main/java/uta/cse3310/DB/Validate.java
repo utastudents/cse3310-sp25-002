@@ -7,8 +7,8 @@ public class Validate
 {
     public static void ValidateUser(String username){
         try{
-            String sqlString = "SELECT username FROM users WHERE username = ?";
-            try (java.sql.Connection connection = DriverManager.getConnection("jdbc:sqlite:users.db");
+            String sqlString = "SELECT username FROM USERS WHERE username = ?";
+            try (java.sql.Connection connection = DriverManager.getConnection("jdbc:sqlite:checkers.db");
                 java.sql.PreparedStatement sqlStatement = connection.prepareStatement(sqlString))
             {
                 sqlStatement.setString(1, username);
