@@ -96,8 +96,13 @@ public class PageManager {
 
         switch (U.type) {
             case "join": {
+                //Receiving the username from Login team, so
+                //adding this to confirm. more of a debug
+                System.out.println("Received username: " + U.playerName);
+
                 JsonObject result = handleUsernameValidation(U.playerName);
                 ret.status.type = result.get("type").getAsString();
+                
                 ret.status.msg = result.get("accepted").getAsBoolean() ? "accepted" : "rejected";
                 break;
             }

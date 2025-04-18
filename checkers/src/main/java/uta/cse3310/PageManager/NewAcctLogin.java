@@ -14,7 +14,6 @@ import com.google.gson.JsonParser;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.DB.SQLiteConnector;
-import uta.cse3310.DB.Validate;
 
 public class NewAcctLogin
 {
@@ -44,27 +43,13 @@ public class NewAcctLogin
                 response.addProperty("Message", "Please enter username");
                 return response.toString();
             }
+            //Page Manager already has the main logic:
+            PageManager pm = new PageManager();
+            JsonObject validate = pm.handleUsernameValidation(username);
+            boolean accepted = validate.get("accepted").getAsBoolean();
 
-            //Print out to confirm process username
-            //More so for us
-            System.err.println("Processing... " + username);
-
-            //Now use DB validate
-            Validate.ValidateUser(username);
-
-            //now check if already exists
-            if(usernameExists(username))
-            {
-                //if it does, then return error message
-                response.addProperty("Status", "Error");
-                response.addProperty("Message","Username already exists");
-            }
-            else
-            {
-                //if not, then success! add the user
-                response.addProperty("Status", "Success");
-                response.addProperty("Message","Success!");
-            }
+            response.addProperty("Status", accepted ? "Success!" : "Error");
+            response.addProperty("Message", accepted ? "Success!" : "Error");
         }
         catch(Exception e)
         {
