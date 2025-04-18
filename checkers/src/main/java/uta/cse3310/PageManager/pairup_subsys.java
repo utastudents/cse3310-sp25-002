@@ -49,9 +49,10 @@ public class pairup_subsys {
         long timestamp = now.toInstant(ZoneOffset.UTC).toEpochMilli();
 
         // Send to PageManager
+        pageManager.handlePlayerRemoval((Integer) null);
         pageManager.handleNewPlayer(
                 timestamp,
-                clientID,
+                Result.clientID,
                 username,
                 Result.playAgainstBot,
                 0 

@@ -2,6 +2,7 @@ package uta.cse3310.GameTermination;
 import uta.cse3310.GameManager.Player;
 import uta.cse3310.GamePlay.GamePlay;
 import java.util.Map;
+import java.util.HashMap;
 
 public class GameTermination 
 {
@@ -12,34 +13,72 @@ public class GameTermination
 
     //hardcoded methods for unit testing
     //player 1 lost
-    public Map<String, Integer> getPlayerPieceCounts() 
+    public Map<Integer, Integer> getPlayerPieceCounts() 
     {
-        Map<String, Integer> pieceCounts = new java.util.HashMap<>();
-        pieceCounts.put("player1", 0);  
-        pieceCounts.put("player2", 5);
+        Map<Integer, Integer> pieceCounts = new HashMap<>();
+        pieceCounts.put(1, 0);  
+        pieceCounts.put(2, 5);
         return pieceCounts;
     }
 
     //has any legal moves
-    public Map<String, Boolean> getPlayerHasLegalMoves() 
+    public Map<Integer, Boolean> getPlayerHasLegalMoves() 
     {
-        Map<String, Boolean> legalMoves = new java.util.HashMap<>();
-        legalMoves.put("player1", false);
-        legalMoves.put("player2", true);
+        Map<Integer, Boolean> legalMoves = new HashMap<>();
+        legalMoves.put(1, false);
+        legalMoves.put(2, true);
         return legalMoves;
     }
 
     //get scores
-    public Map<String, Integer> getPlayerScores() 
+    public Map<Integer, Integer> getPlayerScores() 
     {
-        Map<String, Integer> scores = new java.util.HashMap<>();
-        scores.put("player1", 6);
-        scores.put("player2", 9);
+        Map<Integer, Integer> scores = new HashMap<>();
+        scores.put(1, 6);
+        scores.put(2, 9);
         return scores;
     }
 
+    public void checkGameOver()
+    { 
+        Map<Integer, Integer> pieceCounts = getPlayerPieceCounts();     //temp till real   
+        Map<Integer, Boolean> legalMoves = getPlayerHasLegalMoves();    //temp till real
+        Map<Integer, Integer> playerScores = getPlayerScores();         //temp till real
+
+        Integer winnerId = null;
+        boolean isDraw = false;
+
+        for (Map.Entry<Integer, Integer> entry : pieceCounts.entrySet()) 
+        {
+            if (entry.getValue() == 0) 
+            {
+                for (Integer otherPlayer : pieceCounts.keySet()) 
+                {
+                    if (!otherPlayer.equals(entry.getKey())) 
+                    {
+                        winnerId = otherPlayer;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+
+        if (winnerId == null && legalMoves.values().stream().noneMatch(v -> v)) 
+        {
+            isDraw = true;
+        }
+
+        if (winnerId != null || isDraw) 
+        {
+            endGame(playerScores, isDraw ? -1 : winnerId);
+        }
+
+    }
+
+
     // Method to handle the end of the game and declare the winner
-    public void endGame(Map<String, Integer> playerScores, int winningPlayer) 
+    public void endGame(Map<Integer, Integer> playerScores, int winningPlayer) 
     {
         if (gameOver) 
         {
@@ -47,19 +86,21 @@ public class GameTermination
             return;
         }
 
-        String winnerId = null;
-        boolean isDraw = false;
-        
-        
-        
-        
-        
-        
-        
-        
-        
         // Mark the game as over
-        //gameOver = true;
+        gameOver = true;
+
+        if (winningPlayer != -1) 
+        {
+            finalWinner = "Player " + winningPlayer;
+            System.out.println("Game Over! Player " + winningPlayer + " has won");
+        } 
+        else 
+        {
+            finalWinner = "Draw";
+            System.out.println("Game Over! It's a draw!");
+        }
+    
+        saveResultsToDatabase(playerScores);
 
     // NOTE: this was causing compile error 
     //     // Check if there's a winner or a draw
@@ -72,7 +113,7 @@ public class GameTermination
     //     }
     }
     // This method will save the results to the database
-    public void saveResultsToDatabase(Map<String, Integer> playerScores) {
+    public void saveResultsToDatabase(Map<Integer, Integer> playerScores) {
         System.out.println("Saving results to database...");
         System.out.println("Final winner: " + finalWinner);
         System.out.println("Scores: " + playerScores);

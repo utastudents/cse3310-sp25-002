@@ -46,6 +46,13 @@ public class PlayerInMatchmaking {
     public int getWins() {
         return wins;
     }
-    
 
+    int getQueueTime() {
+        return (int) (System.currentTimeMillis() - timeOfEntry);
+    }
+
+    @Override
+    public String toString() {
+        return this.playerName;
+    }
 }

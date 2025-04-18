@@ -11,25 +11,28 @@ import java.util.LinkedList;
 
 public class BotI extends Bot {
 
-    public BotI(boolean color) {
-        super(color); // Call the constructor of the parent class (Bot)
+    public BotI() {
+        super(); // Call the constructor of the parent class (Bot)
     }
 
     @Override
     public Moves requestMove(Board board) {
+        setCurrentGameBoard(board);
+        flushMoves();
 
-        // setCurrentGameBoard(board);
-        // flushMoves();
+        LinkedList<Move> possibleMoves = determineMoves(board);
+        boolean isAggressive = isAggressive(board);
 
-        // LinkedList<Move> possibleMoves = determineMoves();
-        // implementBotStrategy(possibleMoves);
+        Moves playMove;
+        if (isAggressive) {
+            playMove = aggressiveStrategyImplementation(possibleMoves, board);
+        } else {
+            playMove = passiveStrategyImplementation(possibleMoves, board);
+        }
 
-        // Adding the possible moves from the commented function determineMoves(board)
-        // LinkedList<Move> possibleMoves = determineMoves(board);
-        // boolean isAggressive = isAggressive(board);
-        // return implementStrategy(board, isAggressive, possibleMoves);
+        this.moves = playMove;
+        return sendMove();
 
-        return null;
     }
 
     /* Sending Moves from Bot 1 to the GameManager */
@@ -38,23 +41,12 @@ public class BotI extends Bot {
         return this.moves;
     }
 
-    private void isAggressive(Board board) {
-        LinkedList<Move> openmoves = determineMoves(board);
+    protected boolean isAggressive(Board board) {
+        int botPieces = countallPieces(board, this.color);
+        int playerPieces = countallPieces(board, !(this.color));
 
-        int bot_pieces = countallPieces(board, color);
-        int player_pieces = countallPieces(board, color);
-
-        boolean isAggresive = (bot_pieces < player_pieces);
-
-        Move atMove;
-        if (isAggresive) {
-            // atMove = aggressiveStrategyImplementation(openmoves, board);
-        } else {
-            // atMove = passiveStrategyImplementation(openmoves, board);
-        }
-
-        // this.moves.addNext(atMove);
-        // return sendMove();
+        boolean isAggressive = botPieces < playerPieces;
+        return isAggressive;
     }
 
     private int countallPieces(Board board, boolean color) {
@@ -65,7 +57,7 @@ public class BotI extends Bot {
             for (int col = 0; col < 8; col++) {
                 Square selectsquare = board.getSquare(row, col);
 
-                if (selectsquare.getColor() && selectsquare.hasPiece() == color) {
+                if (selectsquare.hasPiece() && selectsquare.getColor() == color) {
                     count++;
                 }
             }
@@ -119,7 +111,7 @@ public class BotI extends Bot {
     }
 
     /* Play a normal non capturing move if the sqaure is empty */
-    private void playNormalMove(LinkedList<Move> moves, Square square, int toRow, int toCol, Board board) {
+    protected void playNormalMove(LinkedList<Move> moves, Square square, int toRow, int toCol, Board board) {
         if (toRow >= 0 && toRow < 8 && toCol >= 0 && toCol < 8) {
             Square newPosition = board.getSquare(toRow, toCol);
             if (!newPosition.hasPiece()) {
@@ -133,7 +125,7 @@ public class BotI extends Bot {
      * Play a capture move if the middle square has an opponent's piece and the
      * target is empty
      */
-    private void playCapture(LinkedList<Move> moves, Square square, int toRow, int toCol, int midRow, int midCol,
+    protected void playCapture(LinkedList<Move> moves, Square square, int toRow, int toCol, int midRow, int midCol,
             Board board) {
         if (toRow >= 0 && toRow < 8 && toCol >= 0 && toCol < 8) {
             Square newPosition = board.getSquare(toRow, toCol);
@@ -145,28 +137,58 @@ public class BotI extends Bot {
         }
     }
 
-    private void isCapturingMove(Move move) {
-        
+    private boolean isCapturingMove(Move move, Board board) {
+        Square start = move.getStart();
+        Square end = move.getDest();
+        int distdifferenceRow = Math.abs(start.getRow() - end.getRow());
+        int distdifferenceColumn = Math.abs(start.getCol() - end.getCol());
+
+        // Piece moves 2 space; 1 of them over opponent piece
+        if (distdifferenceRow - distdifferenceColumn == 2) {
+            int jumpedRow = ((start.getRow() + end.getRow()) / 2);
+            int jumpedColumn = ((start.getCol() + end.getCol()) / 2);
+
+            Square jumpedSquare = board.getSquare(jumpedRow, jumpedColumn);
+            Boolean movingPiece = start.getColor();
+            Boolean jumpedpieceColor = jumpedSquare.getColor();
+
+            return ((jumpedpieceColor != null && jumpedSquare.hasPiece()) && (!jumpedpieceColor == movingPiece));
+        }
+
+        return false;
     }
 
     private Moves aggressiveStrategyImplementation(LinkedList<Move> possibleMoves, Board board) {
         // similar implementation to passive strategy BUT...
         // bot's goal is so maximize the number of capture moves
 
-        // initialize a variable which starts with no move (make in null)
-        // loop through all possible moves
-        // increment a variable that judges how good the move is (higher score = better
-        // move)
-        // every move should be initialized to 1
-        // (this is all from a defensive POV)
+        Move bestMove = null;
+        int bestScore = -1;
 
-        // if the move has a better score than the current best move, update the best
-        // move variable to the move that has a better score
-        // if no move was safe for the bot && there are no possible moves -> pick the
-        // first move to make game continue
-        // put the resulting move into a Moves object and return it
+        for (Move move : possibleMoves) {
+            int score = 1;
 
-        return null;
+            // incremement for being a better move
+            if (isCapturingMove(move, board)) {
+                score += 1;
+            }
+
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = move;
+            }
+        }
+
+        // if no move selected, pick the first
+        if (bestMove == null && !possibleMoves.isEmpty()) {
+            bestMove = possibleMoves.getFirst();
+        }
+
+        Moves result = new Moves();
+        if (bestMove != null) {
+            result.addNext(bestMove);
+        }
+        return result;
     }
 
     /**
@@ -185,20 +207,36 @@ public class BotI extends Bot {
         for (Move move : possibleMoves) {
 
             // Skip risky moves
-            // if (isInDangerZone(move, board))
-            // continue;
+            if (insideDangerRegion(move, board))
+                continue;
 
-            int prefernceScore = 0;
+            int preferenceScore = 0;
 
-            prefernceScore += 1;
+            preferenceScore += 1;
 
-            // hasBackupAfterMove — +1 if protected
-            // if (hasBackupAfterMove(move, board)) {
-            // prefernceScore += 1;
-            // }
+            if (!move.getStart().isKing()) {
+                int startRow = move.getStart().getRow();
+                int destRow = move.getDest().getRow();
 
-            if (prefernceScore > bestPreference) {
-                bestPreference = prefernceScore;
+                if (!this.color && destRow < startRow)
+                    preferenceScore += 1;
+                else if (this.color && destRow > startRow)
+                    preferenceScore += 1;
+            }
+
+            int col = move.getDest().getCol();
+            if (col == 3 || col == 4) {
+                preferenceScore += 2;
+            } else if (col == 2 || col == 5) {
+                preferenceScore += 1;
+            }
+
+            if (hasBackupAfterMove(move, board)) {
+                preferenceScore += 1;
+            }
+
+            if (preferenceScore > bestPreference) {
+                bestPreference = preferenceScore;
                 bestMove = move;
             }
 
@@ -216,9 +254,44 @@ public class BotI extends Bot {
     }
     /* Helper Methods for passiveStrategyImplementation */
 
-    private void insideDangerRegion(Move move, Board board) {
+    private boolean insideDangerRegion(Move move, Board board) {
         // function serves to tell if a piece is in danger of being captured after a
         // move is made
+        int row = move.getDest().getRow();
+        int col = move.getDest().getCol();
+        int enemyDir = this.color ? -1 : 1;
 
+        return canBeAttackedFrom(row, col, row + enemyDir, col - 1, board) ||
+                canBeAttackedFrom(row, col, row + enemyDir, col + 1, board);
     }
+
+    private boolean canBeAttackedFrom(int targetRow, int targetCol, int attackerRow, int attackerCol, Board board) {
+        if (!isInsideBoard(attackerRow, attackerCol))
+            return false;
+
+        Square attacker = board.getSquare(attackerRow, attackerCol);
+        return attacker.hasPiece() && attacker.getColor() != this.color;
+    }
+
+    // Checks if the move ends on a square protected by an ally
+    private boolean hasBackupAfterMove(Move move, Board board) {
+        int row = move.getDest().getRow();
+        int col = move.getDest().getCol();
+        int friendDir = this.color ? -1 : 1;
+
+        return hasSupportAt(row + friendDir, col - 1, board) || hasSupportAt(row + friendDir, col + 1, board);
+    }
+
+    private boolean hasSupportAt(int row, int col, Board board) {
+        if (!isInsideBoard(row, col))
+            return false;
+        Square square = board.getSquare(row, col);
+        return square.hasPiece() && square.getColor() == this.color;
+    }
+
+    // Utility method to check board boundaries
+    private boolean isInsideBoard(int row, int col) {
+        return row >= 0 && row < 8 && col >= 0 && col < 8;
+    }
+
 }

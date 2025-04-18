@@ -14,7 +14,7 @@ public class DB
 	{
 		String createStatement = "CREATE TABLE IF NOT EXISTS USERS (\n"
                 + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                + " username TEXT NOT NULL UNIQUE,\n"
+                + " username varchar(30) NOT NULL,\n"
                 + "rank INTEGER NOT NULL DEFAULT 0)"; //here the schema is to be established and create statement 
 		
 		try(Connection connection = SQLiteConnector.connect();
@@ -37,7 +37,7 @@ public class DB
 
 	public static void insertUser(String username)				//assumes username is already validated 
 	{
-		String insertStatement = "INSERT INTO users (username) VALUES(?)";	
+		String insertStatement = "INSERT INTO USERS (username) VALUES(?)";
 		try(Connection connection = SQLiteConnector.connect();
 			PreparedStatement pstmt = connection.prepareStatement(insertStatement)) 
 		{
@@ -57,15 +57,36 @@ public class DB
 		}
 	}
 
-	public static void getLeaderboard()
+	public static List<String> getLeaderboard()
 	{
-		//List<String> leaderboard = new ArrayList<>();
-		//String selectStatement = "SELECT username, rank FROM USERS ORDER BY rank DESC";
+		List<String> leaderboard = new ArrayList<>();
+		String selectStatement = "SELECT username, rank FROM USERS ORDER BY rank DESC";
 
-		//try (Connection connection = SQLiteConnector.connect();
-			 //leaderboardQuery )
+		try (Connection connection = SQLiteConnector.connect();
+			 Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(selectStatement))
+		{
+			if (connection != null)
+			{
+				while(rs.next())
+				{
+					String entry = rs.getString("username") + ": " + rs.getInt("rank"); //here the query is parsed and entered into the List
+					leaderboard.add(entry);
+				}
+			}
+			else
+			{
+				System.err.println("Failed to connect to database in Leaderboard query");
+			}
+		}
+		catch (SQLException e)
+		{
+			System.err.println("Error retrieving Leaderboard: " + e.getMessage());
+		}
+		
+		return leaderboard;
 	}
-/*
+
 	public static void updatePlayer(String username, int newRank )			
 	{
 		String updatePlayer = "UPDATE USERS SET rank = ? WHERE username = ?";  		
@@ -87,7 +108,7 @@ public class DB
 		{
 			System.err.println("Error updating user: " + e.getMessage());
 		}
-*/
 
+	}
 }
 

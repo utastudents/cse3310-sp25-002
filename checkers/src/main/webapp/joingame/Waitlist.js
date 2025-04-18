@@ -1,11 +1,17 @@
 class Waitlist{
-	constructor(){
-        this.waitlist = []; // Array to store player objects
-		this.data = new Data;
+	constructor(waitlistElementId) {
+        this.waitlist = []; //Array to store player objects
+        this.waitlistElementId = waitlistElementId;
     }
 	
 	add(playerInfo){	//Add a player's info onto the waitlist
-		player = new Player(playerInfo.username, playerInfo.id); // Create a new Player object with given data
+
+		if (this.waitlist.some(p => p.id === playerInfo.id)) {
+            console.log(`Player ${playerInfo.username} already in waitlist`);
+            return;
+        }
+
+		const player = new Player(playerInfo.username, playerInfo.id); // Create a new Player object with given data
 		player.waitlistStatus = true; // Update the flag to true to indicate player is on the waitlist
 		this.waitlist.push(player); // Add the Player object to the waitlist
 		this.displayWaitlist(); // Update/display the waitlist again with the new Player
@@ -27,14 +33,14 @@ class Waitlist{
 	}
 
 	displayWaitlist(){	//Displays the updated waitlist
-		const list = document.getElementById(waitlist);
-
-		list.innerHTML = "";
-
-		this.waitlist.forEach(player => {
-			const li = document.createElement("li");
-			li.textContent = `${player.getUsername()}	${player.getID()}`;
-			HTMLDataListElement.appendChild(li);
-		});
-	}
+		const listElement = document.getElementById(this.waitlistElementId);
+        if (!listElement) return;
+        
+        listElement.innerHTML = '';
+        this.waitlist.forEach((player, index) => {
+            const li = document.createElement('li');
+            li.textContent = `${index + 1}. ${player.username} (${player.id})`;
+            listElement.appendChild(li);
+        });
+    }
 }

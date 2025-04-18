@@ -1,6 +1,10 @@
 package uta.cse3310.GameTermination;
 import uta.cse3310.GamePlay.GamePlay;
 import uta.cse3310.GameManager.Player;
+import uta.cse3310.GameManager.Game;
+import uta.cse3310.GameManager.Square;
+import uta.cse3310.GameManager.Board;
+import uta.cse3310.GameManager.Moves;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -8,24 +12,24 @@ import java.util.Map;
 public class GameResult {
 
     // Stores scores for each player by their ID
-    private Map<String, Integer> playerScores;
+    private Map<Integer, Integer> playerScores;
     
-    private String winningPlayerId;
+    private Integer winningPlayerId;
 
     // Stores all game results
     private List<GameResult> gameHistory = new ArrayList<>();
 
     // Constructor to initialize scores
-    public GameResult(Map<String, Integer> playerScores) {
+    public GameResult(Map<Integer, Integer> playerScores) {
         this.playerScores = playerScores;
         this.winningPlayerId = null; //no winner yet
     }
 
-    public Map<String, Integer> getPlayerScores() {
+    public Map<Integer, Integer> getPlayerScores() {
         return playerScores;
     }
 
-    public String getWinningPlayerId() {
+    public Integer getWinningPlayerId() {
         return winningPlayerId;
     }
 
@@ -33,61 +37,70 @@ public class GameResult {
         return winningPlayerId == null;
     }
 
-    public List<String> getPlayerIds() {
+    public List<Integer> getPlayerIds() {
         return new ArrayList<>(playerScores.keySet());
     }
     
     //to call player's id anywhere later
     public void setWinner(Player player) {
-        this.winningPlayerId = String.valueOf(player.getPlayerId());
+        this.winningPlayerId = player.getPlayerId();
     }
     //match is drawn
     public void setDraw() {
         this.winningPlayerId = null;
     }
 
-     // This method will update the number of pieces captured for each player.
-    // If a player has all 12 pieces captured, they lose.
-    public void trackCapturedPieces(Player player) {
-        //int capturedPieces = player.getCapturedCount(); // assuming GamePlay provides this
-        int capturedPieces = 0; // Placeholder until integration with GamePlay
 
-        if (capturedPieces >= 12) {
-            // Remember to implement actual game ending logic inside GameTermination
-            System.out.println("Player " + player.getPlayerId() + " has lost!");
-      // Remember to implement actual game ending logic inside GameTermination here
+public void trackCapturedPieces(Player player, Board board) {
+    int totalPiecesAtStart = 12;
+    int remainingPieces = 0;
+
+    for (int row = 0; row < 8; row++) {
+        for (int col = 0; col < 8; col++) {
+            Square square = board.getSquare(row, col);
+            if (square != null && square.getColor() != null) { // Assume getColor() returns true = white, false = black
+                // And player.getColor() or player ID tells us which side they're on
+                if ((player.getColor() && square.getColor()) ||
+                    (!player.getColor() && !square.getColor())) {
+                    remainingPieces++;
+                }
+            }
         }
     }
 
-    // This method checks if a player has any legal moves left.
-    // If there are none, the player loses.
-     public void checkForLegalMoves(Player player1, Player player2) {
-        //boolean player1HasLegalMoves = player1.hasLegalMoves(); // Assuming GamePlay provides this
-        //boolean player2HasLegalMoves = player2.hasLegalMoves(); // Assuming GamePlay provides this
+    int capturedPieces = totalPiecesAtStart - remainingPieces;
 
-        //if (!player1HasLegalMoves && !player2HasLegalMoves) {
-            // If both players have no legal moves left, it's a draw
-          //  System.out.println("Both players have no legal moves left. It's a draw!");
-            // End the game with a draw
-           // endGame(null); // No winner in a draw
-       // } else if (!player1HasLegalMoves) {
-            // Player 1 has no legal moves left, Player 2 wins
-         //   System.out.println("Player " + player1.getPlayerId() + " has lost due to no legal moves.");
-          //  endGame(player2); // Player 2 is the winner
-       // } else if (!player2HasLegalMoves) {
-            // Player 2 has no legal moves left, Player 1 wins
-         //   System.out.println("Player " + player2.getPlayerId() + " has lost due to no legal moves.");
-          //  endGame(player1); // Player 1 is the winner
-        }
+    if (capturedPieces >= 12) {
+        System.out.println("Player " + player.getPlayerId() + " has lost!");
+        // PUT GAME END LOGIC HERE
+    }
+}
+
+
+
+
+// This method checks if a player has any legal moves left.
+// If there are none, the player loses.
+    public void checkForLegalMoves(Player player, Game game) {
+        GamePlay gameplay = new GamePlay();
+        Map<Square, Moves> legalMoves = gameplay.returnMoves(game);
+
+        if (legalMoves == null || legalMoves.isEmpty()) {
+        System.out.println("Player " + player.getPlayerId() + " has no legal moves and loses!");
+
+        // Game-end goes here
+    }
+}
+
 
     // This method updates the current score of a player after a move.
     public void updateScores(Player player, int score) {
-        String id = String.valueOf(player.getPlayerId());
+        int id = player.getPlayerId();
         playerScores.put(id, score);
     }
 
     // This is for unit testing support to verify the scores updates.
-    public int getScore(String playerId) {
+    public int getScore(int playerId) {
         return playerScores.getOrDefault(playerId, -1);
     }
 

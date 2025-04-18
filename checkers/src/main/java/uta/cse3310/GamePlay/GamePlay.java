@@ -32,7 +32,7 @@ public class GamePlay
             // Check if there is at least one legal move the player can make with this piece
             if(rule.canMovePiece(currentGameBoard, currentSquare, game))
             {
-                if(rule.inBounds(currentMove))
+                if(rule.isLegal(currentMove, game))
                 {
                     if(activePlayer.getColor())
                     {
