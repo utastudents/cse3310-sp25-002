@@ -39,18 +39,14 @@ public class GameTermination
         return scores;
     }
 
-    // Method to handle the end of the game and declare the winner
-    public void endGame(Map<Integer, Integer> playerScores, int winningPlayer) 
-    {
-        if (gameOver) 
-        {
-            System.out.println("The game has already ended."); //to handle abrupt endings
-            return;
-        }
+    public void checkGameOver()
+    { 
+        Map<Integer, Integer> pieceCounts = getPlayerPieceCounts();     //temp till real   
+        Map<Integer, Boolean> legalMoves = getPlayerHasLegalMoves();    //temp till real
+        Map<Integer, Integer> playerScores = getPlayerScores();         //temp till real
 
         Integer winnerId = null;
         boolean isDraw = false;
-        Map<Integer, Integer> pieceCounts = getPlayerPieceCounts(); //temp till we get the real one
 
         for (Map.Entry<Integer, Integer> entry : pieceCounts.entrySet()) 
         {
@@ -67,19 +63,44 @@ public class GameTermination
                 break;
             }
         }
+
+        if (winnerId == null && legalMoves.values().stream().noneMatch(v -> v)) 
+        {
+            isDraw = true;
+        }
+
+        if (winnerId != null || isDraw) 
+        {
+            endGame(playerScores, isDraw ? -1 : winnerId);
+        }
+
+    }
+
+
+    // Method to handle the end of the game and declare the winner
+    public void endGame(Map<Integer, Integer> playerScores, int winningPlayer) 
+    {
+        if (gameOver) 
+        {
+            System.out.println("The game has already ended."); //to handle abrupt endings
+            return;
+        }
+
         // Mark the game as over
         gameOver = true;
 
-        if (winnerId != null) 
+        if (winningPlayer != -1) 
         {
-            finalWinner = "Player " + winnerId; 
-            System.out.println("Game Over! Player " + winnerId + " has won");
-        }
+            finalWinner = "Player " + winningPlayer;
+            System.out.println("Game Over! Player " + winningPlayer + " has won");
+        } 
         else 
         {
             finalWinner = "Draw";
             System.out.println("Game Over! It's a draw!");
         }
+    
+        saveResultsToDatabase(playerScores);
 
     // NOTE: this was causing compile error 
     //     // Check if there's a winner or a draw
