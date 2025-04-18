@@ -76,9 +76,6 @@ public void trackCapturedPieces(Player player, Board board) {
     }
 }
 
-
-
-
 // This method checks if a player has any legal moves left.
 // If there are none, the player loses.
     public void checkForLegalMoves(Player player, Game game) {
@@ -91,7 +88,6 @@ public void trackCapturedPieces(Player player, Board board) {
         // Game-end goes here
     }
 }
-
 
     // This method updates the current score of a player after a move.
     public void updateScores(Player player, int score) {
