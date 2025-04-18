@@ -7,7 +7,6 @@ import java.util.HashMap;
 public class GameTermination 
 {
 
-
     private boolean gameOver = false; // Flag to indicate if the game is over, game state
     private String finalWinner = null; // Stores the winner's ID or "Draw"
 
@@ -76,7 +75,6 @@ public class GameTermination
 
     }
 
-
     // Method to handle the end of the game and declare the winner
     public void endGame(Map<Integer, Integer> playerScores, int winningPlayer) 
     {
@@ -102,15 +100,6 @@ public class GameTermination
     
         saveResultsToDatabase(playerScores);
 
-    // NOTE: this was causing compile error 
-    //     // Check if there's a winner or a draw
-    //    if (winningPlayer != null) {
-    //         finalWinner = winningPlayer;
-    //         System.out.println("Game Over! " + winningPlayer + " has won!");
-    //     } else {
-    //         finalWinner = "Draw";
-    //         System.out.println("Game Over! It's a draw!");
-    //     }
     }
     // This method will save the results to the database
     public void saveResultsToDatabase(Map<Integer, Integer> playerScores) {
@@ -143,5 +132,4 @@ public class GameTermination
         //dummy return
         return 3;
     }
-    
 }
