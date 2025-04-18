@@ -47,7 +47,7 @@
 </div>
 
 
-<div> id="game_lobby"
+<div> id="game_lobby"</div>
     <header>
       <h1>Game Lobby</h1>
     </header>
@@ -173,6 +173,61 @@
         connection.send(JSON.stringify(U));
         console.log(JSON.stringify(U))
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize components
+      const dataManager = new Data();
+      const playerWaitlist = new Waitlist("player-waitlist");
+      const botWaitlist = new Waitlist("bot-waitlist");
+      const notification = new DisplayNotification();
+      const communication = new Communication(dataManager);
+      const matchmaker = new Matchmaking(
+        communication, 
+        dataManager, 
+        notification, 
+        playerWaitlist, 
+        botWaitlist
+      );
+
+      // Create Player instance
+      const currentPlayer = new Player("P1", "Ash", "player.jpg");
+      dataManager.setPlayer(currentPlayer);
+      
+      // Display current player information
+      const playerInfoDiv = document.getElementById("current-player-info");
+      if (playerInfoDiv) {
+        playerInfoDiv.innerHTML = `
+          <strong>Username:</strong> ${currentPlayer.getUsername()}<br>
+          <strong>ID:</strong> ${currentPlayer.getId()}<br>
+          <img src="${currentPlayer.getAvatar()}" alt="Player Avatar" width="50">
+        `;
+      }
+      
+      // Add current player to Player vs Player waitlist by default
+      playerWaitlist.add(currentPlayer);
+
+      // Button event handlers
+      document.getElementById("play-vs-player")?.addEventListener("click", () => {
+        dataManager.setGameMode("Human");
+        matchmaker.requestPlayerMatch();
+        notification.displayNotification("Searching for player match...");
+      });
+
+      document.getElementById("play-vs-bot")?.addEventListener("click", () => {
+        dataManager.setGameMode("Bot");
+        matchmaker.requestBotMatch();
+        notification.displayNotification("Starting bot match...");
+      });
+
+      document.getElementById("spectate-bots")?.addEventListener("click", () => {
+        dataManager.setGameMode("Spectate");
+        matchmaker.requestSpectateBotVsBot();
+        notification.displayNotification("Preparing bot vs bot match...");
+      });
+
+      // Initial notification
+      notification.displayNotification(`Welcome ${currentPlayer.getUsername()}!`);
+    });
 
 </script>
 <script src = "js/loginHandler.js"></script>

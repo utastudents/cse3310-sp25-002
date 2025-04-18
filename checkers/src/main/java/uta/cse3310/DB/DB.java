@@ -12,7 +12,7 @@ public class DB
 {
 	public static void createTable()
 	{
-		String createStatement = "CREATE TABLE IF NOT EXISTS USERS (\n"
+		String createStatement = "CREATE TABLE IF NOT EXISTS users (\n"
                 + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
                 + " username varchar(30) NOT NULL,\n"
                 + "rank INTEGER NOT NULL DEFAULT 0)"; //here the schema is to be established and create statement 

@@ -12,46 +12,20 @@ package uta.cse3310.PageManager;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import uta.cse3310.DB.DB;
 import uta.cse3310.DB.Validate;
 
 public class NewAcctLogin
 {
-
     //constructor
     public NewAcctLogin()
     {
-       
+        //The usernames will be entered here so make
+        //sure the table is made here
+        DB.createTable();       
     }
 
-    //check if user already in database
-    public boolean usernameExists(String username)
-    {
-        try
-        {
-            //following what DB has
-            String sqlString = "SELECT username FROM users WHERE username = ?";
-            try(java.sql.Connection connection = java.sql.DriverManager.getConnection("jbc:sqlite:users.db");
-                java.sql.PreparedStatement st = connection.prepareStatement(sqlString))
-            {
-                st.setString(1,username);
-                java.sql.ResultSet rs = st.executeQuery();
-                //Confirm if there is an instance
-                //of that username.
-                return rs.next();
-            }
-        }
-        catch(Exception e)
-        {
-            //If all else fails, do error handling
-            System.out.println("Could not verify if username exists: " + e.getMessage());
-            
-            //does user exist?
-            //return true if user is found...otherwise...
-            return false;
-        }
-    }
-
-    //Process the input of the usernames
+    //First, lets process the input of the usernames
     public String processUsernameInput(String inputJSON)
     {
         JsonObject response = new JsonObject();
@@ -100,6 +74,34 @@ public class NewAcctLogin
         }
         //return back the reponse of success or failure
         return response.toString();
+    }
+
+    //check if user already in database
+    public boolean usernameExists(String username)
+    {
+        try
+        {
+            //following what DB has
+            String sqlString = "SELECT username FROM users WHERE username = ?";
+            try(java.sql.Connection connection = java.sql.DriverManager.getConnection("jdbc:sqlite:users.db");
+                java.sql.PreparedStatement st = connection.prepareStatement(sqlString))
+            {
+                st.setString(1,username);
+                java.sql.ResultSet rs = st.executeQuery();
+                //Confirm if there is an instance
+                //of that username.
+                return rs.next();
+            }
+        }
+        catch(Exception e)
+        {
+            //If all else fails, do error handling
+            System.out.println("Could not verify if username exists: " + e.getMessage());
+            
+            //does user exist?
+            //return true if user is found...otherwise...
+            return false;
+        }
     }
 
     // Helper to extract username from JSON
