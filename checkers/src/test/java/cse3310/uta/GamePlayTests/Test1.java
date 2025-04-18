@@ -9,7 +9,7 @@ import uta.cse3310.GameManager.Move;
 import uta.cse3310.GamePlay.rules;
 
 
-public class canMovePieceTest extends rules 
+public class Test1 extends rules 
 {
     
 
