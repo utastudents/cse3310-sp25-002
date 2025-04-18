@@ -125,16 +125,6 @@ public class GameTermination
         return finalWinner;
     }
 
-    public int playerHasResigned(int player1, int player2){
-        //logic will look something like this.
-        //if player1 has regsined -> winningPlayer = player2
-        //if player2 has resigned -> winningPlayer = player1
-        //else continue the game
-        //dummy return
-        return 3;
-
-    }
-
     public boolean isGameOver() { //getter for endGame unit test
         return gameOver;
     }
