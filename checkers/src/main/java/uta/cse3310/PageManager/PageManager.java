@@ -25,22 +25,22 @@ public class PageManager {
     private final JoinGameHandler joinGameHandler = new JoinGameHandler();
 
     public PageManager() {
+        //Database here:
         db = new DB();
+        //User table from DB here:
+        DB.createTable();
+
         pu = new PairUp();
+
 
         displayConnector = new GameDisplayConnector(new GameManager());
 
-        try
-        {
-            //need to use NewAcctLogin here
-            //for username processing
-            accountHandler = new NewAcctLogin();
-        }
-        catch(Exception e)
-        {
-            //if not, then error handle it
-            System.out.println("Could not create the user account: " + e.getMessage());
-        }
+        //need to use NewAcctLogin here
+        //for username processing
+        accountHandler = new NewAcctLogin();
+
+        //debug to make sure the table is made:
+        System.out.println("Success, table made.");
     }
 
     // Add a new player to matchmaking
