@@ -31,29 +31,15 @@ public class PageManager {
 
     public PageManager()
     {
-        //Database here:
         db = new DB();
-        //User table from DB here:
         DB.createTable();
 
-<<<<<<< HEAD
-        GameManager gameManager = new GameManager(); // instantiate GameManager
-        GamePageController controller = new GamePageController(gameManager); // pass it to GamePageController
-        displayConnector = new GameDisplayConnector(controller); // pass controller to connector
-=======
-        pu = new PairUp();
-<<<<<<< HEAD
-        
+        // Create GameManager and pass it into both controllers
+        GameManager gameManager = new GameManager();
+        gamePageController = new GamePageController(gameManager);
         gameManagerSubsys = new GameManagerSubsys(gamePageController);
-=======
+        displayConnector = new GameDisplayConnector(gamePageController);
 
-
->>>>>>> 935712e1b4383c7ac0278dcf07ba5054f2269e58
-        displayConnector = new GameDisplayConnector(new GameManager());
->>>>>>> 5e9ef07ab15edb8fef61634b85393ecb675cd060
-
-        //need to use NewAcctLogin here
-        //for username processing
         accountHandler = new NewAcctLogin();
     }
 
