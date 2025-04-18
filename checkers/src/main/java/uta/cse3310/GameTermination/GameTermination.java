@@ -1,21 +1,57 @@
 package uta.cse3310.GameTermination;
 import uta.cse3310.GameManager.Player;
 import uta.cse3310.GamePlay.GamePlay;
+import uta.cse3310.GameManager.Game;
 import java.util.Map;
 import java.util.HashMap;
 
 public class GameTermination 
 {
+    
 
     private boolean gameOver = false; // Flag to indicate if the game is over, game state
     private String finalWinner = null; // Stores the winner's ID or "Draw"
+    
+    private boolean isGameDraw = false;
+
+    public boolean checkForGameTermination(){
+        //this method will be used by some other group to check if game ended before every move and do their thing if the game has ended
+        //will check for winner
+        //Player finalWinner = getWinner();
+        //if (finalWinner == null){
+            //there is no winner do not end game
+        //     gameOver = false; //still false
+        // }else{
+            // gameOver = true;
+        // }
+
+        //ending by using lastCapture
+        //int lastCapture = lastCapture();
+        // if (lastCapture == 40){
+        //     gameOver == true;
+        // the game is draw
+                // isGameDraw = true;
+        // }
+
+        //if (player1Quit()){
+    //     finalWinner = player2;
+    //     gameOver = true;
+    // }
+        
+        // if (player2Quit()){
+        //     finalWinner = player1;
+        //     gameOver = true;
+        // }
+
+        return false; //dummy
+    }
 
     //hardcoded methods for unit testing
     //player 1 lost
     public Map<Integer, Integer> getPlayerPieceCounts() 
     {
-        Map<Integer, Integer> pieceCounts = new HashMap<>();
-        pieceCounts.put(1, 0);  
+        Map<Integer, Integer> pieceCounts = new HashMap<>();    
+        pieceCounts.put(1, 0);
         pieceCounts.put(2, 5);
         return pieceCounts;
     }
@@ -38,43 +74,6 @@ public class GameTermination
         return scores;
     }
 
-    public void checkGameOver()
-    { 
-        Map<Integer, Integer> pieceCounts = getPlayerPieceCounts();     //temp till real   
-        Map<Integer, Boolean> legalMoves = getPlayerHasLegalMoves();    //temp till real
-        Map<Integer, Integer> playerScores = getPlayerScores();         //temp till real
-
-        Integer winnerId = null;
-        boolean isDraw = false;
-
-        for (Map.Entry<Integer, Integer> entry : pieceCounts.entrySet()) 
-        {
-            if (entry.getValue() == 0) 
-            {
-                for (Integer otherPlayer : pieceCounts.keySet()) 
-                {
-                    if (!otherPlayer.equals(entry.getKey())) 
-                    {
-                        winnerId = otherPlayer;
-                        break;
-                    }
-                }
-                break;
-            }
-        }
-
-        if (winnerId == null && legalMoves.values().stream().noneMatch(v -> v)) 
-        {
-            isDraw = true;
-        }
-
-        if (winnerId != null || isDraw) 
-        {
-            endGame(playerScores, isDraw ? -1 : winnerId);
-        }
-
-    }
-
     // Method to handle the end of the game and declare the winner
     public void endGame(Map<Integer, Integer> playerScores, int winningPlayer) 
     {
@@ -84,22 +83,22 @@ public class GameTermination
             return;
         }
 
+        String winnerId = null;
+        boolean isDraw = false;
+        
+        
         // Mark the game as over
-        gameOver = true;
+        //gameOver = true;
 
-        if (winningPlayer != -1) 
-        {
-            finalWinner = "Player " + winningPlayer;
-            System.out.println("Game Over! Player " + winningPlayer + " has won");
-        } 
-        else 
-        {
-            finalWinner = "Draw";
-            System.out.println("Game Over! It's a draw!");
-        }
-    
-        saveResultsToDatabase(playerScores);
-
+    // NOTE: this was causing compile error 
+    //     // Check if there's a winner or a draw
+    //    if (winningPlayer != null) {
+    //         finalWinner = winningPlayer;
+    //         System.out.println("Game Over! " + winningPlayer + " has won!");
+    //     } else {
+    //         finalWinner = "Draw";
+    //         System.out.println("Game Over! It's a draw!");
+    //     }
     }
     // This method will save the results to the database
     public void saveResultsToDatabase(Map<Integer, Integer> playerScores) {
@@ -120,9 +119,9 @@ public class GameTermination
     }
 
     // Returns the winner or draw
-    public String getWinner() {
-        return finalWinner;
-    }
+   // public String getWinner() {
+     //   return finalWinner;
+    //}
     
     public int playerHasResigned(int player1, int player2){
         //logic will look something like this.
@@ -132,4 +131,5 @@ public class GameTermination
         //dummy return
         return 3;
     }
+    
 }
