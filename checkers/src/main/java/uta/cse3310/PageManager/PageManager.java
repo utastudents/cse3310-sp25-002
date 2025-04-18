@@ -9,6 +9,7 @@ import com.google.gson.JsonObject;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.GameManager.GameManager;
+import uta.cse3310.GameManager.GamePageController;
 import uta.cse3310.PairUp.PairUp;
 
 public class PageManager {
@@ -16,6 +17,9 @@ public class PageManager {
     PairUp pu;
     public NewAcctLogin accountHandler;
     private GameDisplayConnector displayConnector;
+    private GameManagerSubsys gameManagerSubsys;
+    private GamePageController gamePageController;
+    
     Integer turn = 0;
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // key = gameId, value = player IDs
@@ -27,7 +31,8 @@ public class PageManager {
     public PageManager() {
         db = new DB();
         pu = new PairUp();
-
+        
+        gameManagerSubsys = new GameManagerSubsys(gamePageController);
         displayConnector = new GameDisplayConnector(new GameManager());
 
         try
@@ -137,6 +142,12 @@ public class PageManager {
                 ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
                 break;
             }
+
+            case "game_status": {
+                ret.status = gameManagerSubsys.getGameInfo(U.id);
+                break;
+            }
+            
         }
 
         // Always send a response back to the sender
