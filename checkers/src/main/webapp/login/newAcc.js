@@ -78,7 +78,7 @@ uInput.onkeyup = function() {
     function joinGame() 
     {
       const username = document.getElementById('username').value;
-      const pattern = /^(?=.\d)(?=.[!@#$%^&])(?=.[A-Za-z])(?!.*\s).{8,}$/;
+      const pattern = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[A-Za-z])(?!.*\s).{8,}$/;
       if (!username) {
         alert('Please enter a username.');
       } else if (!pattern.test(username)) {
