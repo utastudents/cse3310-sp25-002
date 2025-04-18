@@ -24,4 +24,29 @@ public class GameResultTest
 
         assertEquals(20, actualScore);
     }
+
+    @Test
+    public void testSetAndGetWinner() 
+    {
+        Map<Integer, Integer> scores = new HashMap<>();
+        GameResult result = new GameResult(scores);
+
+        Player player = new Player(2, false); // false = Black, for example
+        result.setWinner(player);
+
+        assertEquals((Integer)2, result.getWinningPlayerId());
+        assertFalse(result.isDraw());
+    }
+
+    @Test
+    public void testSetDraw() 
+    {
+        Map<Integer, Integer> scores = new HashMap<>();
+        GameResult result = new GameResult(scores);
+    
+        result.setDraw();
+    
+        assertNull(result.getWinningPlayerId());
+        assertTrue(result.isDraw());
+    }
 }
