@@ -82,7 +82,7 @@ public class NewAcctLogin
         try
         {
             //following what DB has
-            String sqlString = "SELECT username FROM USERS WHERE username = ?";
+            String sqlString = "SELECT username FROM users WHERE username = ?";
             try(java.sql.Connection connection = java.sql.DriverManager.getConnection("jdbc:sqlite:users.db");
                 java.sql.PreparedStatement st = connection.prepareStatement(sqlString))
             {

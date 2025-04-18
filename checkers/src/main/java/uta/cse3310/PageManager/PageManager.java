@@ -8,6 +8,7 @@ import java.util.Map;
 import com.google.gson.JsonObject;
 
 import uta.cse3310.DB.DB;
+import uta.cse3310.DB.Validate;
 import uta.cse3310.GameManager.GameManager;
 import uta.cse3310.PairUp.PairUp;
 
@@ -24,7 +25,8 @@ public class PageManager {
 
     private final JoinGameHandler joinGameHandler = new JoinGameHandler();
 
-    public PageManager() {
+    public PageManager()
+    {
         //Database here:
         db = new DB();
         //User table from DB here:
@@ -38,9 +40,6 @@ public class PageManager {
         //need to use NewAcctLogin here
         //for username processing
         accountHandler = new NewAcctLogin();
-
-        //debug to make sure the table is made:
-        System.out.println("Success, table made.");
     }
 
     // Add a new player to matchmaking
@@ -59,6 +58,8 @@ public class PageManager {
         //using the DB validation:
         JsonObject responseMsg = new JsonObject();
 
+        DB.createTable();
+
         if(accountHandler.usernameExists(username))
         {
             responseMsg.addProperty("type", "username_status");
@@ -68,19 +69,12 @@ public class PageManager {
         {
             try
             {
-                uta.cse3310.DB.Validate.ValidateUser(username);
+                //using DB validation
+                Validate.ValidateUser(username);
 
                 //Making sure the username was added
-                if(accountHandler.usernameExists(username))
-                {
-                    responseMsg.addProperty("type","username_status");
-                    responseMsg.addProperty("accepted",true);
-                }
-                else
-                {
-                    responseMsg.addProperty("type","username_status");
-                    responseMsg.addProperty("accepted",false);
-                }
+                responseMsg.addProperty("type","username_status");
+                responseMsg.addProperty("accepted",true);
             }
             catch(Exception e)
             {
@@ -90,7 +84,6 @@ public class PageManager {
                 responseMsg.addProperty("accepted",false);
             }
         }
-
         return responseMsg;
     }
 
