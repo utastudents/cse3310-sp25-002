@@ -1,5 +1,4 @@
 package uta.cse3310.GameTermination;
-
 import uta.cse3310.GameManager.Player;
 import uta.cse3310.GamePlay.GamePlay;
 import java.util.Map;

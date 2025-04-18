@@ -80,7 +80,8 @@ public class GameResult {
 
     if (capturedPieces >= 12) {
         System.out.println("Player " + player.getPlayerId() + " (" + (playerColor ? "White" : "Black") + ") has lost!");
-        // PUT GAME END HERE
+        GameTermination gameTermination = new GameTermination();
+        gameTermination.checkGameOver();
     }
 }
 
@@ -92,8 +93,8 @@ public class GameResult {
 
         if (legalMoves == null || legalMoves.isEmpty()) {
         System.out.println("Player " + player.getPlayerId() + " has no legal moves and loses!");
-
-        // Game-end goes here
+        GameTermination gameTermination = new GameTermination();
+        gameTermination.checkGameOver();
     }
 }
 
