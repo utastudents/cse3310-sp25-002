@@ -10,6 +10,7 @@ import com.google.gson.JsonObject;
 import uta.cse3310.DB.DB;
 import uta.cse3310.DB.Validate;
 import uta.cse3310.GameManager.GameManager;
+import uta.cse3310.GameManager.GamePageController;
 import uta.cse3310.PairUp.PairUp;
 
 public class PageManager {
@@ -17,6 +18,9 @@ public class PageManager {
     PairUp pu;
     public NewAcctLogin accountHandler;
     private GameDisplayConnector displayConnector;
+    private GameManagerSubsys gameManagerSubsys;
+    private GamePageController gamePageController;
+    
     Integer turn = 0;
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // key = gameId, value = player IDs
@@ -33,8 +37,13 @@ public class PageManager {
         DB.createTable();
 
         pu = new PairUp();
+<<<<<<< HEAD
+        
+        gameManagerSubsys = new GameManagerSubsys(gamePageController);
+=======
 
 
+>>>>>>> 935712e1b4383c7ac0278dcf07ba5054f2269e58
         displayConnector = new GameDisplayConnector(new GameManager());
 
         //need to use NewAcctLogin here
@@ -124,12 +133,18 @@ public class PageManager {
                 ret.status.type = "cancel_status";
                 ret.status.msg = "cancelled";
                 break;
-            }
+            } 
 
             default: {
                 ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
                 break;
             }
+
+            case "game_status": {
+                ret.status = gameManagerSubsys.getGameInfo(U.id);
+                break;
+            }
+            
         }
 
         // Always send a response back to the sender

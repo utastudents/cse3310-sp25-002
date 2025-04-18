@@ -5,10 +5,10 @@ import uta.cse3310.GameManager.GamePageController;
 
 public class GameManagerSubsys {
 
-    private GamePageController gamePageController;
+    public GamePageController gamePageController;
 
-    public GameManagerSubsys(GamePageController controller) {
-        this.gamePageController = controller;
+    public GameManagerSubsys(GamePageController gamePageController) {
+        this.gamePageController = gamePageController;
     }
 
     public game_status getGameInfo(int playerID) {
@@ -30,6 +30,7 @@ public class GameManagerSubsys {
         status.loser = gamePageController.getLoser(playerID);
         status.draw = gamePageController.getDraw(playerID);
         status.gameOver =  (status.winner != null || status.draw);
+        
        } catch (Exception e) {
 
         status.msg = "Error retrieving game info: " + e.getMessage();
