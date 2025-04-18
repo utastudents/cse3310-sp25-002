@@ -1,8 +1,5 @@
 package uta.cse3310.PageManager;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +8,7 @@ import java.util.Map;
 import com.google.gson.JsonObject;
 
 import uta.cse3310.DB.DB;
+import uta.cse3310.DB.Validate;
 import uta.cse3310.GameManager.GameManager;
 import uta.cse3310.GameManager.GamePageController;
 import uta.cse3310.PairUp.PairUp;
@@ -20,6 +18,9 @@ public class PageManager {
     PairUp pu;
     public NewAcctLogin accountHandler;
     private GameDisplayConnector displayConnector;
+    private GameManagerSubsys gameManagerSubsys;
+    private GamePageController gamePageController;
+    
     Integer turn = 0;
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // key = gameId, value = player IDs
@@ -28,29 +29,32 @@ public class PageManager {
 
     private final JoinGameHandler joinGameHandler = new JoinGameHandler();
 
-    public PageManager() {
+    public PageManager()
+    {
+        //Database here:
         db = new DB();
-        pu = new PairUp();
+        //User table from DB here:
+        DB.createTable();
 
+<<<<<<< HEAD
         GameManager gameManager = new GameManager(); // instantiate GameManager
         GamePageController controller = new GamePageController(gameManager); // pass it to GamePageController
         displayConnector = new GameDisplayConnector(controller); // pass controller to connector
+=======
+        pu = new PairUp();
+<<<<<<< HEAD
+        
+        gameManagerSubsys = new GameManagerSubsys(gamePageController);
+=======
 
-        try
-        {
-            //temporary url for database for now
-            String sqlURL = "jdbc:sqlite:checkers.db";
-            //from the documentation, drivermanager is able to get the connection
-            //via the url
-            Connection connection = DriverManager.getConnection(sqlURL);
-            //if successful it should make this connection to use
-            accountHandler = new NewAcctLogin(connection);
-        }
-        catch(SQLException e)
-        {
-            //if not, then error handle it
-            System.out.println("Fail: No database connection: " + e.getMessage());
-        }
+
+>>>>>>> 935712e1b4383c7ac0278dcf07ba5054f2269e58
+        displayConnector = new GameDisplayConnector(new GameManager());
+>>>>>>> 5e9ef07ab15edb8fef61634b85393ecb675cd060
+
+        //need to use NewAcctLogin here
+        //for username processing
+        accountHandler = new NewAcctLogin();
     }
 
     // Add a new player to matchmaking
@@ -64,20 +68,37 @@ public class PageManager {
     }
 
     // Username validation logic
-    public JsonObject handleUsernameValidation(String username) {
+    public JsonObject handleUsernameValidation(String username)
+    {
+        //using the DB validation:
         JsonObject responseMsg = new JsonObject();
 
-        if (accountHandler.usernameExists(username)) {
-            responseMsg.addProperty("type", "username_status");
-            responseMsg.addProperty("accepted", false);
-        } else if (accountHandler.addUser(username)) {
-            responseMsg.addProperty("type", "username_status");
-            responseMsg.addProperty("accepted", true);
-        } else {
+        DB.createTable();
+
+        if(accountHandler.usernameExists(username))
+        {
             responseMsg.addProperty("type", "username_status");
             responseMsg.addProperty("accepted", false);
         }
+        else
+        {
+            try
+            {
+                //using DB validation
+                Validate.ValidateUser(username);
 
+                //Making sure the username was added
+                responseMsg.addProperty("type","username_status");
+                responseMsg.addProperty("accepted",true);
+            }
+            catch(Exception e)
+            {
+                //Error handling
+                System.out.println("Could not validate the username: " + e.getMessage());
+                responseMsg.addProperty("type","username_status");
+                responseMsg.addProperty("accepted",false);
+            }
+        }
         return responseMsg;
     }
 
@@ -118,12 +139,18 @@ public class PageManager {
                 ret.status.type = "cancel_status";
                 ret.status.msg = "cancelled";
                 break;
-            }
+            } 
 
             default: {
                 ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
                 break;
             }
+
+            case "game_status": {
+                ret.status = gameManagerSubsys.getGameInfo(U.id);
+                break;
+            }
+            
         }
 
         // Always send a response back to the sender
