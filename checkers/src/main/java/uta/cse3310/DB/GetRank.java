@@ -38,12 +38,12 @@ public class GetRank
        if (resultSet.next()) {
            return resultSet.getInt("rank");
        } else {
-           System.out.println("User not found.");
+           System.out.println("401 User not found.");
            return -1;
        }
 
    } catch (SQLException e) {
-       System.err.println("Error retrieving stored rank: " + e.getMessage());
+       System.err.println("401 Error retrieving stored rank: " + e.getMessage());
        return -1;
    }
 
@@ -93,14 +93,14 @@ public class GetRank
 
             // This next part is where the rank is calculated using the 
             // formula in the requirements document.
-            int rankDiff = oppRank - playerRank;
+            double rankDiff = oppRank - playerRank;
             double We = 1.0 / (Math.pow(10, - rankDiff / 400.0) + 1);
             int K;
-            if(playerRank < 2100)
+            if(playerRank <= 2100)
             {
                 K = 32;
             }
-            else if(playerRank < 2400)
+            else if(playerRank <= 2400)
             {
                 K = 24;
             }
@@ -108,9 +108,9 @@ public class GetRank
             {
                 K = 16;
             }
-            int newRank = (int) Math.round(playerRank + K * (W - We));
+            double newRating = (playerRank + K * (W - We));
 
-            return newRank;
+            return (int) Math.round(newRating);
         } catch(SQLException e) {
             System.err.println("Error updating score: " + e.getMessage());
             return -1;
