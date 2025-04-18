@@ -4,6 +4,7 @@ import uta.cse3310.GameManager.GamePageController;
 import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
+import uta.cse3310.GameTermination.GameTermination;
 import uta.cse3310.PageManager.UserEvent;
 import uta.cse3310.PageManager.UserEventReply;
 import uta.cse3310.PageManager.game_status;
@@ -18,9 +19,11 @@ import java.util.Map;
 public class GameDisplayConnector {
 
     private GamePageController gamePageController;
+    private GameTermination gameTermination;
 
-    public GameDisplayConnector(GamePageController gamePageController) {
+    public GameDisplayConnector(GamePageController gamePageController, GameTermination gameTermination) {
         this.gamePageController = gamePageController;
+        this.gameTermination = gameTermination;
     }
 
     // Handle a move from the front-end
@@ -67,9 +70,9 @@ public class GameDisplayConnector {
         reply.status = new game_status();
         reply.recipients = new ArrayList<>();
 
-        // Remove player from who resigned
-        // currently not implemented in GameManager
-        // gamePageController.removePlayer(event.id);
+        // Trigger game termination logic
+        //gameTermination.terminateGame(event.gameId, event.id);
+
         reply.status.type = "resign";
         reply.status.player = event.playerName + " (ID: " + event.id + ")";
 

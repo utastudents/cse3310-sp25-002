@@ -11,6 +11,7 @@ import uta.cse3310.DB.DB;
 import uta.cse3310.DB.Validate;
 import uta.cse3310.GameManager.GameManager;
 import uta.cse3310.GameManager.GamePageController;
+import uta.cse3310.GameTermination.GameTermination;
 import uta.cse3310.PairUp.PairUp;
 
 public class PageManager {
@@ -29,8 +30,7 @@ public class PageManager {
 
     private final JoinGameHandler joinGameHandler = new JoinGameHandler();
 
-    public PageManager()
-    {
+    public PageManager() {
         db = new DB();
         DB.createTable();
 
@@ -38,10 +38,14 @@ public class PageManager {
         GameManager gameManager = new GameManager();
         gamePageController = new GamePageController(gameManager);
         gameManagerSubsys = new GameManagerSubsys(gamePageController);
-        displayConnector = new GameDisplayConnector(gamePageController);
+
+        // Create GameTermination and connect it
+        GameTermination gameTermination = new GameTermination();
+        displayConnector = new GameDisplayConnector(gamePageController, gameTermination);  
 
         accountHandler = new NewAcctLogin();
     }
+
 
     // Add a new player to matchmaking
     public void handleNewPlayer(long timestamp, int clientId, String playerName, boolean playAgainstBot, int wins) {
