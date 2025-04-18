@@ -6,30 +6,27 @@ import java.sql.SQLException;
 public class Validate
 {
     public static void ValidateUser(String username){
-        try{
-            String sqlString = "SELECT username FROM USERS WHERE username = ?";
-            try (java.sql.Connection connection = DriverManager.getConnection("jdbc:sqlite:checkers.db");
+        
+            String UrlString = "jdbc:sqlite:users.db";
+            String sqlString = "SELECT 1 FROM USERS WHERE username = ?";
+            try (java.sql.Connection connection = DriverManager.getConnection(UrlString);
                 java.sql.PreparedStatement sqlStatement = connection.prepareStatement(sqlString))
             {
                 sqlStatement.setString(1, username);
-                java.sql.ResultSet resultSet = sqlStatement.executeQuery();
+                try(java.sql.ResultSet resultSet = sqlStatement.executeQuery()){
                 if(resultSet.next()){
-                    System.out.println("401 Invalid username");
+                    System.out.println("401 User name already exist");
                 }else{
-                    System.out.println("201 Username Created");
                     DB.insertUser(username);
-                    
+                    System.out.println("201 Username Created");    
                 }
             }
+        }
             catch (SQLException e)
             {
                 System.err.println("Error in the username insertion: " + e.getMessage());
             }
-            System.out.println("201 Username Created");
-        } catch (Exception e) {
-            System.err.println("Error in the database: " + e.getMessage());
-        }
-
+       
     }
 }
 //     public static void ValidateUser(String username)

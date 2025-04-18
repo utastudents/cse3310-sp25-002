@@ -1,5 +1,6 @@
 package uta.cse3310.GameTermination;
 import uta.cse3310.GamePlay.GamePlay;
+import uta.cse3310.PairUp.Match;
 import uta.cse3310.GameManager.Player;
 import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameManager.Square;
@@ -50,20 +51,27 @@ public class GameResult {
         this.winningPlayerId = null;
     }
 
-
-public void trackCapturedPieces(Player player, Board board) {
+    public void trackCapturedPieces(Player player, Board board, Match match) {
     int totalPiecesAtStart = 12;
     int remainingPieces = 0;
 
-    for (int row = 0; row < 8; row++) {
-        for (int col = 0; col < 8; col++) {
-            Square square = board.getSquare(row, col);
-            if (square != null && square.getColor() != null) { // Assume getColor() returns true = white, false = black
-                // And player.getColor() or player ID tells us which side they're on
-                if ((player.getColor() && square.getColor()) ||
-                    (!player.getColor() && !square.getColor())) {
-                    remainingPieces++;
-                }
+    Boolean playerColor = null;
+
+    if (player.getPlayerId() == match.getPlayer1Id()) {
+        playerColor = match.getPlayer1Color();
+    } else if (player.getPlayerId() == match.getPlayer2Id()) {
+        playerColor = match.getPlayer2Color();
+    } else {
+        System.out.println("Player not part of this match.");
+        return;
+    }
+
+    // Loop through board and count pieces of the player's color
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            Square square = board.getSquare(i, j);
+            if (square != null && square.getColor() != null && square.getColor().equals(playerColor)) {
+                remainingPieces++;
             }
         }
     }
@@ -71,8 +79,8 @@ public void trackCapturedPieces(Player player, Board board) {
     int capturedPieces = totalPiecesAtStart - remainingPieces;
 
     if (capturedPieces >= 12) {
-        System.out.println("Player " + player.getPlayerId() + " has lost!");
-        // PUT GAME END LOGIC HERE
+        System.out.println("Player " + player.getPlayerId() + " (" + (playerColor ? "White" : "Black") + ") has lost!");
+        // PUT GAME END HERE
     }
 }
 

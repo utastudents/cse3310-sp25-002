@@ -118,7 +118,6 @@ public class BotI extends Bot {
                 moves.add(new Move(square, newPosition));
             }
         }
-
     }
 
     /*
@@ -293,5 +292,4 @@ public class BotI extends Bot {
     private boolean isInsideBoard(int row, int col) {
         return row >= 0 && row < 8 && col >= 0 && col < 8;
     }
-
 }
