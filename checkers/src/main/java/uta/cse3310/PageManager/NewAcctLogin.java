@@ -13,6 +13,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import uta.cse3310.DB.DB;
+import uta.cse3310.DB.SQLiteConnector;
 import uta.cse3310.DB.Validate;
 
 public class NewAcctLogin
@@ -83,7 +84,8 @@ public class NewAcctLogin
         {
             //following what DB has
             String sqlString = "SELECT username FROM users WHERE username = ?";
-            try(java.sql.Connection connection = java.sql.DriverManager.getConnection("jdbc:sqlite:users.db");
+            //DB already has the SQLite Connector so just need to connect to same one
+            try(java.sql.Connection connection = SQLiteConnector.connect();
                 java.sql.PreparedStatement st = connection.prepareStatement(sqlString))
             {
                 st.setString(1,username);
