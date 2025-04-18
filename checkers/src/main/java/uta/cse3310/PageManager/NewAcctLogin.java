@@ -83,7 +83,7 @@ public class NewAcctLogin
         try
         {
             //following what DB has
-            String sqlString = "SELECT username FROM users WHERE username = ?";
+            String sqlString = "SELECT username FROM USERS WHERE username = ?";
             //DB already has the SQLite Connector so just need to connect to same one
             try(java.sql.Connection connection = SQLiteConnector.connect();
                 java.sql.PreparedStatement st = connection.prepareStatement(sqlString))
