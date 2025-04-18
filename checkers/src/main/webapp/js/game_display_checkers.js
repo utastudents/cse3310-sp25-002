@@ -579,7 +579,7 @@ class CheckersBoard {
                 // TODO: This needs to be handled by the java backend since this involves making game logic
                 this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, id: this.player_id, player: this.current_player, square: [x, y] }));
                 // we do not receive a response from the request to the websocket, so i prevented a non thread blocking mechanism.
-                // wait for 7 seconds until we get the valid moves
+                // wait for upto 7 seconds until we get the valid moves
                 setTimeout(() => {
                     if (this.last_requested_moves) {
                         console.log("waiting for valid moves....");
@@ -598,4 +598,3 @@ class CheckersBoard {
 
 
 }
-
