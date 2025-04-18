@@ -82,54 +82,54 @@ public class Matchmaking {
     }
 
     public synchronized void matching() {
-    List<Map.Entry<Integer, PlayerInMatchmaking>> entries = new ArrayList<>(players.entrySet());
-    for (int i = 0; i < entries.size(); i++) {
-        PlayerInMatchmaking p1 = entries.get(i).getValue();
-        
-        // Skip if player has already been matched
-        if (!players.containsKey(entries.get(i).getKey())) {
-            continue;
-        }
-
-        boolean matched = false;
-        
-        // First try to match with players within +/- 1 win
-        for (int j = i + 1; j < entries.size() && !matched; j++) {
-            PlayerInMatchmaking p2 = entries.get(j).getValue();
+        List<Map.Entry<Integer, PlayerInMatchmaking>> entries = new ArrayList<>(players.entrySet());
+        for (int i = 0; i < entries.size(); i++) {
+            PlayerInMatchmaking p1 = entries.get(i).getValue();
             
             // Skip if player has already been matched
-            if (!players.containsKey(entries.get(j).getKey())) {
+            if (!players.containsKey(entries.get(i).getKey())) {
                 continue;
             }
 
-            int winDifference = Math.abs(p1.getWins() - p2.getWins());
- 
-            if (winDifference <= 1) {
-                pair(p1, p2);
-                players.remove(p1.getPlayerID());
-                players.remove(p2.getPlayerID());
-                matched = true;
-            }
-        }
-
-        // If no match found and player has been waiting > 60 seconds, match with next available player
-        if (!matched && p1.getQueueTime() > 60000) { // 60000 milliseconds = 60 seconds
+            boolean matched = false;
+            
+            // First try to match with players within +/- 1 win
             for (int j = i + 1; j < entries.size() && !matched; j++) {
                 PlayerInMatchmaking p2 = entries.get(j).getValue();
                 
-                
+                // Skip if player has already been matched
                 if (!players.containsKey(entries.get(j).getKey())) {
                     continue;
                 }
 
-                pair(p1, p2);
-                players.remove(p1.getPlayerID());
-                players.remove(p2.getPlayerID());
-                matched = true;
-             }
+                int winDifference = Math.abs(p1.getWins() - p2.getWins());
+    
+                if (winDifference <= 1) {
+                    pair(p1, p2);
+                    players.remove(p1.getPlayerID());
+                    players.remove(p2.getPlayerID());
+                    // System.out.println("Matched by wins");
+                    matched = true;
+                }
             }
-        
-       
-}
-}
+
+            // If no match found and player has been waiting > 60 seconds, match with next available player
+            if (!matched && p1.getQueueTime() > 60000) { // 60000 milliseconds = 60 seconds
+                System.out.println("P1 queue time: " + p1.getQueueTime());
+                for (int j = i + 1; j < entries.size() && !matched; j++) {
+                    PlayerInMatchmaking p2 = entries.get(j).getValue();
+                    
+                    if (!players.containsKey(entries.get(j).getKey())) {
+                        continue;
+                    }
+
+                    pair(p1, p2);
+                    players.remove(p1.getPlayerID());
+                    players.remove(p2.getPlayerID());
+                    // System.out.println("Matched by timer");
+                    matched = true;
+                }
+            }      
+        }
+    }
 }

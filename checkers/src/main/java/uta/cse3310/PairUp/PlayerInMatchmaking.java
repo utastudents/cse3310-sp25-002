@@ -47,8 +47,8 @@ public class PlayerInMatchmaking {
         return wins;
     }
 
-    int getQueueTime() {
-        return (int) (System.currentTimeMillis() - timeOfEntry);
+    public long getQueueTime() {
+        return (long) (System.currentTimeMillis() - timeOfEntry);
     }
 
     @Override
