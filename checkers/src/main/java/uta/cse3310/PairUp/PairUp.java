@@ -34,28 +34,55 @@ public class PairUp {
 
     }
     
+    /*
+        Removes a player from the matchmaking queue.
+        Parameters:
+        - PlayerID: The unique ID of the player to be removed
+    */
     public void removePlayer(int PlayerID)
     {
-        // Request a removal from Matchmaking
         Mmaker.removePlayer(PlayerID);
 
     }
 
+    /*
+        Searches for a player in the matchmaking queue.
+        Parameters:
+        - PlayerID: The unique ID of the player to search for
+        Returns:
+        - Boolean indicating whether the player is in the queue
+    */
     public boolean searchPlayer(int PlayerID)
     {
         return Mmaker.getPlayer(PlayerID);
     }
 
+    /*
+        Clears all players from the matchmaking queue.
+        This method is typically used to reset the matchmaking system.
+    */
     public void clearPlayers()
     {
         Mmaker.players.clear();
     }
 
+    /*
+        Triggers the matchmaking process.
+        This method is used to attempt pairing players in the queue.
+    */
     public void ping()
     {
         Mmaker.matching();
     }
 
+    /*
+        Directly pairs two players for a match.
+        Parameters:
+        - p1ID: The unique ID of player 1
+        - p1Name: The name of player 1
+        - p2ID: The unique ID of player 2
+        - p2Name: The name of player 2
+    */
     public void pair(int p1ID, String p1Name, int p2ID, String p2Name)
     {
         // Directly establishes match between two players

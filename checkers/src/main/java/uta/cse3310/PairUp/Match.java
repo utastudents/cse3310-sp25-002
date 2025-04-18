@@ -7,14 +7,14 @@ package uta.cse3310.PairUp;
 */
 public class Match {
 
-    private int player1Id;
-    private int player2Id;
-    private String player1Name; 
-    private String player2Name;
-    private Boolean isBot;
-    private int gameId;
-    private Boolean player1Color;
-    private Boolean player2Color;
+    private int player1Id; // Player 1's unique ID
+    private int player2Id; // Player 2's unique ID
+    private String player1Name; // Player 1's name
+    private String player2Name; // Player 2's name
+    private Boolean isBot; // Indicates if the match is against a bot
+    private int gameId; // Unique game ID for the match
+    private Boolean player1Color; // Player 1's piece color (true for one color, false for the other)
+    private Boolean player2Color; // Player 2's piece color (true for one color, false for the other)
 
 
     public Match(int player1Id, int player2Id, String player1Name, String player2Name,
