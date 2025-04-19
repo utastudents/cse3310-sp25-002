@@ -6,7 +6,6 @@ class Matchmaking {
         this.notification = notification;
         this.playerWaitlist = playerWaitlist;
         this.botWaitlist = botWaitlist;
-
     }
 
     addToQueue(playerID) {
@@ -26,6 +25,7 @@ class Matchmaking {
         }
 
         this.playerWaitlist.remove(player.getID());
+        this.data.setGameMode("Human");
         this.communication.sendPlayerAttributes(this.data.getGameMode());
         this.notification.displayNotification("Finding player match...");
     }
@@ -42,6 +42,7 @@ class Matchmaking {
         }
 
         this.botWaitlist.remove(player.getID());
+        this.data.setGameMode("Bot");
         this.communication.sendPlayerAttributes(this.data.getGameMode());
         this.notification.displayNotification("Starting bot match...");
     }
@@ -51,6 +52,7 @@ class Matchmaking {
     requestSpectateBotVsBot(playerID) {
         // Called when a player wants to spectate a match between two bots.
         // Should be a button
+        this.data.setGameMode("Spectate");
         this.communication.sendPlayerAttributes(this.data.getGameMode());
         this.notification.displayNotification("Loading bot vs bot match...");
     }
