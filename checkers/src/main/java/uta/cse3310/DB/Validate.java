@@ -2,16 +2,23 @@ package uta.cse3310.DB;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 
 public class Validate
 {
     public static void ValidateUser(String username){
-        
-            String UrlString = "jdbc:sqlite:users.db";
             String sqlString = "SELECT 1 FROM USERS WHERE username = ?";
-            try (java.sql.Connection connection = DriverManager.getConnection(UrlString);
-                java.sql.PreparedStatement sqlStatement = connection.prepareStatement(sqlString))
+
+            try (Connection connection = SQLiteConnector.connect();
+                PreparedStatement sqlStatement = connection.prepareStatement(sqlString))
             {
+                if (connection == null) {
+                    System.err.println("Error: Failed to connect to database.");
+                    return;
+                }
                 sqlStatement.setString(1, username);
                 try(java.sql.ResultSet resultSet = sqlStatement.executeQuery()){
                 if(resultSet.next()){
