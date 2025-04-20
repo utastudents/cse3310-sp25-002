@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.DB.Validate;
@@ -100,17 +101,25 @@ public class PageManager {
 
         switch (U.type) {
             case "join": {
-                //Receiving the username from Login team, so
-                //adding this to confirm. more of a debug
                 System.out.println("Received username: " + U.playerName);
 
-                JsonObject result = handleUsernameValidation(U.playerName);
-                ret.status.type = result.get("type").getAsString();
-                
-                ret.status.msg = result.get("accepted").getAsBoolean() ? "accepted" : "rejected";
+                // Wrap username into JSON format for compatibility
+                JsonObject input = new JsonObject();
+                input.addProperty("username", U.playerName);
+
+                // Call the login handler (returns a JSON string)
+                String loginResult = accountHandler.processUsernameInput(input.toString());
+
+                // Parse the string response into a JsonObject
+                JsonObject parsed = JsonParser.parseString(loginResult).getAsJsonObject();
+
+                // Populate the game_status reply
+                ret.status.type = "username_status";
+                ret.status.msg = parsed.get("Message").getAsString();
+                ret.status.clientID = U.id; // Use .clientId if that's what you're assigning in App.java
+
                 break;
             }
-
             case "test": {
                 return displayConnector.sendShowGameDisplayTest(U);
             }

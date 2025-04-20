@@ -7,6 +7,7 @@
 // If not, add to DB and send back success message.
 // This will ensure no duplicate usernames while providing immediate feedback to users during registration.
 
+// Would be better to return a JSON object with status and message rather than a string.
 package uta.cse3310.PageManager;
 
 import com.google.gson.JsonObject;
@@ -48,8 +49,9 @@ public class NewAcctLogin
             JsonObject validate = pm.handleUsernameValidation(username);
             boolean accepted = validate.get("accepted").getAsBoolean();
 
-            response.addProperty("Status", accepted ? "Success!" : "Error");
-            response.addProperty("Message", accepted ? "Success!" : "Error");
+            response.addProperty("Status", accepted ? "Success" : "Error");
+            response.addProperty("Message", accepted ? "Username accepted" : "Username is already taken or invalid.");
+
         }
         catch(Exception e)
         {
