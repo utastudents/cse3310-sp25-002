@@ -102,7 +102,7 @@ uInput.onkeyup = function() {
             const userData = 
             {
                 type: "join",
-                username: username
+                playerName: username
             }
             // Sending data through WebSocket
             if(connection === WebSocket.OPEN)

@@ -98,7 +98,7 @@ function sendUsername()
     const userData = 
   {
     type: "join", 
-    username: username
+    playerName: username
   };
 
   //Sending name through WebSocket
