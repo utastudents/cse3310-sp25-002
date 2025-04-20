@@ -10,24 +10,24 @@
 
 </head>
 <body>
-  <div class ="wrapper">
-    <div class="header">
-      <article class="mascot">
-        <div class="Piece">
-          <div class="Face"></div>
+  <div class ="login_wrapper">
+    <div class="login_header">
+      <article class="login_mascot">
+        <div class="login_Piece">
+          <div class="login_Face"></div>
         </div>
       </article>
       <h1>CHECKERS WITH 3310-002</h1>
   <div>
     
     <form action="">
-      <div class="input-box">
+      <div class="login_input-box">
         <label for="username">Username</label>
         <input type="text" placeholder="Enter Username" id="username" 
   pattern="^(?=.\d)(?=.[A-Za-z])(?=.[!@#$%^&])(?!.*\s).{8,}$" required />
       </div>
 
-      <div id="message">
+      <div id="login_message">
         <h3>Username must contain:</h3>
         <p id="letter" class="invalid">A <b>Letter</b></p>
         <p id="num" class="invalid">A <b>Number</b></p>
@@ -36,7 +36,7 @@
         <p id="space" class="invalid"><b>No spaces</b> allowed</p> 
       </div>
 
-      <button onclick="joinGame()">Join Game</button>
+      <button id= login_button onclick="joinGame()">Join Game</button>
     </form>
   </div>
 

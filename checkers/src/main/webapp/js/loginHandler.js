@@ -9,12 +9,12 @@ var length = document.getElementById("length");
 
 // User Clicks in input field
 uInput.onfocus = function() {
-  document.getElementById("message").style.display = "block";
+  document.getElementById("login_message").style.display = "block";
 }
 
 // User Clicks outside input field
 uInput.onblur = function() {
-  document.getElementById("message").style.display = "none";
+  document.getElementById("login_message").style.display = "none";
 }
 
 
@@ -26,40 +26,40 @@ uInput.onkeyup = function() {
   //Letter
   var Letter = /[A-Za-z]/g;
   if(uInput.value.match(Letter)) {  
-    letter.classList.remove("invalid");
-    letter.classList.add("valid");
+    letter.classList.remove("login_invalid");
+    letter.classList.add("login_valid");
   } else {
-    letter.classList.remove("valid");
-    letter.classList.add("invalid");
+    letter.classList.remove("login_valid");
+    letter.classList.add("login_invalid");
   }
 
   // Numbers
   var numbers = /[0-9]/g;
   if(uInput.value.match(numbers)) {  
-    num.classList.remove("invalid");
-    num.classList.add("valid");
+    num.classList.remove("login_invalid");
+    num.classList.add("login_valid");
   } else {
-    num.classList.remove("valid");
-    num.classList.add("invalid");
+    num.classList.remove("login_valid");
+    num.classList.add("login_invalid");
   }
 
   // Special Characters
   var specialChars = /[!@#$%^&*]/g;
   if(uInput.value.match(specialChars)) {  
-    special.classList.remove("invalid");
-    special.classList.add("valid");
+    special.classList.remove("login_invalid");
+    special.classList.add("login_valid");
   } else {
-    special.classList.remove("valid");
-    special.classList.add("invalid");
+    special.classList.remove("login_valid");
+    special.classList.add("login_invalid");
   }
   
   // Length
   if(uInput.value.length >= 8) {
-    length.classList.remove("invalid");
-    length.classList.add("valid");
+    length.classList.remove("login_invalid");
+    length.classList.add("login_valid");
   } else {
-    length.classList.remove("valid");
-    length.classList.add("invalid");
+    length.classList.remove("login_valid");
+    length.classList.add("login_invalid");
   }
 }
 
