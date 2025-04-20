@@ -12,6 +12,10 @@ public class game_status {
     public int game_id;
     public String playerName;
 
+    // login data
+    public String Status;
+    public String Message;
+
     // game state data
     public boolean gameOver = false;
     public Integer winner = null;

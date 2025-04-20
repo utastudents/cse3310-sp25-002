@@ -114,9 +114,8 @@ public class PageManager {
                 JsonObject parsed = JsonParser.parseString(loginResult).getAsJsonObject();
 
                 // Populate the game_status reply
-                ret.status.type = "username_status";
-                ret.status.msg = parsed.get("Message").getAsString();
-                ret.status.clientID = U.id; // Use .clientId if that's what you're assigning in App.java
+                ret.status.Status = parsed.get("Status").getAsString();
+                ret.status.Message = parsed.get("Message").getAsString();
 
                 break;
             }
