@@ -40,6 +40,8 @@ public class JoinGameHandler {
         game_status status = new game_status();
         status.type = "join_response";
         status.msg = playAgainstBot ? "Matched with Bot!" : "Waiting for another player...";
+        status.clientID = clientID;
+        status.isBot = playAgainstBot;  
         return status;
     }
 
