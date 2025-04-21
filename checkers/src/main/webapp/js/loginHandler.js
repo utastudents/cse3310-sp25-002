@@ -128,7 +128,7 @@ function receiveFromPageManager(msg) {
     /*If the username is valid and user is added in DB, 
     hide the current login section*/
     document.getElementById("new_account").style.display = "none";
-    document.getElementById("join_game").style.display = "block";
+    document.getElementById("game_lobby").style.display = "block";
   } 
   else if (msg.Status === "Error") //If username exists or input is invalid.
   {
