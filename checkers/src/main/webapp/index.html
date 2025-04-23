@@ -1,64 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Page</title>
-   <link rel="icon" type="image/png" href="login/Tokens.png">
-  <link rel = "stylesheet" href="login/style.css">
+  <link rel="icon" type="image/png" href="login/Tokens.png">
+  <link rel="stylesheet" href="login/style.css">
   <link rel="stylesheet" href="joingame/styles.css">
 </head>
 
 <body>
 
-  <div id = "new_account">
+  <div id="new_account">
 
-   <!-- Container of the login page -->
+    <!-- Container of the login page -->
     <div class="login_container">
 
-    <div class="login_left-panel">
-      <article class="login_mascot">
-        <div class="login_Piece">
-          <div class="login_Face">
+      <div class="login_left-panel">
+        <article class="login_mascot">
+          <div class="login_Piece">
+            <div class="login_Face">
+            </div>
           </div>
-        </div>
-      </article>
-      <h1>
-        <span class="title-top">CHECKERS WITH</span><br>
-        <span class="title-bottom">CSE 3310-002</span>
-      </h1>
-    </div>
-  
-    <div class="login_right-panel">
-      <form onsubmit="joinGame(); return false;">
-    </div>
+        </article>
+        <h1>
+          <span class="title-top">CHECKERS WITH</span><br>
+          <span class="title-bottom">CSE 3310-002</span>
+        </h1>
+      </div>
 
-    <div class="login_input-box">
-      <input type="text" placeholder="Enter Username" id="username" 
-        pattern="(?=.*\d)(?=.*[A-Za-z])(?=.*[!@#$%^&*]).{8,}" required />
-    </div>
+      <div class="login_right-panel">
+        <form onsubmit="joinGame(); return false;">
+      </div>
 
-    <div id="login_message">
-      <h3>Username must contain:</h3>
-      <p id="letter" class="invalid">A <b>Letter</b></p>
-      <p id="num" class="invalid">A <b>Number</b></p>
-      <p id="special" class="invalid">A <b>Special Character</b></p>
-      <p id="length" class="invalid">Minimum <b>8 characters</b></p>
-    </div>
+      <div class="login_input-box">
+        <input type="text" placeholder="Enter Username" id="username"
+          pattern="(?=.*\d)(?=.*[A-Za-z])(?=.*[!@#$%^&*]).{8,}" required />
+      </div>
 
-    <div class="login_button-container">
-      <button type="submit">Join Game</button>
-    </div>
+      <div id="login_message">
+        <h3>Username must contain:</h3>
+        <p id="letter" class="invalid">A <b>Letter</b></p>
+        <p id="num" class="invalid">A <b>Number</b></p>
+        <p id="special" class="invalid">A <b>Special Character</b></p>
+        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+      </div>
 
-  </div>
+      <div class="login_button-container">
+        <button type="submit">Join Game</button>
+      </div>
+
+    </div>
   </div>
 
   <div id="game_lobby">
-    
+
     <header>
       <h1>Game Lobby</h1>
     </header>
-    
+
     <main>
       <section id="game-options">
         <h2>Choose a Game Mode</h2>
@@ -74,153 +75,153 @@
         <div class="waitlist-container">
         </div>
       </section>
-        
+
       <section id="notification-section">
         <h2>Notifications</h2>
         <div id="notification">Ready to play!</div>
       </section>
     </main>
   </div>
-  
+
   <div id="join_game">
 
     join game
   </div>
-    
+
   <div id="game_display">
     game display
     <div style="width: 336px; max-width:auto; margin: 10px auto;" class="hidden" id="game_display_container">
-    <div style="text-align: center; font-size: 16px; margin-top: 10px; font-weight: bold; color: #333;">
-      <p id="current-player">Current Player: Player 1</p>
-  </div>
-  
-  <br/>
-  
-  <div class="game" style="display: inline-block; border: 4px solid #333; background: #333; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.3); width: 328px; height: 328px; padding: 0; box-sizing: content-box;"></div>
-    <div style="margin-top: 15px; text-align: center;">
-    <button id="resign_buttom" class="button" style="background-color: #ff4f4f; color: white; padding: 8px 16px; font-size: 14px; border: none; cursor: pointer; margin: 5px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: all 0.2s ease;">Resign</button>
-    <button id="offer_draw_button" class="button" style="background-color: #ffcb45; color: #333; padding: 8px 16px; font-size: 14px; border: none; cursor: pointer; margin: 5px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: all 0.2s ease;">Offer Draw</button>
-  </div>
-       
-  <div id="summary">
-    summary
-  </div>
-  
-    <!-- Note from gamedisplay: Our entire component mostly uses javascript to handle the game display. The only thing we use html for is to create the divs that will be used to display the game. The rest of the functionality is handled by javascript. -->
-    <!-- WARNING: Do not remove this javascript file!! This javascript code contains logic for the game display. Imports the CheckersBoard class which contains methods to create and add functionality to the checkers board. -->
-    <script src="js/game_display_checkers.js"></script>
+      <div style="text-align: center; font-size: 16px; margin-top: 10px; font-weight: bold; color: #333;">
+        <p id="current-player">Current Player: Player 1</p>
+      </div>
 
-    </body>
+      <br />
+
+      <div class="game"
+        style="display: inline-block; border: 4px solid #333; background: #333; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.3); width: 328px; height: 328px; padding: 0; box-sizing: content-box;">
+      </div>
+      <div style="margin-top: 15px; text-align: center;">
+        <button id="resign_buttom" class="button"
+          style="background-color: #ff4f4f; color: white; padding: 8px 16px; font-size: 14px; border: none; cursor: pointer; margin: 5px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: all 0.2s ease;">Resign</button>
+        <button id="offer_draw_button" class="button"
+          style="background-color: #ffcb45; color: #333; padding: 8px 16px; font-size: 14px; border: none; cursor: pointer; margin: 5px; border-radius: 20px; font-weight: bold; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); transition: all 0.2s ease;">Offer
+          Draw</button>
+      </div>
+
+      <div id="summary">
+        summary
+      </div>
+
+      <!-- Note from gamedisplay: Our entire component mostly uses javascript to handle the game display. The only thing we use html for is to create the divs that will be used to display the game. The rest of the functionality is handled by javascript. -->
+      <!-- WARNING: Do not remove this javascript file!! This javascript code contains logic for the game display. Imports the CheckersBoard class which contains methods to create and add functionality to the checkers board. -->
+      <script src="js/game_display_checkers.js"></script>
+
+</body>
+
 </html>
 <script>
 
-     // make only the 'new account'  part visible..
+  // make only the 'new account'  part visible..
 
-     document.getElementById("new_account").style.display = "initial";
-     document.getElementById("game_lobby").style.display = "none";
-     document.getElementById("join_game").style.display = "none";
-     document.getElementById("game_display").style.display = "none";
-     document.getElementById("summary").style.display = "none";
+  document.getElementById("new_account").style.display = "initial";
+  document.getElementById("game_lobby").style.display = "none";
+  document.getElementById("join_game").style.display = "none";
+  document.getElementById("game_display").style.display = "none";
+  document.getElementById("summary").style.display = "none";
 
 
 
-    // a reminder.  we want to create one websocket connection, and use if, basically forever.
-    // or until the user decides to go to another page.
-    // this requires everything to load from this page.
-    var connection = null;
+  // a reminder.  we want to create one websocket connection, and use if, basically forever.
+  // or until the user decides to go to another page.
+  // this requires everything to load from this page.
+  var connection = null;
 
-    var clientId = 0;
+  var clientId = 0;
 
-    var serverUrl;
-    serverUrl = "ws://" + window.location.hostname + ":" + (parseInt(location.port) + 100);
-    connection = new WebSocket(serverUrl);
+  var serverUrl;
+  serverUrl = "ws://" + window.location.hostname + ":" + (parseInt(location.port) + 100);
+  connection = new WebSocket(serverUrl);
 
-    connection.onopen = function (evt) {
-        console.log("open");
+  connection.onopen = function (evt) {
+    console.log("open");
+  }
+
+  connection.onclose = function (evt) {
+    console.log("close");
+  }
+
+  connection.onmessage = function (evt) {
+    var msg;
+    msg = evt.data;
+
+    // one websocket for the whole client.
+    // everything has to come in right here on this on_message() callback
+
+    console.log("Message received: " + msg);
+
+    // as near as I can tell, there is a desire to send specific processing into specific js files / routines for 
+    // processing.  which is great.  but it needs to have some discipline.
+
+    // first, turn the websocket message into a js class for easy processing.
+    // if it isn't json formatted, you will get an exception.  maybe a try / catch would be smart?
+    let inputData = JSON.parse(msg);
+    // depending on what it is, we can then call the other routines for processing
+    // (put a test here to determine which object type was received)
+    // (the test may get a little more complicated, since field names are not unique.
+    //  but, all of the fields in a class should be)
+    if ('clientId' in inputData) {
+      console.log("recieved a client id of " + inputData.clientId);
+      clientId = inputData.clientId; // save this, it will be important.  globally important.
+    }
+    // this if may need some more knowledge to make it correct.. or maybe one routine needs
+    // to deal with instances of this class that are sent....
+    else if ('isBot' in inputData && 'game_id' in inputData && 'Message' in inputData) {
+      // an example of what is expected if we get here..
+      //{"clientID":0,"isBot":false,"game_id":0,"Status":"Success","Message":"Username accepted","gameOver":false,"draw":false}
+      receiveFromPageManager(inputData); // notice that an instance of the class is passed as an argument.  perhaps not
+      // all of the class has to be sent
+    }
+    else if (0) {
+      // do not like this function, because it wants the connection?
+      // why would we leak this out and need to pass this around?
+
+      //game_display_handle_websocket_received_data(connection, data);
+    }
+    else {
+      console.log("msg received, but unknown");
     }
 
-    connection.onclose = function (evt) {
-        console.log("close");
-    }
-
-    connection.onmessage = function (evt) {
-        var msg;
-        msg = evt.data;
-
-        // one websocket for the whole client.
-        // everything has to come in right here on this on_message() callback
-
-        console.log("Message received: " + msg);
-
-        // as near as I can tell, there is a desire to send specific processing into specific js files / routines for 
-        // processing.  which is great.  but it needs to have some discipline.
-
-        // first, turn the websocket message into a js class for easy processing.
-        // if it isn't json formatted, you will get an exception.  maybe a try / catch would be smart?
-        let inputData = JSON.parse(msg);
-        // depending on what it is, we can then call the other routines for processing
-        // (put a test here to determine which object type was received)
-        // (the test may get a little more complicated, since field names are not unique.
-        //  but, all of the fields in a class should be)
-        if ('clientId' in inputData)
-        {
-            console.log("recieved a client id of "+inputData.clientId);
-            clientId = inputData.clientId; // save this, it will be important.  globally important.
-        }
-        // this if may need some more knowledge to make it correct.. or maybe one routine needs
-        // to deal with instances of this class that are sent....
-        else if ('isBot' in inputData && 'game_id' in inputData && 'Message' in inputData)
-        {
-            // an example of what is expected if we get here..
-            //{"clientID":0,"isBot":false,"game_id":0,"Status":"Success","Message":"Username accepted","gameOver":false,"draw":false}
-            receiveFromPageManager(inputData); // notice that an instance of the class is passed as an argument.  perhaps not
-            // all of the class has to be sent
-        }
-        else if (0)
-        {
-            // do not like this function, because it wants the connection?
-            // why would we leak this out and need to pass this around?
-
-          //game_display_handle_websocket_received_data(connection, data);
-        }
-        else 
-        {
-            console.log("msg received, but unknown");
-        }
 
 
 
 
+    // previous comment, not sure if it is valid or a misunderstanding.  leaving it here for now.
+    // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
+    // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
+    //game_display_handle_websocket_received_data(connection, data);
 
-        // previous comment, not sure if it is valid or a misunderstanding.  leaving it here for now.
-        // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
-        // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
-        //game_display_handle_websocket_received_data(connection, data);
+    //Receiving from Page Manager (newAccount)
+    //receiveFromPageManager(data);
+  }
 
-        //Receiving from Page Manager (newAccount)
-        //receiveFromPageManager(data);
-    }
+  // Note from Game Display: comment the line below to hide the game board
+  setTimeout(show_game_display(connection, "134242424", "this is player 1", "this is player2", "B"), 3000);
 
-    // Note from Game Display: comment the line below to hide the game board
-    setTimeout(show_game_display(connection, "134242424", "this is player 1", "this is player2", "B"),3000);
+  class UserEvent {
+    msg;
+  }
 
-    class UserEvent {
-        msg;
-    }
+  function msg() {
+    console.log("button clicked");
+    U = new UserEvent();
+    U.msg = "i pushed a button";
+    connection.send(JSON.stringify(U));
+    console.log(JSON.stringify(U))
+  }
 
-    function msg() {
-        console.log("button clicked");
-        U = new UserEvent();
-        U.msg="i pushed a button";
-        connection.send(JSON.stringify(U));
-        console.log(JSON.stringify(U))
-    }
-
-  document.addEventListener('DOMContentLoaded', () => 
-  {
+  document.addEventListener('DOMContentLoaded', () => {
     // Initialize only if the game_lobby element is visible
-    if (document.getElementById('game_lobby') && document.getElementById('game_lobby').style.display !== 'none') 
-    {
+    if (document.getElementById('game_lobby') && document.getElementById('game_lobby').style.display !== 'none') {
       console.log("Initializing Join Game component...");
       window.joinGameManager = new JoinGameManager();
       window.joinGameManager.initialize();
@@ -228,10 +229,10 @@
   });
 
 </script>
-<script src = "js/loginHandler.js"></script>
+<script src="js/loginHandler.js"></script>
 <script src="joingame/Data.js"></script>
 <script src="joingame/Waitlist.js"></script>
 <script src="joingame/Displaynotification.js"></script>
-<script src="joingame/Communication.js"></script> 
-<script src="joingame/MatchMaking.js"></script> 
-<script src="joingame/JoinGameManager.js"></script> 
+<script src="joingame/Communication.js"></script>
+<script src="joingame/MatchMaking.js"></script>
+<script src="joingame/JoinGameManager.js"></script>
