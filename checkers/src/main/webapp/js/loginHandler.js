@@ -105,6 +105,7 @@ function sendUsername()
 
   if (connection.readyState === WebSocket.OPEN) {
     connection.send(JSON.stringify(userData)); //Sending JSON
+    console.log("sending "+JSON.stringify(userData));
   } else {
     errorDiv.innerText = "Connection to server not available.";
     errorDiv.style.display = "block";
@@ -112,31 +113,23 @@ function sendUsername()
 }
         
 function receiveFromPageManager(msg) {
-  if (typeof msg === "string") 
-  {
-    try {
-      msg = JSON.parse(msg);
-    } catch (e) {
-      console.log("Failed to parse backend message:", e);
-      return;
-    }
-  }
+  console.log("the message is "+msg);
 
   // Handling backend message structure
   if (msg.Status === "Success") 
   {
+      console.log("success on the username");
     /*If the username is valid and user is added in DB, 
     hide the current login section*/
-    document.getElementById("new_account").style.display = "none";
-    document.getElementById("game_lobby").style.display = "block";
-  } 
-  else if (msg.Status === "Error") //If username exists or input is invalid.
-  {
-    console.log("Username is already taken or invalid:", msg.Message);
+
+      // right now, this is blanking the entire screen.
+      // next highest priority thing to work....
+    //document.getElementById("new_account").style.display = "none";
+    //document.getElementById("game_lobby").style.display = "block";
+ } 
+ else if (msg.Status === "Error") //If username exists or input is invalid.
+ {
+   console.log("Username is already taken or invalid:", msg.Message);
     alert(msg.Message || "Username not accepted.");
-  } 
-  else //if the recieved msg isn't valid (wrong msg)
-  {
-    console.log("Unknown message type:", msg);
-  }
+ } 
 }
