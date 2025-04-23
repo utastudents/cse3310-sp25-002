@@ -120,10 +120,16 @@
     </body>
 </html>
 <script>
-    // each of the 'divs' in the html page should have attributes to allow them to be hidden.
-    // the page manager should send a small json message, that tells which of these are hidden
-    // and which are visible when there is a change
-    // something like "{"display_new_account":t,"display_join_game":f,"display_game_display:f,"display_summary":f}"
+
+     // make only the 'new account'  part visible..
+
+     document.getElementById("new_account").style.display = "initial";
+     document.getElementById("game_lobby").style.display = "none";
+     document.getElementById("join_game").style.display = "none";
+     document.getElementById("game_display").style.display = "none";
+     document.getElementById("summary").style.display = "none";
+     document.getElementById("stuff").style.display = "none";
+
 
 
     // a reminder.  we want to create one websocket connection, and use if, basically forever.

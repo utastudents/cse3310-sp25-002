@@ -122,11 +122,13 @@ function receiveFromPageManager(msg) {
     /*If the username is valid and user is added in DB, 
     hide the current login section*/
 
-      // right now, this is blanking the entire screen.
-      // next highest priority thing to work....
     document.getElementById("new_account").style.display = "none";
     document.getElementById("game_lobby").style.display = "initial";
-      // and the other ones go here.....
+    document.getElementById("join_game").style.display = "none";
+    document.getElementById("game_display").style.display = "none";
+    document.getElementById("summary").style.display = "none";
+    document.getElementById("stuff").style.display = "none";
+
  } 
  else if (msg.Status === "Error") //If username exists or input is invalid.
  {
