@@ -127,7 +127,6 @@ function receiveFromPageManager(msg) {
     document.getElementById("join_game").style.display = "none";
     document.getElementById("game_display").style.display = "none";
     document.getElementById("summary").style.display = "none";
-    document.getElementById("stuff").style.display = "none";
 
  } 
  else if (msg.Status === "Error") //If username exists or input is invalid.
