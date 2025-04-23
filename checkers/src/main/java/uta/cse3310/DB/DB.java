@@ -23,6 +23,8 @@ public class DB
 			if(connection != null)
 			{
 				stmt.execute(createStatement);
+				insertUser("Bot1");
+				insertUser("Bot2");
 			}
 			else
 			{
