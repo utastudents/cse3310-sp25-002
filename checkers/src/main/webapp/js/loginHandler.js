@@ -124,8 +124,9 @@ function receiveFromPageManager(msg) {
 
       // right now, this is blanking the entire screen.
       // next highest priority thing to work....
-    //document.getElementById("new_account").style.display = "none";
-    //document.getElementById("game_lobby").style.display = "block";
+    document.getElementById("new_account").style.display = "none";
+    document.getElementById("game_lobby").style.display = "initial";
+      // and the other ones go here.....
  } 
  else if (msg.Status === "Error") //If username exists or input is invalid.
  {
