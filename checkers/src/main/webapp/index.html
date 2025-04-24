@@ -287,15 +287,6 @@
     console.log(JSON.stringify(U))
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // Initialize only if the game_lobby element is visible
-    if (document.getElementById('game_lobby') && document.getElementById('game_lobby').style.display !== 'none') {
-      console.log("Initializing Join Game component...");
-      window.joinGameManager = new JoinGameManager();
-      window.joinGameManager.initialize();
-    }
-  });
-
 </script>
 <script src="js/loginHandler.js"></script>
 <script src="joingame/Data.js"></script>
