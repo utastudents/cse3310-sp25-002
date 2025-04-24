@@ -219,8 +219,7 @@
   }
 
   connection.onmessage = function (evt) {
-    var msg;
-    msg = evt.data;
+    const msg = evt.data;
 
     // one websocket for the whole client.
     // everything has to come in right here on this on_message() callback
@@ -254,6 +253,10 @@
       // why would we leak this out and need to pass this around?
 
       //game_display_handle_websocket_received_data(connection, data);
+    }
+    else if ('msg' in inputData && 'type' in inputData && inputData.type === 'join_response'){
+      const joinResponseEvent = new CustomEvent('joinResponseReceived', { detail: inputData});
+      window.dispatchEvent(joinResponseEvent);
     }
     else {
       console.log("msg received, but unknown");
