@@ -130,6 +130,11 @@ function receiveFromPageManager(msg) {
     document.getElementById("game_display").style.display = "none";
     document.getElementById("summary").style.display = "none";
 
+    if (!window.joinGameManager){
+      window.joinGameManager = new JoinGameManager();
+    }
+    window.joinGameManager.initialize();
+
  } 
  else if (msg.Status === "Error") //If username exists or input is invalid.
  {
