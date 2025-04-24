@@ -116,6 +116,7 @@ public class PageManager {
                 // Populate the game_status reply
                 ret.status.Status = parsed.get("Status").getAsString();
                 ret.status.Message = parsed.get("Message").getAsString();
+                ret.status.playerName = U.playerName;
 
                 break;
             }
