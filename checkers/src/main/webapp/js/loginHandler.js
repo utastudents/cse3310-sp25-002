@@ -66,7 +66,6 @@ uInput.onkeyup = function() {
 function joinGame() 
 {
   const username = document.getElementById('username').value;
-  window.playerUsername = username;
   const pattern = /^(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
   if (!username) 
     {
@@ -122,6 +121,8 @@ function receiveFromPageManager(msg) {
       console.log("success on the username");
     /*If the username is valid and user is added in DB, 
     hide the current login section*/
+
+    window.playerUsername = msg.playerName;
 
     document.getElementById("new_account").style.display = "none";
     document.getElementById("game_lobby").style.display = "initial";
