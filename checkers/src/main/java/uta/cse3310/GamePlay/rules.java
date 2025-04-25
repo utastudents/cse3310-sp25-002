@@ -230,9 +230,25 @@ public class rules
         return legality;
     }
 
-    
+
     static protected boolean hasLegalCapture(Game game, Move move) {
-        // To be implemented
+       Square start = move.getStart();
+    Board board = game.getBoard();
+    boolean playerColor = game.getCurrentTurn().getColor();
+
+    int row = start.getRow();
+    int col = start.getCol();
+
+    // Set directions (basic placeholder for now)
+    int[][] directions = {
+        {-1, -1}, {-1, 1},
+        {1, -1}, {1, 1}
+    };
+
+    for (int[] dir : directions) {
+        // Logic to be added
+    }
+
         return false;
     }
 
