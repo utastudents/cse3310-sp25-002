@@ -230,6 +230,14 @@ public class rules
         return legality;
     }
 
+    
+    static protected boolean hasLegalCapture(Game game, Move move) {
+        // To be implemented
+        return false;
+    }
+
+
+
     //Check to see if current player can move selected piece
     //Does the color of the player match the color of the piece
     static protected boolean canMovePiece(Board board, Square square, Game game)
