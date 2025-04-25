@@ -231,26 +231,49 @@ public class rules
     }
 
 
-    static protected boolean hasLegalCapture(Game game, Move move) {
-       Square start = move.getStart();
+    // Checks if a legal capture is available from the starting square of the move.
+// Returns true if at least one valid jump (capture) exists.
+// Considers both regular and king pieces.
+static protected boolean hasLegalCapture(Game game, Move move) {
+    Square start = move.getStart(); // Get the piece's current square
     Board board = game.getBoard();
-    boolean playerColor = game.getCurrentTurn().getColor();
+    boolean playerColor = game.getCurrentTurn().getColor(); // true = white, false = black
 
     int row = start.getRow();
     int col = start.getCol();
 
-    // Set directions (basic placeholder for now)
-    int[][] directions = {
-        {-1, -1}, {-1, 1},
-        {1, -1}, {1, 1}
-    };
+    // If king, check all 4 directions. Else, only forward diagonals based on color.
+    int[][] directions = start.isKing()
+        ? new int[][] { {-2, -2}, {-2, 2}, {2, -2}, {2, 2} } // King: all 4 directions
+        : (playerColor
+            ? new int[][] { {-2, -2}, {-2, 2} }              // White: moves upward
+            : new int[][] { {2, -2}, {2, 2} });              // Black: moves downward
 
     for (int[] dir : directions) {
-        // Logic to be added
+        int newRow = row + dir[0]; // landing square row
+        int newCol = col + dir[1]; // landing square col
+
+        // Skip if out of board
+        if (newRow < 0 || newRow > 7 || newCol < 0 || newCol > 7)
+            continue;
+
+        Square landing = board.getSquare(newRow, newCol); // potential landing square
+        if (landing != null && !landing.hasPiece()) {
+            int midRow = row + dir[0] / 2; // middle square row (piece to capture)
+            int midCol = col + dir[1] / 2; // middle square col
+            Square middle = board.getSquare(midRow, midCol);
+
+            // Check if middle square has opponent's piece
+            if (middle != null && middle.hasPiece() && middle.getColor() != playerColor) {
+                return true; // Found a legal capture move
+            }
+        }
     }
 
-        return false;
-    }
+    return false; // No captures found
+}
+
+
 
 
 
