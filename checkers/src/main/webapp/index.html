@@ -251,6 +251,7 @@
     else if (0) {
       // do not like this function, because it wants the connection?
       // why would we leak this out and need to pass this around?
+      // Answer: This is not a leak. The function is imported in this html file. It is a function that is used to handle the data received from the websocket connection. We use the same connection instance passed to communicate back with the page manager.
 
       //game_display_handle_websocket_received_data(connection, data);
     }
@@ -339,6 +340,9 @@
 
 
     
+
+    game_display_handle_websocket_received_data(connection, inputData);
+  
 
     //Receiving from Page Manager (newAccount)
     //receiveFromPageManager(data);
