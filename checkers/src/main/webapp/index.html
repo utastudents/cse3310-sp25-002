@@ -327,25 +327,23 @@
     }
   }
     
-    else {
+  else {
+      
+      // previous comment, not sure if it is valid or a misunderstanding.  leaving it here for now.
+      // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
+      // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
+      game_display_handle_websocket_received_data(connection, data);
       console.log("msg received, but unknown");
     }
 
 
 
-
-
-    // previous comment, not sure if it is valid or a misunderstanding.  leaving it here for now.
-    // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
-    // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
-    //game_display_handle_websocket_received_data(connection, data);
+    
 
     //Receiving from Page Manager (newAccount)
     //receiveFromPageManager(data);
   }
 
-  // Note from Game Display: comment the line below to hide the game board
-  setTimeout(show_game_display(connection, "134242424", "this is player 1", "this is player2", "B"), 3000);
 
   class UserEvent {
     msg;
