@@ -251,6 +251,7 @@
     else if (0) {
       // do not like this function, because it wants the connection?
       // why would we leak this out and need to pass this around?
+      // Answer: This is not a leak. The function is imported in this html file. It is a function that is used to handle the data received from the websocket connection. We use the same connection instance passed to communicate back with the page manager.
 
       //game_display_handle_websocket_received_data(connection, data);
     }
@@ -327,18 +328,21 @@
     }
   }
     
-  else {
-      
-      // previous comment, not sure if it is valid or a misunderstanding.  leaving it here for now.
-      // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
-      // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
-      game_display_handle_websocket_received_data(connection, inputData);
+    else {
       console.log("msg received, but unknown");
     }
 
 
 
-    
+
+
+    // previous comment, not sure if it is valid or a misunderstanding.  leaving it here for now.
+    // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
+    // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
+    //game_display_handle_websocket_received_data(connection, data);
+
+    game_display_handle_websocket_received_data(connection, inputData);
+  
 
     //Receiving from Page Manager (newAccount)
     //receiveFromPageManager(data);
