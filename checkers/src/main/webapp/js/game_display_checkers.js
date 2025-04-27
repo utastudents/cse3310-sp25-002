@@ -568,6 +568,26 @@ class CheckersBoard {
             //gets color of selected piece
             const selected_piece_color = this.get_piece_color(this.selected_piece.type);
 
+            const filtered_legal_moves = (data.legal_moves || []).filter(move =>{
+                const [dest_x, dest_y] = move;
+
+                //find the destination square on the board
+                const dest_square = this.checkers_board.find(sq => sq.x === dest_x && sq.y === dest_y);
+                //if not found, show error message and skip
+                if (!dest_square){
+                    game_display_popup_messages(`filtered_legal_moves: Destination square [${dest_x}, ${dest_y}] not found in checkers_board`);
+                    console.log(`Destination square [${dest_x}, ${dest_y}] not found in checkers_board.`);
+                    return false;
+                }
+                //get piece type and color and destination square
+                const dest_piece_type = dest_square.el.getAttribute("data-piece");
+                const dest_piece_color = this.get_piece_color(dest_piece_type);
+
+                //keep the move if one of the two is true:
+                //the destination square is empty
+                //the destination square has a piece, and the collor is different from the selected piece's color
+                return dest_piece_type === '.' || dest_piece_color !== requested_piece_color;
+            });
         }
     }
     
