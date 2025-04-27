@@ -37,12 +37,18 @@ public class Matchmaking {
         return gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
     }
 
-    // Pairs a plyer and bot
+    // Pairs a player and bot
     public Game pair(PlayerInMatchmaking p1, int botID) {
         Random coinflip = new Random();
         boolean p1Color = coinflip.nextBoolean();
         boolean botColor = !p1Color;
         Match match = new Match(p1.getPlayerID(), botID, p1.getPlayerName(), "Bot", true, gameId++, p1Color, botColor);
+        return gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
+    }
+
+    // Pairs a bot and bot
+    public Game pair(int bot1ID, int bot2ID, int creatorID) {
+        Match match = new Match(bot1ID, bot2ID, gameId++, creatorID);
         return gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
     }
 

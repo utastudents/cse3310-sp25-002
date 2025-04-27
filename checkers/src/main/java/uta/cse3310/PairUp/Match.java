@@ -15,6 +15,7 @@ public class Match {
     private int gameId; // Unique game ID for the match
     private Boolean player1Color; // Player 1's piece color (true for one color, false for the other)
     private Boolean player2Color; // Player 2's piece color (true for one color, false for the other)
+    private int creatorID = -1; // Optional, for use in bot v bot matches
 
 
     public Match(int player1Id, int player2Id, String player1Name, String player2Name,
@@ -27,6 +28,18 @@ public class Match {
         this.gameId = gameId;
         this.player1Color = player1Color;
         this.player2Color = player2Color;
+    }
+
+    public Match(int bot1Id, int bot2Id, int gameId, int creatorID) {
+        player1Id = bot1Id;
+        player2Id = bot2Id;
+        player1Name = "Bot " + bot1Id;
+        player2Name = "Bot " + bot2Id;
+        isBot = true;
+        this.gameId = gameId;
+        player1Color = true;
+        player2Color = false;
+        this.creatorID = creatorID;
     }
 
     /* Method to get the player1 ID from MatchMaking class

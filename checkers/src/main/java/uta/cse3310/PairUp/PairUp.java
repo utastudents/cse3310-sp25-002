@@ -91,6 +91,12 @@ public class PairUp {
         Mmaker.pair(p1, p2);
     }
 
-    
+    // For now, creates match between two random bots
+    public void createBotGame(int creatorID)
+    {
+        int bot1ID = (int) (Math.random() * 2);
+        int bot2ID = (int) (Math.random() * 2);
+        Mmaker.pair(bot1ID, bot2ID, creatorID);
+    }
 
 }
