@@ -548,7 +548,7 @@ class CheckersBoard {
     }
 
 
-    handle_valid_move_received_from_websocket(data) {
+    /*handle_valid_move_received_from_websocket(data) {
         if (data.type === "valid_moves" && this.last_requested_moves) {
             const { resolver } = this.last_requested_moves;
 
@@ -558,7 +558,19 @@ class CheckersBoard {
             resolver(move_object);
             this.last_requested_moves = null;
         }
+    }*/
+
+    handle_valid_move_received_from_websocket(data){
+        //checks if recieved data type is valid_moves
+        if (data.type === "valid_moves" && this.last_requested_moves){
+            //destructure the resolver func and req piece color
+            const { resolver, requested_piece_color } = this.last_requested_moves;
+            //gets color of selected piece
+            const selected_piece_color = this.get_piece_color(this.selected_piece.type);
+
+        }
     }
+    
 
 
     /*
