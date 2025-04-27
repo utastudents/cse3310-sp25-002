@@ -547,19 +547,6 @@ class CheckersBoard {
         }
     }
 
-
-    /*handle_valid_move_received_from_websocket(data) {
-        if (data.type === "valid_moves" && this.last_requested_moves) {
-            const { resolver } = this.last_requested_moves;
-
-            // store the move as an object. I have added this mechanism to prevent the javascript thread from blocking the ui
-            const move_object = (data.legal_moves || []).map(move => ({x: move[0], y: move[1] }));
-            // handle empty array which means this piece has no valid moves
-            resolver(move_object);
-            this.last_requested_moves = null;
-        }
-    }*/
-
     handle_valid_move_received_from_websocket(data){
         //checks if recieved data type is valid_moves
         if (data.type === "valid_moves" && this.last_requested_moves){
@@ -573,21 +560,30 @@ class CheckersBoard {
 
                 //find the destination square on the board
                 const dest_square = this.checkers_board.find(sq => sq.x === dest_x && sq.y === dest_y);
-                //if not found, show error message and skip
+                //if destination square is not found, , show error and skip move
                 if (!dest_square){
                     game_display_popup_messages(`filtered_legal_moves: Destination square [${dest_x}, ${dest_y}] not found in checkers_board`);
                     console.log(`Destination square [${dest_x}, ${dest_y}] not found in checkers_board.`);
                     return false;
                 }
-                //get piece type and color and destination square
+                //get the piece type and color at the destination square
                 const dest_piece_type = dest_square.el.getAttribute("data-piece");
                 const dest_piece_color = this.get_piece_color(dest_piece_type);
 
                 //keep the move if one of the two is true:
                 //the destination square is empty
-                //the destination square has a piece, and the collor is different from the selected piece's color
+                //the destination square has a piece, and the color is different from the selected piece's color
                 return dest_piece_type === '.' || dest_piece_color !== requested_piece_color;
             });
+
+            //map the filtered legal moves into array
+            const move_object = filtered_legal_moves.map(move => ({ x: move[0], y: move[1]}));
+
+            //resolves the list of valid moves
+            resolver(move_object);
+
+            //clears the last requested moves to avoid memory leaks
+            this.last_requested_moves = null;
         }
     }
     
