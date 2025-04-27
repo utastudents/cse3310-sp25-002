@@ -271,6 +271,7 @@
     }
     
     // Check if we need to transition to game display
+    // Play vs Bot option
     if (inputData.msg && inputData.msg.includes("Matched with Bot")) {
     console.log("Bot match confirmed - transitioning to game display");
     // Hide join game, show game display
@@ -283,9 +284,9 @@
       connection, 
       inputData.game_id || "0", 
       window.playerUsername || "Player", 
-      "Bot", 
+      window.playerUsername || "Player", 
       "W", 
-      window.clientId // Added player_id parameter
+      window.clientId 
     );
   } 
   else if (inputData.msg && inputData.msg.includes("Waiting for another player...")) {
