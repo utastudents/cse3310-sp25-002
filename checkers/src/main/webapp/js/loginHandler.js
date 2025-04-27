@@ -5,7 +5,7 @@ var letter = document.getElementById("letter");
 var num = document.getElementById("num");
 var special = document.getElementById("special");
 var length = document.getElementById("length");
-
+var generateBtn = document.getElementById('generate-username-btn');
 
 // User Clicks in input field
 uInput.onfocus = function() {
@@ -16,6 +16,36 @@ uInput.onfocus = function() {
 uInput.onblur = function() {
   document.getElementById("login_message").style.display = "none";
 }
+
+function generateValidUsername(length = 10) {
+  const chars = {
+    letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+    digits: "0123456789",
+    specials: "!@#$%^&*"
+  };
+  const all = chars.letters + chars.digits + chars.specials;
+  const getRandomChar = (str) => str[Math.floor(Math.random() * str.length)];
+
+  let result = [
+    getRandomChar(chars.letters),
+    getRandomChar(chars.digits),
+    getRandomChar(chars.specials)
+  ];
+
+  for (let i = 3; i < length; i++) {
+    result.push(getRandomChar(all));
+  }
+
+  return result.sort(() => 0.5 - Math.random()).join('');
+}
+
+generateBtn.addEventListener('click', () => {
+  uInput.value = generateValidUsername();
+  console.log("Generated username: " + uInput.value);
+
+  let keyup_event = new KeyboardEvent('keyup', { bubbles: true });
+  uInput.dispatchEvent(keyup_event);
+});
 
 
 //User Starts Typing
