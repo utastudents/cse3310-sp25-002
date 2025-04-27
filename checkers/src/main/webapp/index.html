@@ -329,23 +329,16 @@
     );
     }
   }
-    
+
   else {
-      
+
       // previous comment, not sure if it is valid or a misunderstanding.  leaving it here for now.
-      // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
-      // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
-      game_display_handle_websocket_received_data(connection, inputData);
       console.log("msg received, but unknown");
     }
 
-
-
-    
-
+    // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
+    // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.
     game_display_handle_websocket_received_data(connection, inputData);
-  
-
     //Receiving from Page Manager (newAccount)
     //receiveFromPageManager(data);
   }
