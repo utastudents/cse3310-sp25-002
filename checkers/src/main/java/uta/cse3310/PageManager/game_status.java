@@ -25,7 +25,7 @@ public class game_status {
     public boolean draw = false;
     public String type;
     public String player_color;       
-    public Integer starting_player;    
+    public String starting_player;    
     public List<Integer> from;
     public List<Integer> to;
     public List<List<Integer>> legal_moves;

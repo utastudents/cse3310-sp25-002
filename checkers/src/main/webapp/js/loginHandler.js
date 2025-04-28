@@ -157,7 +157,6 @@ function receiveFromPageManager(msg) {
     document.getElementById("new_account").style.display = "none";
     document.getElementById("game_lobby").style.display = "initial";
     document.getElementById("join_game").style.display = "none";
-    document.getElementById("game_display").style.display = "none";
     document.getElementById("summary").style.display = "none";
 
     if (!window.joinGameManager){

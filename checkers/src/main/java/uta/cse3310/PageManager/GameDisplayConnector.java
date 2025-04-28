@@ -196,7 +196,7 @@ public class GameDisplayConnector {
         }
         reply.status.player_color = colorIsWhite ? "W" : "B";
 
-        reply.status.starting_player = game.getCurrentTurn().getPlayerId();
+        reply.status.starting_player = "Player " + game.getCurrentTurn().getPlayerId();
 
         reply.recipients.add(clientId);
 
@@ -214,7 +214,7 @@ public class GameDisplayConnector {
         reply.status.game_id = 123; // dummy game ID
         reply.status.player = "Luigi (ID: 1)";
         reply.status.player_color = "B"; // or "W"
-        reply.status.starting_player = 1;
+        reply.status.starting_player = "1"; // i changed this from int to a string
 
         // Send to both players (hardcoded values for test)
         reply.recipients.add(1); // Luigi

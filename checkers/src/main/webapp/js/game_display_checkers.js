@@ -92,7 +92,7 @@ const show_game_display = (connection, gameid, starting_player, player, player_c
         game_id = gameid;
         game_display_current_player_name = starting_player;
         game_display_current_player_id = player_id;
-
+        console.log("here")
         // use the CheckersBoard class to create the game board and attach the class to the DOM
         checkerBoard = new CheckersBoard(connection, gameid, starting_player, player, player_color, player_id);
         // call the create_checkers_board method to create the game board
@@ -139,6 +139,7 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             game_display_popup_messages(`(gd) game_display_handle_websocket_received_data: game board not initialized and data type is not show_game_display.`);
             return;
         };
+        console.log("game display",data)
 
         if (data.type==="valid_moves") {
             // assuming that websocket sends the json string {"type":"valid_moves", "legal_moves":[[x1,y1],[x2,y2],...]}
@@ -179,7 +180,8 @@ const game_display_handle_websocket_received_data = (connection, data) => {
 
         } else if(data.type === 'show_game_display') {
             // this function is used to show the game display. It is called when the game is started.
-            show_game_display(connection, data.game_id, data.starting_player, data.player, data.player_color, data.id);
+            console.log("game display initialized")
+            show_game_display(connection, data.game_id, data.starting_player, data.player, data.player_color, data.playerId);
 
         } else if(data.type === 'hide_game_display') {
             hide_game_display();
