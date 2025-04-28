@@ -23,6 +23,11 @@ const game_display_popup_messages = (message) =>{
 
 const handle_resign = () => {
     try{
+        // this prevents spectators or non-current players from resigning
+        if (checkerBoard.player !== checkerBoard.current_player) {
+            game_display_popup_messages("You cannot resign because it's not your turn or you are spectating.");
+            return;
+        }
         connection.send(JSON.stringify({type: "resign", game_id: game_id, id: game_display_current_player_id, player: game_display_current_player_name}));
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
@@ -32,6 +37,11 @@ const handle_resign = () => {
 
 const offer_draw = () => {
     try{
+        // this prevents spectators or non-current players from offering a draw
+        if (checkerBoard.player !== checkerBoard.current_player) {
+            game_display_popup_messages("You cannot offer a draw because it's not your turn or you are spectating.");
+            return;
+        }
         connection.send(JSON.stringify({type: "draw", game_id: game_id, id: game_display_current_player_id, player: game_display_current_player_name}));
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
@@ -208,6 +218,13 @@ class CheckersBoard {
     }
 
     //function is used to get the color of the piece
+    get_piece_color(piece_type){
+        if (piece_type === 'w' || piece_type === 'W')
+            return 'W';
+        if (piece_type === 'b' || piece_type === 'B')
+            return 'B';
+        return null;
+    }
 
 
     update_current_player(player, player_id) {
@@ -604,15 +621,17 @@ class CheckersBoard {
                     resolve([]);
                     return;
                 }
+                const piece_type_at_request = square.el.getAttribute("data-piece");
+                const piece_color_at_request = this.get_piece_color(piece_type_at_request);
 
-                this.last_requested_moves = { resolver: resolve };
+                this.last_requested_moves = { resolver: resolve, requested_piece_color: piece_color_at_request };
 
                 // TODO: This needs to be handled by the java backend since this involves making game logic
                 this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, id: this.player_id, player: this.current_player, square: [x, y] }));
                 // we do not receive a response from the request to the websocket, so i prevented a non thread blocking mechanism.
                 // wait for upto 7 seconds until we get the valid moves
                 setTimeout(() => {
-                    if (this.last_requested_moves) {
+                    if (this.last_requested_moves && this.last_requested_moves.resolver === resolve) {
                         console.log("waiting for valid moves....");
                         resolve([]);
                         this.last_requested_moves = null;
@@ -623,9 +642,8 @@ class CheckersBoard {
                 console.error("Error in game_display_checkers.js: ", error);
                 game_display_popup_messages(`(gd) return_allowed_moves: An error occurred while handling the game display. Please check the console.`);
                 resolve([]);
+                this.last_requested_moves = null;
             }
         });
     }
-
-
 }
