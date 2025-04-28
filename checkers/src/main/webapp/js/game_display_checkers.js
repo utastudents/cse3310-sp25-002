@@ -144,7 +144,9 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             return;
         };
         console.log("game display",data)
-
+        if (data?.clientId){
+            data.id = data.clientId;
+        }
         if (data.type==="valid_moves") {
             // assuming that websocket sends the json string {"type":"valid_moves", "legal_moves":[[x1,y1],[x2,y2],...]}
 
@@ -580,7 +582,7 @@ class CheckersBoard {
             const { resolver, requested_piece_color } = this.last_requested_moves;
             //gets color of selected piece
             const selected_piece_color = this.get_piece_color(this.selected_piece.type);
-
+            console.log("valid moves received from backend: ", data.legal_moves);
             const filtered_legal_moves = (data.legal_moves || []).filter(move =>{
                 const [dest_x, dest_y] = move;
 
@@ -601,6 +603,10 @@ class CheckersBoard {
                 //the destination square has a piece, and the color is different from the selected piece's color
                 return dest_piece_type === '.' || dest_piece_color !== requested_piece_color;
             });
+            if (filtered_legal_moves.length === 0) {
+                game_display_popup_messages(`(gd) return_allowed_moves: No valid moves available for the selected piece at [${this.selected_piece.x}, ${this.selected_piece.y}]`);
+                return;
+            }
 
             //map the filtered legal moves into array
             const move_object = filtered_legal_moves.map(move => ({ x: move[0], y: move[1]}));
