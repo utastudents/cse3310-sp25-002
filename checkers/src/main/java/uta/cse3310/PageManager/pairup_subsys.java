@@ -10,9 +10,9 @@ public class pairup_subsys {
     private final PageManager pageManager = new PageManager();
     private final NewAcctLogin newAcctLogin;
 
-    private int clientID = -1;
+    private int clientId = -1;
 
-    public int extractClientId(UserEvent event) 
+    public int extractclientId(UserEvent event) 
     {
         if (event == null) {
             System.out.println("UserEvent is null");
@@ -23,8 +23,8 @@ public class pairup_subsys {
     }
 
     public void handleEvent(UserEvent event) {
-        this.clientID = extractClientId(event);
-        System.out.println("Extracted Client ID: " + clientID);
+        this.clientId = extractclientId(event);
+        System.out.println("Extracted Client ID: " + clientId);
     }
 
 
@@ -52,7 +52,7 @@ public class pairup_subsys {
         pageManager.handlePlayerRemoval((Integer) null);
         pageManager.handleNewPlayer(
                 timestamp,
-                Result.clientID,
+                Result.clientId,
                 username,
                 Result.playAgainstBot,
                 0 

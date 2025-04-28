@@ -7,7 +7,7 @@ public class game_status {
     // user data
     Integer turn;
     Float score;
-    public int clientID;
+    public int clientId;
     public boolean isBot;
     public String player;
     public int game_id;

@@ -10,57 +10,57 @@ public class JoinGameHandler {
     }
 
     public Result processJoinGame(Map<String, String> joinData) {
-        int clientID = Integer.parseInt(joinData.get("ClientID"));  
+        int clientId = Integer.parseInt(joinData.get("clientId"));  
         String gameMode = joinData.get("gameMode");
 
         // bot modes
-        boolean isBotvbot = "BotvBot".equalsIgnoreCase(gameMode);
+        boolean isBotvBot = "BotvBot".equalsIgnoreCase(gameMode);
         boolean playAgainstBot = "Bot".equalsIgnoreCase(gameMode);
         
         if (playAgainstBot) {
             System.out.println("Bot vs Player mode selected.");
-            sendToPairUpForBot(clientID);
-        } else if (isBotvbot) {
+            sendToPairUpForBot(clientId);
+        } else if (isBotvBot) {
             System.out.println("Bot vs Bot mode selected.");
         } else {
             System.out.println("Player vs Player mode selected.");
-            sendAvailabilityToDB(clientID);
+            sendAvailabilityToDB(clientId);
         }
 
-        return new Result(clientID, playAgainstBot); // sends data to pairup_subsys
+        return new Result(clientId, playAgainstBot, isBotvBot); // sends data to pairup_subsys
     }
 
-    public void cancelJoinRequest(int clientID) {
-        System.out.println("Cancelling join request for ClientID: " + clientID);
+    public void cancelJoinRequest(int clientId) {
+        System.out.println("Cancelling join request for clientId: " + clientId);
     }
 
-    private void sendAvailabilityToDB(int clientID) {
+    private void sendAvailabilityToDB(int clientId) {
         System.out.println("Flagging user as available in DB...");
-        System.out.println("ClientID: " + clientID);
+        System.out.println("clientId: " + clientId);
     }
 
-    private void sendToPairUpForBot(int clientID) {
+    private void sendToPairUpForBot(int clientId) {
         System.out.println("Sending request to PairUp for bot match...");
-        System.out.println("ClientID: " + clientID);
+        System.out.println("clientId: " + clientId);
     }
 
-    public game_status createGameStatusMessage(int clientID, boolean playAgainstBot) {
+    public game_status createGameStatusMessage(int clientId, boolean playAgainstBot) {
         game_status status = new game_status();
         status.type = "join_response";
         status.msg = playAgainstBot ? "Matched with Bot!" : "Waiting for another player...";
-        status.clientID = clientID;
+        status.clientId = clientId;
         status.isBot = playAgainstBot;  
         return status;
     }
 
     // Helper return class used in pairup_subsys
     public static class Result {
-        public int clientID; 
+        public int clientId; 
         public boolean playAgainstBot;
         public boolean isBotvBot;
 
-        public Result(int clientID, boolean playAgainstBot) {
-            this.clientID = clientID;
+        public Result(int clientId, boolean playAgainstBot, boolean isBotvBot) {
+            this.clientId = clientId;
             this.playAgainstBot = playAgainstBot;
             this.isBotvBot = isBotvBot;
         }
