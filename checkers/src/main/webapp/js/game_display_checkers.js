@@ -207,6 +207,8 @@ class CheckersBoard {
         this.last_requested_moves = null;
     }
 
+    //function is used to get the color of the piece
+
 
     update_current_player(player, player_id) {
         // Update the UI to show whose turn it is
@@ -327,7 +329,7 @@ class CheckersBoard {
                 // relay the move to the backend through the ws connection
                 console.log({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
                 //Does not send a move request to the backend if it is the opponent's turn
-                if(this.player !== this.current_player){
+                if(this.player === this.current_player){
                     this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, id: this.player_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
                 }
             }
@@ -500,6 +502,7 @@ class CheckersBoard {
     */
     async show_possible_moves(x, y) {
         try{
+            this.hide_possible_moves();
             let valid_moves = await this.return_allowed_moves(x, y);
             this.checkers_board.forEach((square) => {
                 let check_valid_move = valid_moves.some(move => move.x === square.x && move.y === square.y);
