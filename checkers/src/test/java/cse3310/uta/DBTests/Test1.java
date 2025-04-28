@@ -31,10 +31,11 @@ public class Test1
 
         List<String> leaderboard = DB.getLeaderboard();
 
+        /*
         for( String element : leaderboard )
         {
             System.out.println(element);
         }
-
+        */
     }
 }
