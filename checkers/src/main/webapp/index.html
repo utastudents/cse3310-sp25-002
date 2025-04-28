@@ -244,19 +244,13 @@
     }
     // this if may need some more knowledge to make it correct.. or maybe one routine needs
     // to deal with instances of this class that are sent....
-    else if ('isBot' in inputData && 'game_id' in inputData && 'Message' in inputData) {
+    if ('isBot' in inputData && 'game_id' in inputData && 'Message' in inputData) {
       // an example of what is expected if we get here..
       //{"clientID":0,"isBot":false,"game_id":0,"Status":"Success","Message":"Username accepted","gameOver":false,"draw":false}
       receiveFromPageManager(inputData); // notice that an instance of the class is passed as an argument.  perhaps not
       // all of the class has to be sent
     }
-    else if (0) {
-      // do not like this function, because it wants the connection?
-      // why would we leak this out and need to pass this around?
-      // Answer: This is not a leak. The function is imported in this html file. It is a function that is used to handle the data received from the websocket connection. We use the same connection instance passed to communicate back with the page manager.
 
-      //game_display_handle_websocket_received_data(connection, data);
-    }
     else if ('msg' in inputData && 'type' in inputData && inputData.type === 'join_response'){
       const joinResponseEvent = new CustomEvent('joinResponseReceived', { detail: inputData});
       window.dispatchEvent(joinResponseEvent);
