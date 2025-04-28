@@ -500,6 +500,7 @@ class CheckersBoard {
     */
     async show_possible_moves(x, y) {
         try{
+            this.hide_possible_moves();
             let valid_moves = await this.return_allowed_moves(x, y);
             this.checkers_board.forEach((square) => {
                 let check_valid_move = valid_moves.some(move => move.x === square.x && move.y === square.y);
