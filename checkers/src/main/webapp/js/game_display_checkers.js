@@ -23,6 +23,11 @@ const game_display_popup_messages = (message) =>{
 
 const handle_resign = () => {
     try{
+        // this prevents spectators or non-current players from resigning
+        if (checkerBoard.player !== checkerBoard.current_player) {
+            game_display_popup_messages("You cannot resign because it's not your turn or you are spectating.");
+            return;
+        }
         connection.send(JSON.stringify({type: "resign", game_id: game_id, id: game_display_current_player_id, player: game_display_current_player_name}));
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
@@ -32,6 +37,11 @@ const handle_resign = () => {
 
 const offer_draw = () => {
     try{
+        // this prevents spectators or non-current players from offering a draw
+        if (checkerBoard.player !== checkerBoard.current_player) {
+            game_display_popup_messages("You cannot offer a draw because it's not your turn or you are spectating.");
+            return;
+        }
         connection.send(JSON.stringify({type: "draw", game_id: game_id, id: game_display_current_player_id, player: game_display_current_player_name}));
     } catch (error) {
         console.error("Error in game_display_checkers.js: ", error);
