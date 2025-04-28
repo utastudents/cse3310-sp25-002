@@ -92,7 +92,6 @@ const show_game_display = (connection, gameid, starting_player, player, player_c
         game_id = gameid;
         game_display_current_player_name = starting_player;
         game_display_current_player_id = player_id;
-        console.log("here")
         // use the CheckersBoard class to create the game board and attach the class to the DOM
         checkerBoard = new CheckersBoard(connection, gameid, starting_player, player, player_color, player_id);
         // call the create_checkers_board method to create the game board
@@ -103,7 +102,12 @@ const show_game_display = (connection, gameid, starting_player, player, player_c
         game_display_checkers_board_initialized = true;
     };
 
-    document.getElementById("current-player").textContent = `Current Player: ${starting_player}`;
+    if (checkerBoard.current_player === checkerBoard.player){
+        document.getElementById("current-player").innerText = "It's your turn to make a move!";
+    } else{
+        document.getElementById("current-player").innerText = `Your opponent (${checkerBoard.current_player}) is going to make a move.`;
+    }
+    // document.getElementById("current-player").textContent = `Current Player: ${starting_player}`;
 }
 
 const hide_game_display = () => {
