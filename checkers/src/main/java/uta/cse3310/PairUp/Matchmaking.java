@@ -43,6 +43,7 @@ public class Matchmaking {
         boolean p1Color = coinflip.nextBoolean();
         boolean botColor = !p1Color;
         Match match = new Match(p1.getPlayerID(), botID, p1.getPlayerName(), "Bot", true, gameId++, p1Color, botColor);
+        System.out.println("[DEBUG] Created a Bot vs Player game with ClientID: " + p1.getPlayerID() + " and BotID: " + botID);
         return gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
     }
 

@@ -150,6 +150,9 @@ public class PageManager {
                 if (result.isBotvBot) {
                     System.out.println("[DEBUG] BotvBot match requested. Creating bot game...");
                     return handleBotVsBotRequest(result.clientId);
+                } else if (result.playAgainstBot) {
+                    System.out.println("[DEBUG] Player vs Bot match requested. Sending show_game_display...");
+                    return displayConnector.sendShowGameDisplay(result.clientId);
                 } else {
                     game_status feedback = joinGameHandler.createGameStatusMessage(result.clientId, result.playAgainstBot);
                     ret.status.type = feedback.type;

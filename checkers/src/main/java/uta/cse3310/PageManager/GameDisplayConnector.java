@@ -183,11 +183,20 @@ public class GameDisplayConnector {
         }
 
         reply.status.type = "show_game_display";
-        reply.status.game_id = 1; // Needs GameID from GM
+        reply.status.game_id = game.gameNumber();
         reply.status.player = "Player " + clientId; // Needs PlayerName from GM
-        reply.status.clientId = clientId; 
-        reply.status.player_color = "w"; // Needs PlayerColor from GM
-        reply.status.starting_player = 1; // Needs StartingPlayer from GM (return w/ clientId)
+        reply.status.playerId = clientId; 
+
+        // get player color from Game
+        boolean colorIsWhite;
+        if (game.getPlayer1ID() == clientId) {
+            colorIsWhite = game.getPlayer1Color();
+        } else {
+            colorIsWhite = game.getPlayer2Color();
+        }
+        reply.status.player_color = colorIsWhite ? "W" : "B";
+
+        reply.status.starting_player = game.getCurrentTurn().getPlayerId();
 
         reply.recipients.add(clientId);
 
