@@ -160,6 +160,7 @@ public class GameDisplayConnector {
         reply.status.game_id = gameId;
         reply.status.msg = "You are now watching a Bot vs Bot match.";
 
+        reply.status.clientId = creatorId;
         reply.recipients.add(creatorId);
 
         return reply;
