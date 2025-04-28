@@ -4,6 +4,7 @@ import uta.cse3310.GameManager.GamePageController;
 import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
+import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameTermination.GameTermination;
 import uta.cse3310.PageManager.UserEvent;
 import uta.cse3310.PageManager.UserEventReply;
@@ -169,6 +170,30 @@ public class GameDisplayConnector {
         return reply;
     }
 
+    public UserEventReply sendShowGameDisplay(int clientId) {
+        UserEventReply reply = new UserEventReply();
+        reply.status = new game_status();
+        reply.recipients = new ArrayList<>();
+
+        Game game = gamePageController.returnGame(clientId);
+
+        if (game == null) {
+            System.out.println("[DEBUG] No active game found for client ID " + clientId);
+            return null; 
+        }
+
+        reply.status.type = "show_game_display";
+        reply.status.game_id = 1; // Needs GameID from GM
+        reply.status.player = "Player " + clientId; // Needs PlayerName from GM
+        reply.status.clientId = clientId; 
+        reply.status.player_color = "w"; // Needs PlayerColor from GM
+        reply.status.starting_player = 1; // Needs StartingPlayer from GM (return w/ clientId)
+
+        reply.recipients.add(clientId);
+
+        return reply;
+    }
+
     // Test-only dummy mehthod for the GameDisplay group
     public UserEventReply sendShowGameDisplayTest(UserEvent event) {
         UserEventReply reply = new UserEventReply();
@@ -180,7 +205,7 @@ public class GameDisplayConnector {
         reply.status.game_id = 123; // dummy game ID
         reply.status.player = "Luigi (ID: 1)";
         reply.status.player_color = "B"; // or "W"
-        reply.status.starting_player = "Mario (ID: 2)";
+        reply.status.starting_player = 1;
 
         // Send to both players (hardcoded values for test)
         reply.recipients.add(1); // Luigi

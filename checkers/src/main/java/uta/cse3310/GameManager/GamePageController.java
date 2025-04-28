@@ -83,4 +83,5 @@ public class GamePageController {
         ids[1] = game.getPlayer2ID();
         return ids;
     }
+
 }

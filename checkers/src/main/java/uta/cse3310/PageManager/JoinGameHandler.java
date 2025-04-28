@@ -42,6 +42,13 @@ public class JoinGameHandler {
     private void sendToPairUpForBot(int clientId) {
         System.out.println("Sending request to PairUp for bot match...");
         System.out.println("clientId: " + clientId);
+
+        PairUp pairUp = new PairUp();
+        long timestamp = System.currentTimeMillis();
+        String playerName = "Player_" + clientId;
+        int wins = 0; 
+
+        pairUp.AddPlayer(timestamp, clientId, playerName, true, wins);
     }
 
     public game_status createGameStatusMessage(int clientId, boolean playAgainstBot) {

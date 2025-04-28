@@ -8,6 +8,7 @@ public class GamePairController{
     }
 
     public Game newMatch(Match match){
+        System.out.println("[DEBUG] GamePairController: New Match received with GameID " + match.getGameId());
         int player1ID = match.getPlayer1Id();
         int player2ID = match.getPlayer2Id();
         boolean player1Color = match.getPlayer1Color();
