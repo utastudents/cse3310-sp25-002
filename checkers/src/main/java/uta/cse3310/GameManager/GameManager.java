@@ -16,7 +16,7 @@ import java.util.Map;
 public class GameManager {
 
     private static final int MAXIMUM_GAMES = 10;
-    private ArrayList<Game> games;
+    private static ArrayList<Game> games;
     private GamePlay gp;
     private GameTermination gt;
     GamePageController ggc;
