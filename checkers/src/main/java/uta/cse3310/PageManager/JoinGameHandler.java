@@ -2,6 +2,7 @@ package uta.cse3310.PageManager;
 
 import java.util.Map;
 import uta.cse3310.PageManager.game_status;
+import uta.cse3310.PairUp.PairUp;
 
 public class JoinGameHandler {
     
@@ -11,11 +12,18 @@ public class JoinGameHandler {
     public Result processJoinGame(Map<String, String> joinData) {
         int clientID = Integer.parseInt(joinData.get("ClientID"));  
         String gameMode = joinData.get("gameMode");
+
+        // bot modes
+        boolean isBotvbot = "BotvBot".equalsIgnoreCase(gameMode);
         boolean playAgainstBot = "Bot".equalsIgnoreCase(gameMode);
         
         if (playAgainstBot) {
+            System.out.println("Bot vs Player mode selected.");
             sendToPairUpForBot(clientID);
+        } else if (isBotvbot) {
+            System.out.println("Bot vs Bot mode selected.");
         } else {
+            System.out.println("Player vs Player mode selected.");
             sendAvailabilityToDB(clientID);
         }
 
@@ -49,10 +57,12 @@ public class JoinGameHandler {
     public static class Result {
         public int clientID; 
         public boolean playAgainstBot;
+        public boolean isBotvBot;
 
         public Result(int clientID, boolean playAgainstBot) {
             this.clientID = clientID;
             this.playAgainstBot = playAgainstBot;
+            this.isBotvBot = isBotvBot;
         }
     }
 }

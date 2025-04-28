@@ -148,6 +148,23 @@ public class GameDisplayConnector {
         return reply;
     }
 
+    // Send game board to creator for a Bot vs Bot match
+    public UserEventReply sendBotVsBotBoard(int creatorId, int gameId) {
+        System.out.println("[DEBUG] Sending Bot vs Bot board to creator ID: " + creatorId);
+
+        UserEventReply reply = new UserEventReply();
+        reply.status = new game_status();
+        reply.recipients = new ArrayList<>();
+
+        reply.status.type = "show_game_display";
+        reply.status.game_id = gameId;
+        reply.status.msg = "You are now watching a Bot vs Bot match.";
+
+        reply.recipients.add(creatorId);
+
+        return reply;
+    }
+
     // Test-only dummy mehthod for the GameDisplay group
     public UserEventReply sendShowGameDisplayTest(UserEvent event) {
         UserEventReply reply = new UserEventReply();

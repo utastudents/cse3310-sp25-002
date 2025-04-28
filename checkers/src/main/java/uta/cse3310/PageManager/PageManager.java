@@ -58,6 +58,17 @@ public class PageManager {
         pairUp.removePlayer(clientId);
     }
 
+    // Create a new bot vs bot game and send the board
+    public UserEventReply handleBotVsBotRequest(int creatorId) {
+        System.out.println("[DEBUG] Handling Bot vs Bot request for creatorID: " + creatorId);
+
+        pairUp.createBotGame(creatorId);
+
+        int gameId = 999; // tmp value for testing
+
+        return displayConnector.sendBotVsBotBoard(creatorId, gameId);
+    }
+
     // Username validation logic
     public JsonObject handleUsernameValidation(String username)
     {
@@ -129,11 +140,20 @@ public class PageManager {
                 joinData.put("ClientID", String.valueOf(U.id));
                 joinData.put("gameMode", U.msg);
 
-                JoinGameHandler.Result result = joinGameHandler.processJoinGame(joinData);
-                game_status feedback = joinGameHandler.createGameStatusMessage(result.clientID, result.playAgainstBot);
+                if (U.msg != null && U.msg.equalsIgnoreCase("Spectate")) {
+                    joinData.put("gameMode", "BotvBot");
+                }
 
-                ret.status.type = feedback.type;
-                ret.status.msg = feedback.msg;
+                JoinGameHandler.Result result = joinGameHandler.processJoinGame(joinData);
+
+                if (result.isBotvBot) {
+                    System.out.println("[DEBUG] BotvBot match requested. Creating bot game...");
+                    return handleBotVsBotRequest(result.clientID);
+                } else {
+                    game_status feedback = joinGameHandler.createGameStatusMessage(result.clientID, result.playAgainstBot);
+                    ret.status.type = feedback.type;
+                    ret.status.msg = feedback.msg;
+                }
                 break;
             }
 
