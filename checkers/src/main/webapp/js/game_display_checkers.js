@@ -207,6 +207,8 @@ class CheckersBoard {
         this.last_requested_moves = null;
     }
 
+    //function is used to get the color of the piece
+
 
     update_current_player(player, player_id) {
         // Update the UI to show whose turn it is
