@@ -13,6 +13,7 @@ import uta.cse3310.PageManager.game_status;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 // Needs from GameManager:
 // getAllowedMoves, getGameState, getGameStatus, getGameOver, getWinner, getLoser, getallPlayerIDs 
@@ -114,7 +115,7 @@ public class GameDisplayConnector {
 
     // Get allowed moves 
     public UserEventReply handleGetAllowedMoves(UserEvent event) {
-        System.out.println("[DEBUG] Getting allowed moves for square " + event.square + " from player " + event.id);
+        System.out.println("[DEBUG] Getting allowed moves for square " + Arrays.toString(event.square) + " from player " + event.id);
 
         // Get client ID from event
         UserEventReply reply = new UserEventReply();
@@ -136,18 +137,31 @@ public class GameDisplayConnector {
             }
         }
 
-        System.out.println("[DEBUG] moveMap content: " + moveMap);
+        if (moveMap != null && !moveMap.isEmpty()) {
+            System.out.println("[DEBUG] moveMap details:");
+            for (Map.Entry<Square, Moves> entry : moveMap.entrySet()) {
+                Square s = entry.getKey();
+                Moves moves = entry.getValue();
+                System.out.println(" - From Square: (" + s.getRow() + "," + s.getCol() + ")");
+                System.out.println("   Moves Info: " + moves.toString());  // assuming Moves has a good toString()
+            }
+        } else {
+            System.out.println("[DEBUG] moveMap is empty");
+        }
+
         System.out.println("[DEBUG] legalMoves size: " + legalMoves.size());
 
         reply.status.legal_moves = legalMoves;
 
         // Get all player IDs from GameManager
-        int[] playerIds = gamePageController.getAllPlayerIDs(event.id);
-        if (playerIds != null) {
-            for (int id : playerIds) {
-                reply.recipients.add(id);
-            }
-        }
+        // int[] playerIds = gamePageController.getAllPlayerIDs(event.id);
+        // if (playerIds != null) {
+        //     for (int id : playerIds) {
+        //         reply.recipients.add(id);
+        //     }
+        // }
+
+        reply.recipients.add(event.id);
 
         return reply;
     }
