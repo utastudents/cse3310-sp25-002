@@ -207,6 +207,15 @@ class CheckersBoard {
         this.last_requested_moves = null;
     }
 
+    //function is used to get the color of the piece
+    get_piece_color(piece_type){
+        if (piece_type === 'w' || piece_type === 'W')
+            return 'W';
+        if (piece_type === 'b' || piece_type === 'B')
+            return 'B';
+        return null;
+    }
+
 
     update_current_player(player, player_id) {
         // Update the UI to show whose turn it is
@@ -500,6 +509,7 @@ class CheckersBoard {
     */
     async show_possible_moves(x, y) {
         try{
+            this.hide_possible_moves();
             let valid_moves = await this.return_allowed_moves(x, y);
             this.checkers_board.forEach((square) => {
                 let check_valid_move = valid_moves.some(move => move.x === square.x && move.y === square.y);
