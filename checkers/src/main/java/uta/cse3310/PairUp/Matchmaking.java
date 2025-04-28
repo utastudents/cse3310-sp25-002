@@ -1,6 +1,6 @@
 package uta.cse3310.PairUp;
 
-import uta.cse3310.GameManager.GamePairController;
+import uta.cse3310.GameManager.GameManager;
 import uta.cse3310.GameManager.Game;
 import java.util.LinkedHashMap;
 import java.util.Random;
@@ -17,13 +17,14 @@ import java.util.*;
 public class Matchmaking {
     public LinkedHashMap<Integer, PlayerInMatchmaking> players;
     private int gameId;
-    private GamePairController gameManagerCommunication;
+    private GameManager gameManagerCommunication;
     private MatchmakingScheduler scheduler;
 
     public Matchmaking() {
         players = new LinkedHashMap<>();
         gameId = 0;
-        gameManagerCommunication = new GamePairController();
+        gameManagerCommunication = new GameManager();
+        gameManagerCommunication.initializeGames();
         scheduler = new MatchmakingScheduler();
         scheduler.start();
     }
@@ -34,7 +35,7 @@ public class Matchmaking {
         boolean p1Color = coinflip.nextBoolean();
         boolean p2Color = !p1Color;
         Match match = new Match(p1.getPlayerID(), p2.getPlayerID(), p1.getPlayerName(), p2.getPlayerName(), false, gameId++, p1Color, p2Color);
-        return gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
+        return gameManagerCommunication.createGame(match); // Sends match info to GameManager and creates game
     }
 
     // Pairs a player and bot
@@ -44,13 +45,13 @@ public class Matchmaking {
         boolean botColor = !p1Color;
         Match match = new Match(p1.getPlayerID(), botID, p1.getPlayerName(), "Bot", true, gameId++, p1Color, botColor);
         System.out.println("[DEBUG] Created a Bot vs Player game with ClientID: " + p1.getPlayerID() + " and BotID: " + botID);
-        return gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
+        return gameManagerCommunication.createGame(match); // Sends match info to GameManager and creates game
     }
 
     // Pairs a bot and bot
     public Game pair(int bot1ID, int bot2ID, int creatorID) {
         Match match = new Match(bot1ID, bot2ID, gameId++, creatorID);
-        return gameManagerCommunication.newMatch(match); // Sends match info to gamePairController object for gameController to do what they want with
+        return gameManagerCommunication.createGame(match); // Sends match info to GameManager and creates game
     }
 
     public void addPlayer(int PlayerID, PlayerInMatchmaking newPlayer) {

@@ -28,6 +28,7 @@ public class GameManager {
         gt = new GameTermination(); // Handles game-ending logic
         grc = new GamePairController();
     }
+
     public void initializeGames(){
         games = new ArrayList<>(MAXIMUM_GAMES);
         for (int i = 0; i < MAXIMUM_GAMES; ++i){
@@ -35,16 +36,16 @@ public class GameManager {
         }
     }
     // Create a new game with two players
-    public boolean createGame(Match match){
+    public Game createGame(Match match){
         int availableSlot = getAvailableGameSlot();
         if(availableSlot == -1){
             System.out.println("No available game slots.");
-            return false;
+            return null;
         }
         Game newGame = grc.newMatch(match);
         games.set(availableSlot, newGame);
         
-        return true;
+        return newGame;
     }
 
     // Find first available game slot

@@ -9,6 +9,7 @@ public class Test3{
     @Test
     public void testActiveGameCount() {
         GameManager gm = new GameManager();
+        gm.initializeGames();
         Match match1 = new Match(5, 0, "Player", "beepboop", true, 3, true, false);
         Match match2 = new Match(3, 2, "thismyname", "mynamefr", false, 2, true, false);
         // Initially, no active games
