@@ -327,7 +327,7 @@ class CheckersBoard {
                 // relay the move to the backend through the ws connection
                 console.log({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
                 //Does not send a move request to the backend if it is the opponent's turn
-                if(this.player !== this.current_player){
+                if(this.player === this.current_player){
                     this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, id: this.player_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
                 }
             }
