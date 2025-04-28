@@ -135,6 +135,9 @@ public class GameDisplayConnector {
             }
         }
 
+        System.out.println("[DEBUG] moveMap content: " + moveMap);
+        System.out.println("[DEBUG] legalMoves size: " + legalMoves.size());
+
         reply.status.legal_moves = legalMoves;
 
         // Get all player IDs from GameManager

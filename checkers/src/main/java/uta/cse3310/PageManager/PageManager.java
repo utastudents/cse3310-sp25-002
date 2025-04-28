@@ -166,13 +166,18 @@ public class PageManager {
                 break;
             } 
 
-            default: {
-                ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
-                break;
+            case "get_allowed_moves": {
+                System.out.println("[DEBUG] Handling get_allowed_moves from player: " + U.id);
+                return displayConnector.handleGetAllowedMoves(U);
             }
 
             case "game_status": {
-                ret.status = gameManagerSubsys.getGameInfo(U.id);
+                            ret.status = gameManagerSubsys.getGameInfo(U.id);
+                            break;
+            }
+
+            default: {
+                ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
                 break;
             }
             
