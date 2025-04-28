@@ -128,6 +128,7 @@ public class PageManager {
                 ret.status.Status = parsed.get("Status").getAsString();
                 ret.status.Message = parsed.get("Message").getAsString();
                 ret.status.playerName = U.playerName;
+                ret.status.clientId = U.id;
 
                 break;
             }
