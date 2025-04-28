@@ -24,15 +24,16 @@ public class GameManager {
 
     // Constructor to initialize components
     public GameManager(){
-        games = new ArrayList<>(MAXIMUM_GAMES);
-        for (int i = 0; i < MAXIMUM_GAMES; i++){
-            games.add(null);
-        }
         gp = new GamePlay(); // Handles game rules and moves
         gt = new GameTermination(); // Handles game-ending logic
         grc = new GamePairController();
     }
-
+    public void initializeGames(){
+        games = new ArrayList<>(MAXIMUM_GAMES);
+        for (int i = 0; i < MAXIMUM_GAMES; ++i){
+            games.add(null);
+        }
+    }
     // Create a new game with two players
     public boolean createGame(Match match){
         int availableSlot = getAvailableGameSlot();
