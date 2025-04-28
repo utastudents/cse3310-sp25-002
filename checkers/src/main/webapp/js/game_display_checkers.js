@@ -208,12 +208,7 @@ class CheckersBoard {
     }
 
     //function is used to get the color of the piece
-    get_piece_color(piece_type){
-        if (piece_type === 'w' || piece_type === 'W')
-            return 'W';
-        if (piece_type === 'b' || piece_type === 'B')
-            return 'B';
-    }
+
 
     update_current_player(player, player_id) {
         // Update the UI to show whose turn it is
