@@ -209,6 +209,16 @@ public class GameManager {
         return null;
     }
 
+    public Game findGameById(int gameId) {
+        for (Game game : games) {
+            if (game != null && game.gameNumber() == gameId) {
+                return game;
+            }
+        }
+        return null;
+    }
+
+
     // Check if any slot is free
     public boolean hasAvailableSlot(){
         return getAvailableGameSlot() != -1;

@@ -74,6 +74,11 @@ public class Matchmaking {
     public Game pair(int bot1ID, int bot2ID, int creatorID) {
         Match match = new Match(bot1ID, bot2ID, gameId++, creatorID);
         Game newGame = gameManagerCommunication.createGame(match); // Sends match info to GameManager and creates game
+        
+        if (pageManager != null && newGame != null) {
+            pageManager.triggerGameDisplay(newGame.gameNumber(), bot1ID, bot2ID);
+        }
+        
         return newGame;
     }
 

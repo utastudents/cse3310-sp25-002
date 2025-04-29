@@ -258,7 +258,10 @@ public class PageManager {
             UserEventReply reply2 = displayConnector.sendShowGameDisplay(player2Id);
             appServer.queueMessage(reply2);
         }
-        Game game = gameManager.findGameByPlayerId(player1Id > 1 ? player1Id : player2Id);
+        Game game = (player1Id <= 1 && player2Id <= 1)
+        ? gameManager.findGameById(gameId)
+        : gameManager.findGameByPlayerId(player1Id > 1 ? player1Id : player2Id);
+
 
         if (game != null && game.gameActive()) {
             Player currentPlayer = game.getCurrentTurn();
