@@ -10,16 +10,16 @@ import java.util.concurrent.*;
 */
 public class MatchmakingScheduler {
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private final PairUp pairUp;
+    private final Matchmaking matchmaking;
 
-    public MatchmakingScheduler() {
-        pairUp = new PairUp();
+    public MatchmakingScheduler(Matchmaking matchmaking) {
+        this.matchmaking = matchmaking; 
     }
 
     public void start() {
         // Task that will be ran asynchronously
         Runnable task = () -> {
-            pairUp.ping();
+            matchmaking.matching();
         };
 
         // Task scheduled to start after 30 seconds, and every 60 seconds after that

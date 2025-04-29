@@ -1,7 +1,7 @@
 
 // -- Import Dependencies --
 package uta.cse3310.PairUp;
-
+import uta.cse3310.PageManager.PageManager;
 
 
 /*
@@ -10,16 +10,15 @@ package uta.cse3310.PairUp;
     queue as well as requesting to remove a player from the queue in the case they log off
 */
 
- 
+
 
 public class PairUp {
-    //
-    private static final Matchmaking Mmaker = new Matchmaking();
 
-  
-    public PairUp() 
+    private final Matchmaking Mmaker;
+
+    public PairUp(PageManager pageManager)
     {
-
+        Mmaker = new Matchmaking(pageManager);
     }
 
 
@@ -28,12 +27,12 @@ public class PairUp {
     {
         // Create a new instance of a player from the player in match making class
         PlayerInMatchmaking player = new PlayerInMatchmaking(timeOfEntry, playerID, playerName, playAgainstBot, wins);
-        
+
         // Pass player to Matchmaking
         Mmaker.addPlayer(playerID, player);
 
     }
-    
+
     /*
         Removes a player from the matchmaking queue.
         Parameters:

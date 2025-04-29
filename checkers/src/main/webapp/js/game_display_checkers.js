@@ -138,7 +138,7 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             return;
         };
 
-        let game_display_event_types = ["valid_moves", "move_made_by_other_player_or_bot", "resign", "draw_offer", "draw_accept", "player_name_update", "notify_players", "show_game_display", "hide_game_display"];
+        let game_display_event_types = ["move_ack","game_over","valid_moves", "move_made_by_other_player_or_bot", "resign", "draw_offer", "draw_accept", "player_name_update", "notify_players", "show_game_display", "hide_game_display"];
 
         // this ignores any data that is not related to the game display.
         if(!game_display_event_types.includes(data.type)){ return; }
@@ -151,6 +151,10 @@ const game_display_handle_websocket_received_data = (connection, data) => {
         console.log("game display",data)
         if (data?.clientId){
             data.id = data.clientId;
+        }
+
+        if(data.type === "game_over"){
+            alert(data.message);
         }
         if (data.type==="valid_moves") {
             // assuming that websocket sends the json string {"type":"valid_moves", "legal_moves":[[x1,y1],[x2,y2],...]}
@@ -166,9 +170,9 @@ const game_display_handle_websocket_received_data = (connection, data) => {
                 // move_from_x, move_from_y, move_to_x, move_to_y = data.from[0], data.from[1], data.to[0], data.to[1];
                 // this function is used to move the checkers piece from one square to another. This function is called when the opponent makes a move.
                 checkerBoard.move_made_by_other_player_or_bot(data.from[0],data.from[1],data.to[0],data.to[1]);
-            };
-            // update the current player display after the opponent's move
-            if (data.current_move && data.id !== undefined) {
+            }
+            console.log(data)
+            if (data.player != checkerBoard.player && data.current_move && data.id !== undefined) {
                 checkerBoard.update_current_player(data.current_move, data.id);
             }
 
@@ -200,6 +204,13 @@ const game_display_handle_websocket_received_data = (connection, data) => {
 
         } else if(data.type === 'hide_game_display') {
             hide_game_display();
+        } else if (data.type === 'move_ack') {
+            if (checkerBoard && data.current_move && data.id !== undefined) {
+                console.log(`Received move_ack, updating current player view to: ${data.current_move} (ID: ${data.id})`);
+                checkerBoard.update_current_player(data.current_move, data.id);
+            } else {
+                console.log("Received move_ack without sufficient data or checkerBoard not initialized.");
+            }
         }
 
     } catch (error) {
@@ -339,6 +350,7 @@ class CheckersBoard {
                 // https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute
                 let checkers_piece_type = move_from_square.el.getAttribute("data-piece");
                 move_from_square.el.setAttribute("data-piece", ".");
+                
 
                 move_to_square.el.style.background = "rgb(209, 150, 111)";
                 move_to_square.el.dataset.shownStep = "true";
@@ -389,11 +401,6 @@ class CheckersBoard {
                     }
                 });
 
-                // also rotate the king text to keep it readable
-                const kings = document.querySelectorAll('.King');
-                kings.forEach(king => {
-                    king.style.transform = "rotate(180deg)";
-                });
             }
         } catch (error) {
             console.error("Error in game_display_checkers.js: ", error);
@@ -590,7 +597,6 @@ class CheckersBoard {
             //destructure the resolver func and req piece color
             const { resolver, requested_piece_color } = this.last_requested_moves;
             //gets color of selected piece
-            const selected_piece_color = this.get_piece_color(this.selected_piece.type);
             console.log("valid moves received from backend: ", data.legal_moves);
             const filtered_legal_moves = (data.legal_moves || []).filter(move =>{
                 const [dest_x, dest_y] = move;
@@ -607,22 +613,23 @@ class CheckersBoard {
                 const dest_piece_type = dest_square.el.getAttribute("data-piece");
                 const dest_piece_color = this.get_piece_color(dest_piece_type);
 
-                //keep the move if one of the two is true:
-                //the destination square is empty
-                //the destination square has a piece, and the color is different from the selected piece's color
-                return dest_piece_type === '.' || dest_piece_color !== requested_piece_color;
+                console.log(`Filtering move [${dest_x},${dest_y}]:`);
+                console.log(`  dest_piece_type: '${dest_piece_type}'`);
+                console.log(`  dest_piece_color: ${dest_piece_color}`);
+                console.log(`  requested_piece_color: '${requested_piece_color}'`);
+                let should_keep = dest_piece_type === '.' || dest_piece_color !== requested_piece_color;
+                console.log(`  Keep condition result: ${should_keep}`);
+
+                return should_keep;
             });
             if (filtered_legal_moves.length === 0) {
                 console.log(`(gd) return_allowed_moves: No valid moves available for the selected piece at [${this.selected_piece.x}, ${this.selected_piece.y}]`);
+            }  else {
+                console.log("(gd) Filter result: Found valid moves:", filtered_legal_moves); // Added log for success case
             }
 
-            //map the filtered legal moves into array
             const move_object = filtered_legal_moves.map(move => ({ x: move[0], y: move[1]}));
-
-            //resolves the list of valid moves
             resolver(move_object);
-
-            //clears the last requested moves to avoid memory leaks
             this.last_requested_moves = null;
         }
     }

@@ -2,7 +2,7 @@ package cse3310.uta.PairUpTests;
 
 
 import java.util.LinkedHashMap;
-
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -10,12 +10,24 @@ import org.junit.Test;
 
 import uta.cse3310.PairUp.Matchmaking;
 import uta.cse3310.PairUp.PlayerInMatchmaking;
+import uta.cse3310.App;
+import cse3310.uta.Mock.MockApp;
+
+
+import uta.cse3310.PageManager.PageManager;
+class DummyPageManagerTest5 extends PageManager {
+    public DummyPageManagerTest5(App app) {
+        super(app);
+    }
+}
+
+
 
 public class Test5 {
     // Custom PlayerInMatchmaking class for testing
     private class TestPlayer extends PlayerInMatchmaking {
         private long queueTime;
-
+    
         public TestPlayer(long userId, int playerId, String name, boolean bot, int wins) {
             super(userId, playerId, name, bot, wins);
             this.queueTime = 0;
@@ -33,7 +45,10 @@ public class Test5 {
 
     @Test
     public void TestMatching() {
-        Matchmaking matchmaking = new Matchmaking();
+        MockApp mockApp = new MockApp();
+
+        PageManager dummyPageManagerTest5 = new DummyPageManagerTest5(mockApp);
+        Matchmaking matchmaking = new Matchmaking(dummyPageManagerTest5);
         matchmaking.players = new LinkedHashMap<>();
 
         // Test 1: Players with similar wins should match

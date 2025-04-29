@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class pairup_subsys {
 
-    private final PageManager pageManager = new PageManager();
+    private final PageManager pageManager;
     private final NewAcctLogin newAcctLogin;
 
     private int clientId = -1;
@@ -28,8 +28,9 @@ public class pairup_subsys {
     }
 
 
-    public pairup_subsys(NewAcctLogin newAcctLogin)
+    public pairup_subsys(PageManager pageManager, NewAcctLogin newAcctLogin)
     {
+        this.pageManager = pageManager;
         this.newAcctLogin = newAcctLogin;
     }
 

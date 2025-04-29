@@ -11,21 +11,55 @@ import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Player;
 import uta.cse3310.GameManager.Square;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+
+
 
 //class rules checks if the move is legal
 public class rules
-{   
+{
     //checks if the move is within the bounds of the board
     //8x8 board
-    static protected boolean inBounds(Move move)
+    public static boolean inBounds(Move move)
     {
         Square square = move.getDest();
+        if (square == null) return false;
 
-        if (square.getCol() > 7 || square.getCol() < 0 ||
-            square.getRow() > 7 || square.getRow() < 0)
-            return false;
-        return true;
+        int row = square.getRow();
+        int col = square.getCol();
+
+        return row >= 0 && row < 8 && col >= 0 && col < 8;
     }
+
+    public static boolean inBounds(int row, int col) {
+        return row >= 0 && row < 8 && col >= 0 && col < 8;
+    }
+
+
+
+    public static boolean isCapture(Move move, Board board) {
+        Square start = move.getStart();
+        Square dest = move.getDest();
+
+        if (start == null || dest == null || !start.hasPiece()) return false;
+
+        int rowDiff = Math.abs(dest.getRow() - start.getRow());
+        int colDiff = Math.abs(dest.getCol() - start.getCol());
+
+        if (rowDiff == 2 && colDiff == 2) {
+            int middleRow = (start.getRow() + dest.getRow()) / 2;
+            int middleCol = (start.getCol() + dest.getCol()) / 2;
+
+            if (!inBounds(middleRow, middleCol)) return false;
+
+            Square middleSquare = board.getSquare(middleRow, middleCol);
+            return middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != start.getColor();
+        }
+        return false;
+    }
+
 
     //checks if a move is legal based on checkers rules
     //returns true if:
@@ -35,199 +69,121 @@ public class rules
     //returns false in all other cases
     // During testing, make methods for repetetive lines to reduce file length
     static protected boolean isLegal(Move move, Game game) {
-        boolean legality = false;
-        Square start = move.getStart(); // starting square
-        Square dest = move.getDest();   // destination square
+        Square start = move.getStart();
+        Square dest = move.getDest();
 
-        // check if move is out of bounds or destination is occupied
-        if (!(dest == null || !inBounds(move) || dest.hasPiece()))
-        {
-            Board board = game.getBoard();
-            Player player = game.getCurrentTurn();
-            boolean playerColor = player.getColor();
-            int rowDiff = Math.abs(dest.getRow() - start.getRow());
-            int colDiff = Math.abs(dest.getCol() - start.getCol());
+        if (start == null || dest == null) return false;
 
-            if(playerColor)
-            {
-                // isLegal for white pieces
-                // King piece
-                if(start.isKing())
-                {
-                    // Regular move
-                    if (rowDiff == 1 && colDiff == 1)
-                    {
-                        legality = true;
-                        game.lastCapture();
-                    }
-                    // Capture piece
-                    else if (rowDiff == 2 && colDiff == 2)
-                    {
-                        int middleRow = start.getRow();
-                        int middleCol = start.getCol();
+        Board board = game.getBoard();
+        Player player = game.getCurrentTurn();
 
-                        // Determine if the move is to the left or right
-                        if(middleCol < dest.getCol())
-                        {
-                            middleCol++;
-                        }
-                        else
-                        {
-                            middleCol--;
-                        }
+        if (board == null || player == null) return false;
 
-                        // Determine if the move is up or down
-                        if(middleRow < dest.getRow())
-                        {
-                            middleRow++;
-                        }
-                        else
-                        {
-                            middleRow--;
-                        }
+        Square boardStart = board.getSquare(start.getRow(), start.getCol());
+        Square boardDest = board.getSquare(dest.getRow(), dest.getCol());
 
-                        Square middleSquare = board.getSquare(middleRow, middleCol);
 
-                        // middle square must exist, have a piece, and be of the opposite color
-                        if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
-                        {
-                            legality = true;
-                            middleSquare.remove();
-                            game.newCapture();
-                        }
-                    }
-                }
-                else
-                {
-                    // Regular piece, not king
-                    if(start.getRow() > dest.getRow())
-                    {
-                        // Regular move
-                        if (rowDiff == 1 && colDiff == 1)
-                        {
-                            legality = true;
-                            game.lastCapture();
-                        }
-                        // Capture piece
-                        else if (rowDiff == 2 && colDiff == 2)
-                        {
-                            int middleRow = start.getRow() + 1;
-                            int middleCol = start.getCol();
+        if (boardStart == null || boardDest == null || !boardStart.hasPiece() || boardStart.getColor() != player.getColor()) {
+            System.out.println("[DEBUG rules.isLegal] Fail: Start/Dest null from board, No piece, or Wrong color piece");
+            return false;
+        }
+        if (boardDest.hasPiece()) {
+            System.out.println("[DEBUG rules.isLegal] Fail: Dest occupied");
+            return false;
+        }
 
-                            // Determine if the move is to the left or right
-                            if(middleCol < dest.getCol())
-                            {
-                                middleCol++;
-                            }
-                            else
-                            {
-                                middleCol--;
-                            }
+        boolean playerColor = player.getColor();
+        int rowDiff = boardDest.getRow() - boardStart.getRow();
+        int colDiffAbs = Math.abs(boardDest.getCol() - boardStart.getCol());
+        int rowDiffAbs = Math.abs(rowDiff);
 
-                            Square middleSquare = board.getSquare(middleRow, middleCol);
-
-                            // Middle square must exist, have a piece, and be of the opposite color
-                            if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
-                            {
-                                legality = true;
-                                middleSquare.remove();
-                                game.newCapture();
-                            }
-                        }
-                    }
+        if (rowDiffAbs == 1 && colDiffAbs == 1) {
+            // Check direction
+            if (boardStart.isKing()) {
+                System.out.println("[DEBUG rules.isLegal] OK: King normal move");
+                return true;
+            } else {
+                if ((playerColor && rowDiff == -1) || (!playerColor && rowDiff == 1)) {
+                    System.out.println("[DEBUG rules.isLegal] OK: Regular normal forward move");
+                    return true;
+                } else {
+                    System.out.println("[DEBUG rules.isLegal] Fail: Regular normal backward move");
+                    return false;
                 }
             }
-            else
-            {
-                // isLegal for black pieces
-                if(start.isKing())
-                {
-                    // Regular move
-                    if (rowDiff == 1 && colDiff == 1)
-                    {
-                        legality = true;
-                        game.lastCapture();
-                    }
-                    // Capture piece
-                    else if (rowDiff == 2 && colDiff == 2)
-                    {
-                        int middleRow = start.getRow();
-                        int middleCol = start.getCol();
+        }
+        else if (rowDiffAbs == 2 && colDiffAbs == 2) {
+            if (!boardStart.isKing() && !((playerColor && rowDiff == -2) || (!playerColor && rowDiff == 2))) {
+            System.out.println("[DEBUG rules.isLegal] Fail: Regular jump backward move");
+                return false;
+            }
 
-                        // Determine if the move is to the left or right
-                        if(middleCol < dest.getCol())
-                        {
-                            middleCol++;
-                        }
-                        else
-                        {
-                            middleCol--;
-                        }
+            int middleRow = (boardStart.getRow() + boardDest.getRow()) / 2;
+            int middleCol = (boardStart.getCol() + boardDest.getCol()) / 2;
 
-                        // Determine if the move is up or down
-                        if(middleRow < dest.getRow())
-                        {
-                            middleRow++;
-                        }
-                        else
-                        {
-                            middleRow--;
-                        }
+            Square middleSquare = board.getSquare(middleRow, middleCol);
 
-                        Square middleSquare = board.getSquare(middleRow, middleCol);
+            if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor) {
+                return true;
+            } else {
+                return false;
+            }
+        }
 
-                        // middle square must exist, have a piece, and be of the opposite color
-                        if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
-                        {
-                            legality = true;
-                            middleSquare.remove();
-                            game.newCapture();
-                        }
-                    }
-                }
-                else
-                {
-                    if(start.getRow() < dest.getRow())
-                    {
-                        // Regular move
-                        if (rowDiff == 1 && colDiff == 1)
-                        {
-                            legality = true;
-                            game.lastCapture();
-                        }
-                        // Capture piece
-                        else if (rowDiff == 2 && colDiff == 2)
-                        {
-                            int middleRow = start.getRow() + 1;
-                            int middleCol = start.getCol();
+        return false;
+    }
 
-                            // Determine if the move is to the left or right
-                            if(middleCol < dest.getCol())
-                            {
-                                middleCol++;
-                            }
-                            else
-                            {
-                                middleCol--;
-                            }
+    public static boolean isCaptureAvailableForPlayer(Game game) {
+        Board board = game.getBoard();
+        Player player = game.getCurrentTurn();
 
-                            Square middleSquare = board.getSquare(middleRow, middleCol);
+        if (board == null || player == null) return false;
 
-                            // Middle square must exist, have a piece, and be of the opposite color
-                            if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
-                            {
-                                legality = true;
-                                middleSquare.remove();
-                                game.newCapture();
-                            }
-                        }
+        boolean playerColor = player.getColor();
+
+        for (int r = 0; r < 8; r++) {
+            for (int c = 0; c < 8; c++) {
+                Square start = board.getSquare(r, c);
+                if (start != null && start.hasPiece() && start.getColor() == playerColor) {
+                    if (hasLegalCaptureFromSquare(game, start)) {
+                        return true;
                     }
                 }
             }
         }
+        return false;
+    }
 
-        // Any other move is illegal
-        return legality;
+
+    static protected boolean hasLegalCaptureFromSquare(Game game, Square start) {
+        Board board = game.getBoard();
+        if (board == null || start == null || !start.hasPiece()) return false;
+
+        boolean playerColor = start.getColor();
+        int row = start.getRow();
+        int col = start.getCol();
+
+        int[] rowOffsets = start.isKing() ? new int[]{-2, 2} : (playerColor ? new int[]{-2} : new int[]{2});
+        int[] colOffsets = {-2, 2};
+
+        for (int rOff : rowOffsets) {
+            for (int cOff : colOffsets) {
+                int newRow = row + rOff;
+                int newCol = col + cOff;
+                int midRow = row + rOff / 2;
+                int midCol = col + cOff / 2;
+
+                if (inBounds(newRow, newCol)) { 
+                    Square landing = board.getSquare(newRow, newCol);
+                    Square middle = board.getSquare(midRow, midCol);
+
+                    if (landing != null && !landing.hasPiece() && middle != null && middle.hasPiece() && middle.getColor() != playerColor) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 
@@ -279,33 +235,39 @@ static protected boolean hasLegalCapture(Game game, Move move) {
 
     //Check to see if current player can move selected piece
     //Does the color of the player match the color of the piece
-    static protected boolean canMovePiece(Board board, Square square, Game game)
+    public static boolean canMovePiece(Game game, Move move)
     {
+        if (game == null || move == null || move.getStart() == null) return false;
 
-        Player currentPlayer = game.getCurrentTurn(); //who's turn is it
-        boolean currentPlayerColor = currentPlayer.getColor(); //what color is associated with that player
+        Player currentPlayer = game.getCurrentTurn();
+        Board board = game.getBoard();
 
-        // checks to see if there is no piece on the current square or if the player's assigned color doesn't the peice they're trying to move
-        if(!square.hasPiece()|| square.getColor() != currentPlayerColor)
-        {
+        if (currentPlayer == null || board == null) return false;
+
+        Square startSquare = board.getSquare(move.getStart().getRow(), move.getStart().getCol());
+
+        if (startSquare == null || !startSquare.hasPiece() || startSquare.getColor() != currentPlayer.getColor()) {
+            System.out.println("[DEBUG rules.canMovePiece] Fail: Invalid start square or wrong color.");
             return false;
         }
 
-        Moves canJump = new Moves();
-        if(square.isKing()) //checks to see if there is anyway for the player to jump legally
-        {
-            canJump = rules.kingJump(board, new Moves(), -1, -1, square, currentPlayerColor);
-        }
-        else
-        {
-            canJump = rules.pieceJump(board, new Moves(), square, currentPlayerColor ? 1: -1);
-        }
-        if(canJump.size() <= 0)// return false if the player can't jump anything even if its a king
-        {
+        if (!isLegal(move, game)) {
+            System.out.println("[DEBUG rules.canMovePiece] Fail: Move itself is not legal.");
             return false;
         }
+
+        boolean captureIsAvailable = isCaptureAvailableForPlayer(game);
+
+        if (captureIsAvailable) {
+            boolean chosenMoveIsCapture = isCapture(new Move(startSquare, move.getDest()), board);
+            if (!chosenMoveIsCapture) {
+                System.out.println("[DEBUG rules.canMovePiece] Fail: Capture available, but non-capture move chosen.");
+                return false;
+            }
+        }
+        System.out.println("[DEBUG rules.canMovePiece] OK: Move is legal and satisfies capture rule (if applicable).");
         return true;
-        }
+    }
 
     public static ArrayList<Square> getAllPieces(Board board)
     {
@@ -526,7 +488,7 @@ static protected boolean hasLegalCapture(Game game, Move move) {
                         continue;
                     }
 
-                    
+
                     colAdd = colAdd*(-1);
                     square = squareDup; // redundant (maybe)
                 }
@@ -539,106 +501,156 @@ static protected boolean hasLegalCapture(Game game, Move move) {
         return moveList;
     }
 
-    static protected Moves getMovesForSquare(Board board, boolean color, int[] startSquareCoords)
-        {
-        Moves moves = new Moves();
-        int colorNum;
-        if(color){
-            colorNum = -1; // color is white
+
+
+
+    public static Moves getMovesForSquare(Board board, boolean color, int[] startSquareCoords) 
+    {
+        Moves legalMoves = new Moves();
+        int startRow = startSquareCoords[0];
+        int startCol = startSquareCoords[1];
+
+        if (!inBounds(startRow, startCol) || board == null) return legalMoves;
+
+        Square startSquare = board.getSquare(startRow, startCol);
+
+        if (startSquare == null || !startSquare.hasPiece() || startSquare.getColor() != color) {
+            System.out.println("[DEBUG rules.getMovesForSquare] Invalid start square or wrong color at: " + Arrays.toString(startSquareCoords) + ". Expected color: " + (color ? "W" : "B"));
+            return legalMoves;
         }
-        else{
-            colorNum = 1; // color is black
+
+        Game tempGame = new Game(color ? 100 : 200, color ? 200 : 100, color, !color, 999);
+        tempGame.updateBoard(board.copy());
+        while (tempGame.getCurrentTurn().getColor() != color) {
+            tempGame.switchTurn();
+        }
+        boolean captureAvailableGlobally = isCaptureAvailableForPlayer(tempGame);
+        System.out.println("[DEBUG rules.getMovesForSquare] Checking piece ("+startRow+","+startCol+"). Capture available globally? " + captureAvailableGlobally);
+
+
+        Moves jumpMoves = new Moves();
+        findPossibleJumpsRecursive(board, startSquare, startSquare, jumpMoves, new HashMap<>()); // Populates jumpMoves
+
+        if (jumpMoves.size() > 0) {
+            System.out.println("[DEBUG rules.getMovesForSquare] Jumps found for piece at ("+startRow+","+startCol+"). Returning "+jumpMoves.size()+" jumps.");
+            return jumpMoves;
         }
 
-        Square square = board.getSquare(startSquareCoords[0], startSquareCoords[1]);
-        Square squareDup = square;
-
-        if (square != null && square.hasPiece() && square.getColor() == color) {
-
-            if(square.isKing()){
-
-                for(int j = 3; j > -3; j = j - 2 ){
-                    int rowAdd = 1;
-                    int colAdd = -1;
-
-                    if(j<0){
-                        rowAdd = -1;
-                    }
-
-                    int col = square.getCol();
-                    int row = square.getRow();
-
-                    if(col+colAdd < 0 || col+colAdd > 7 || row+rowAdd < 0 || row+rowAdd > 7){
-                        colAdd = colAdd*(-1);
-                        continue;
-                    }
-
-                    Square temp = board.getSquare(row+rowAdd, col+colAdd);
-
-                    if(temp.hasPiece()){
-                        if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7
-                            || temp.getColor() == square.getColor()){
-                            colAdd = colAdd*(-1);
-                            continue;
-                        }
-                        else{
-                            // opponent's piece found
-                            temp = board.getSquare(row+(rowAdd*2), col+(colAdd*2));
-
-                            if (row+(rowAdd*2) >= 0 && row+(rowAdd*2) <= 7 && col+(colAdd*2) >= 0 && col+(colAdd*2) <= 7 && !temp.hasPiece()){
-                                moves.addNext(squareDup, temp);
-                                kingJump(board, moves, row+rowAdd, col+colAdd, temp, color);
-                            } else {
-                                colAdd = colAdd*(-1);
-                                continue;
-                            }
-                        }
-                    }
-                    else{
-                        // normal move found
-                        moves.addNext(squareDup, temp);
-                        colAdd = colAdd*(-1);
-                        continue;
-                    }
-                    colAdd = colAdd*(-1);
-                }
-            }
-            else{
-                int rowAdd = colorNum;
-                int colAdd = -1;
-
-                for(int j = 0; j < 2; j++){
-
-                    int col = square.getCol();
-                    int row = square.getRow();
-
-                    if(col+colAdd >= 0 && col+colAdd <= 7 && row+rowAdd >= 0 && row+rowAdd <= 7){
-                        Square temp = board.getSquare(row+rowAdd, col+colAdd);
-
-                        if(temp.hasPiece()){
-                            if(row+(rowAdd*2) >= 0 && row+(rowAdd*2) <= 7 && col+(colAdd*2) >= 0 && col+(colAdd*2) <= 7
-                                && temp.getColor() != square.getColor()){
-
-                                Square jumpDest = board.getSquare(row+(rowAdd*2), col+(colAdd*2));
-                                if(!jumpDest.hasPiece()){
-                                    moves.addNext(squareDup, jumpDest);
-                                    pieceJump(board, moves, jumpDest, colorNum);
-                                }
-                            }
-                        }
-                        else{
-                            // empty diagonal square found
-                            moves.addNext(squareDup, temp);
-                        }
-                    }
-                    colAdd = colAdd*(-1);
-                }
-            }
+        if (!captureAvailableGlobally) {
+            System.out.println("[DEBUG rules.getMovesForSquare] No jumps for this piece and none globally. Checking normal moves for ("+startRow+","+startCol+").");
+            findPossibleNormalMoves(board, startSquare, legalMoves);
         } else {
-            System.out.println("[DEBUG rules.getMovesForSquare] No piece found or wrong color at requested square: " + Arrays.toString(startSquareCoords));
+            System.out.println("[DEBUG rules.getMovesForSquare] No jumps for this piece, BUT jumps available elsewhere. No normal moves allowed for ("+startRow+","+startCol+").");
         }
 
-        return moves;
+        System.out.println("[DEBUG rules.getMovesForSquare] Final legal moves count for ("+startRow+","+startCol+"): " + legalMoves.size());
+        return legalMoves;
     }
 
-}
+
+
+
+    static private void findPossibleNormalMoves(Board board, Square start, Moves normalMoves) {
+        if (board == null || start == null || normalMoves == null) return;
+
+        boolean isKing = start.isKing();
+        boolean color = start.getColor();
+        int[] rowOffsets = isKing ? new int[]{-1, 1} : (color ? new int[]{-1} : new int[]{1});
+        int[] colOffsets = {-1, 1};
+        for (int rOff : rowOffsets) {
+            for (int cOff : colOffsets) {
+                int destRow = start.getRow() + rOff;
+                int destCol = start.getCol() + cOff;
+
+                if (inBounds(destRow, destCol)) {
+                    Square dest = board.getSquare(destRow, destCol);
+                    if (dest != null && !dest.hasPiece()) {
+                        System.out.println("[DEBUG rules.findNormal] Adding valid normal move: ("+start.getRow()+","+start.getCol()+") -> ("+destRow+","+destCol+")");
+                        normalMoves.addNext(start, dest);
+                    }
+                }
+            }
+        }
+    }
+
+
+    static private void findPossibleJumpsRecursive(Board board, Square originalStart, Square currentSquare, Moves jumpMoves, Map<String, Boolean> visitedInSequence) {
+        if (board == null || originalStart == null || currentSquare == null || jumpMoves == null || visitedInSequence == null) return;
+
+        boolean isKing = currentSquare.isKing();
+        boolean movingPieceColor = originalStart.getColor();
+        int[] rowOffsets = isKing ? new int[]{-2, 2} : (movingPieceColor ? new int[]{-2} : new int[]{2});
+        int[] colOffsets = {-2, 2};
+        boolean foundFurtherJump = false;
+        String currentKey = currentSquare.getRow() + "," + currentSquare.getCol();
+
+        if (visitedInSequence.containsKey(currentKey)) {
+            return;
+        }
+        visitedInSequence.put(currentKey, true);
+
+
+        for (int rOff : rowOffsets) {
+            for (int cOff : colOffsets) {
+                int destRow = currentSquare.getRow() + rOff;
+                int destCol = currentSquare.getCol() + cOff;
+                int midRow = currentSquare.getRow() + rOff / 2;
+                int midCol = currentSquare.getCol() + cOff / 2;
+                String destKey = destRow + "," + destCol;
+
+                if (inBounds(destRow, destCol)) {
+                    Square dest = board.getSquare(destRow, destCol);
+                    Square middle = board.getSquare(midRow, midCol);
+                    if (dest != null && middle != null && middle.hasPiece() && middle.getColor() != movingPieceColor) {
+                        if (!dest.hasPiece()) {
+                            foundFurtherJump = true;
+                            findPossibleJumpsRecursive(board, originalStart, dest, jumpMoves, new HashMap<>(visitedInSequence));
+                        }
+                        else {
+                            Boolean destColor = dest.getColor();
+                            if (destColor != null && destColor == movingPieceColor) {
+                                System.out.println("[WARN rules.findJumpsRec] Invalid jump: Dest ("+destRow+","+destCol+") occupied by friendly piece. Stale board read likely.");
+                            } else if (destColor != null && destColor != movingPieceColor) {
+                                System.out.println("[WARN rules.findJumpsRec] Invalid jump: Dest ("+destRow+","+destCol+") occupied by opponent piece.");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!foundFurtherJump && !currentSquare.equals(originalStart)) {
+            boolean alreadyAdded = false;
+            for(Move existingMove : jumpMoves.getMoves()) {
+                if (existingMove.getStart().getRow() == originalStart.getRow() &&
+                    existingMove.getStart().getCol() == originalStart.getCol() &&
+                    existingMove.getDest().getRow() == currentSquare.getRow() &&
+                    existingMove.getDest().getCol() == currentSquare.getCol()) {
+                    alreadyAdded = true;
+                    break;
+                }
+            }
+            if (!alreadyAdded) {
+                jumpMoves.addNext(originalStart, currentSquare);
+            }
+        }
+    }
+
+
+    public static ArrayList<Square> getAllPiecesForColor(Board board, boolean color)
+    {
+        ArrayList<Square> pieces = new ArrayList<>();
+        if (board == null) return pieces;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Square boardSquare = board.getSquare(i, j);
+                if (boardSquare != null && boardSquare.hasPiece() && boardSquare.getColor() == color) {
+                    pieces.add(boardSquare);
+                }
+            }
+        }
+        return pieces;
+    }
+
+
+    }

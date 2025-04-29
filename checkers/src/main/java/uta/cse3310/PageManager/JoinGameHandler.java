@@ -3,10 +3,18 @@ package uta.cse3310.PageManager;
 import java.util.Map;
 import uta.cse3310.PageManager.game_status;
 import uta.cse3310.PairUp.PairUp;
+import uta.cse3310.PairUp.PlayerInMatchmaking;
 
 public class JoinGameHandler {
-    
+
+    private final PairUp pairUp;
+
+    public JoinGameHandler(PairUp pairUp) {
+        this.pairUp = pairUp;
+    }
+
     public JoinGameHandler() {
+        this(null); // debug
     }
 
     public Result processJoinGame(Map<String, String> joinData) {
@@ -32,23 +40,34 @@ public class JoinGameHandler {
 
     public void cancelJoinRequest(int clientId) {
         System.out.println("Cancelling join request for clientId: " + clientId);
+        if (pairUp != null) {
+            pairUp.removePlayer(clientId);
+        }
     }
 
     private void sendAvailabilityToDB(int clientId) {
         System.out.println("Flagging user as available in DB...");
         System.out.println("clientId: " + clientId);
+        if (pairUp != null) {
+            long timestamp = System.currentTimeMillis();
+            String playerName = "Player_" + clientId;
+            int wins = 0;
+            pairUp.AddPlayer(timestamp, clientId, playerName, false, wins);
+        }
     }
 
     private void sendToPairUpForBot(int clientId) {
         System.out.println("Sending request to PairUp for bot match...");
         System.out.println("clientId: " + clientId);
 
-        PairUp pairUp = new PairUp();
-        long timestamp = System.currentTimeMillis();
-        String playerName = "Player_" + clientId;
-        int wins = 0; 
-
-        pairUp.AddPlayer(timestamp, clientId, playerName, true, wins);
+        if (pairUp != null) {
+            long timestamp = System.currentTimeMillis();
+            String playerName = "Player_" + clientId;
+            int wins = 0;
+            pairUp.AddPlayer(timestamp, clientId, playerName, true, wins);
+        } else {
+            System.err.println("PairUp instance is null in JoinGameHandler. Cannot add player for bot match.");
+        }
     }
 
     public game_status createGameStatusMessage(int clientId, boolean playAgainstBot) {
@@ -56,7 +75,7 @@ public class JoinGameHandler {
         status.type = "join_response";
         status.msg = playAgainstBot ? "Matched with Bot!" : "Waiting for another player...";
         status.clientId = clientId;
-        status.isBot = playAgainstBot;  
+        status.isBot = playAgainstBot;
         return status;
     }
 

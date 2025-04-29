@@ -67,7 +67,7 @@ public class GamePageController {
         GamePlay gp = new GamePlay();
         Map<Square, Moves> moveList = gp.returnMoves(game);
 
-        if(moveList.isEmpty() == true || game.lastCapture() == 40){
+        if(moveList.isEmpty() == true || game.getMovesSinceLastCapture() == 40){
             game.GameDeclareDraw();
             return true;
         }

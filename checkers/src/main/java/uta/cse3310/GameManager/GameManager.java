@@ -1,5 +1,7 @@
 package uta.cse3310.GameManager;
 
+
+import uta.cse3310.GamePlay.rules;
 import uta.cse3310.GamePlay.GamePlay;
 import uta.cse3310.GameTermination.GameTermination;
 import uta.cse3310.PairUp.Match;
@@ -24,9 +26,12 @@ public class GameManager {
 
     // Constructor to initialize components
     public GameManager(){
-        gp = new GamePlay(); // Handles game rules and moves
-        gt = new GameTermination(); // Handles game-ending logic
+        gp = new GamePlay();
+        gt = new GameTermination();
         grc = new GamePairController();
+        if (games == null) {
+            initializeGames();
+        }
     }
 
     public void initializeGames(){
@@ -62,15 +67,25 @@ public class GameManager {
     public void processMove(int playerId, Move move){
         Game game = findGameByPlayerId(playerId);
         if(game != null && game.gameActive()){
-            Moves moves = new Moves();
-            moves.addNext(move);
-            gp.returnBoard(game, moves); // from GamePlay.java
-            game.switchTurn();
+            boolean success = gp.processAndExecuteMove(game, move);
+            if (success) {
+                Player winner = game.getWinner();
+                boolean draw = game.checkDrawCondition();
+
+                if (winner != null || draw) {
+                    System.out.println("Game " + game.gameNumber() + " ended after move by " + playerId);
+                } else {
+                    game.switchTurn();
+                    System.out.println("Turn switched to player: " + game.getCurrentTurn().getPlayerId());
+                }
+            } else {
+                System.out.println("Invalid move attempted by player " + playerId);
+            }
         } else {
-            System.out.println("Invalid move: game not found or inactive.");
+            System.out.println("Invalid move request: game not found or inactive for player " + playerId);
         }
     }
-    
+
    //Terminate a game and notify GameTermination
     public void terminateGame(int gameNumber){
         if(gameNumber >= 0 && gameNumber < MAXIMUM_GAMES && games.get(gameNumber) != null){
@@ -94,58 +109,91 @@ public class GameManager {
         }
     }
 
-    private Moves requestBotMoves(Game game, int botId){
+    public Moves requestBotMoves(Game game, int botId){
+        if (game == null || game.getCurrentTurn() == null || game.getCurrentTurn().getPlayerId() != botId) {
+            System.err.println("[ERROR GameManager] Bot move requested by ID " + botId + " but it's not their turn or game is null.");
+            return null;
+        }
+
+        boolean botColor = game.getCurrentTurn().getColor();
+
         if(botId == 0){
             BotI bot = new BotI();
-            bot.setColor(game.getCurrentTurn().getColor());
+            bot.setColor(botColor);
             return bot.requestMove(game.getBoard());
         } else if(botId == 1){
             BotII bot = new BotII();
-            bot.setColor(game.getCurrentTurn().getColor());
+            bot.setColor(botColor);
             return bot.requestMove(game.getBoard());
         }
+        System.err.println("[ERROR GameManager] Unknown bot ID requested: " + botId);
         return null;
     }
 
     public void progressGame(int gameNumber){
-        Game game = games.get(gameNumber);
-        if(game == null || !game.gameActive()){
+        if (gameNumber < 0 || gameNumber >= games.size() || games.get(gameNumber) == null) {
+            System.err.println("[ERROR GameManager] progressGame called with invalid game number: " + gameNumber);
             return;
         }
-        
-        // Get current player
-        Player currentPlayer = game.getCurrentTurn();
-        int playerId = currentPlayer.getPlayerId();
-        
-        // Check if current player is a bot
-        boolean isBot = false;
-        if((playerId == game.getPlayer1ID() && game.isPlayer1Bot()) || 
-            (playerId == game.getPlayer2ID() && game.isPlayer2Bot())){
-            isBot = true;
+        Game game = games.get(gameNumber);
+
+        if(game == null || !game.gameActive()){
+            System.out.println("[DEBUG GameManager] progressGame: Game " + gameNumber + " is null or inactive.");
+            return;
         }
-        
+
+        Player currentPlayer = game.getCurrentTurn();
+        if (currentPlayer == null) {
+            System.err.println("[ERROR GameManager] progressGame: Current turn player is null for game " + gameNumber);
+            return;
+        }
+        int playerId = currentPlayer.getPlayerId();
+
+        boolean isBot = (playerId == 0 || playerId == 1);
+
         if(isBot){
-            // For bot players, request moves from the bot
+            System.out.println("[DEBUG GameManager] progressGame: Bot's turn (Player " + playerId + ") in game " + gameNumber);
             Moves botMoves = requestBotMoves(game, playerId);
-            
+
             if(botMoves != null && botMoves.size() > 0){
-                // Send moves to GamePlay and get updated board
-                Board updatedBoard = gp.returnBoard(game, botMoves);
-                
-                if(updatedBoard != null){
-                    // Valid move - update the board
-                    game.updateBoard(updatedBoard);
-                    
-                    // Let GameTermination check if the game is over
-                    boolean gameOver = false;//gt.isGameOver(game);
-                    if(!gameOver){
-                        // If not over, switch turns
-                        game.switchTurn();
+                boolean moveMade = false;
+                for (Move botMove : botMoves.getMoves()) {
+                    if (gp.processAndExecuteMove(game, botMove)) {
+                        System.out.println("[DEBUG GameManager] Bot " + playerId + " move executed successfully in game " + gameNumber);
+                        moveMade = true;
+
+                        Player winner = game.getWinner();
+                        boolean draw = game.checkDrawCondition();
+                        if (winner != null || draw) {
+                            System.out.println("Game " + game.gameNumber() + " ended after bot move.");
+                        } else {
+                            game.switchTurn();
+                            System.out.println("Turn switched to player: " + game.getCurrentTurn().getPlayerId());
+                        }
+                        break;
+                    } else {
+                        System.out.println("[WARN GameManager] Bot " + playerId + " move failed validation/execution. Trying next.");
                     }
                 }
+                if (!moveMade) {
+                    System.err.println("[ERROR GameManager] Bot " + playerId + " failed to make any valid move from its list in game " + gameNumber);
+                    if (!game.isDraw()) game.checkDrawCondition();
+                    if (!game.isDraw() && game.gameActive()) {
+                        System.err.println("Forcing draw for game " + gameNumber + " as bot could not move.");
+                        game.GameDeclareDraw();
+                    }
+                }
+        } else {
+            System.out.println("[WARN GameManager] Bot " + playerId + " provided no moves for game " + gameNumber);
+            if (!game.isDraw()) game.checkDrawCondition();
+            if (!game.isDraw() && game.gameActive()) {
+                System.err.println("Forcing draw for game " + gameNumber + " as bot provided no moves.");
+                game.GameDeclareDraw();
             }
         }
-        // For human players, we wait for input through processMove
+    } else {
+        System.out.println("[DEBUG GameManager] progressGame: Human's turn (Player " + playerId + ") in game " + gameNumber + ". Waiting for input.");
+    }
     }
 
 

@@ -15,6 +15,7 @@ import com.google.gson.JsonParser;
 
 import uta.cse3310.DB.DB;
 import uta.cse3310.DB.SQLiteConnector;
+import uta.cse3310.App;
 
 public class NewAcctLogin
 {
@@ -23,46 +24,10 @@ public class NewAcctLogin
     {
         //The usernames will be entered here so make
         //sure the table is made here
-        DB.createTable();       
+        DB.createTable();
     }
 
-    //First, lets process the input of the usernames
-    public String processUsernameInput(String inputJSON)
-    {
-        JsonObject response = new JsonObject();
-
-        try
-        {
-            //receive the username
-            JsonObject input = JsonParser.parseString(inputJSON).getAsJsonObject();
-            String username = input.get("username").getAsString();
-
-            //Make sure user actually typed something
-            if(username == null)
-            {
-                response.addProperty("Status", "Error");
-                response.addProperty("Message", "Please enter username");
-                return response.toString();
-            }
-            //Page Manager already has the main logic:
-            PageManager pm = new PageManager();
-            JsonObject validate = pm.handleUsernameValidation(username);
-            boolean accepted = validate.get("accepted").getAsBoolean();
-
-            response.addProperty("Status", accepted ? "Success" : "Error");
-            response.addProperty("Message", accepted ? "Username accepted" : "Username is already taken or invalid.");
-
-        }
-        catch(Exception e)
-        {
-            //error handling
-            System.out.println("Could not process username: " + e.getMessage());
-            response.addProperty("Status", "Error");
-            response.addProperty("Message","Invalid");
-        }
-        //return back the reponse of success or failure
-        return response.toString();
-    }
+    
 
     //check if user already in database
     public boolean usernameExists(String username)
