@@ -3,7 +3,7 @@ import uta.cse3310.GameManager.Player;
 import uta.cse3310.GamePlay.GamePlay;
 import java.util.Map;
 import java.util.HashMap;
-
+import uta.cse3310.DB.DB;
 public class GameTermination
 {
 
@@ -108,6 +108,16 @@ public class GameTermination
         System.out.println("Saving results to database...");
         System.out.println("Final winner: " + finalWinner);
         System.out.println("Scores: " + playerScores);
+
+        for (Map.Entry<Integer, Integer> entry : playerScores.entrySet()) {
+            Integer playerId = entry.getKey();   
+            Integer score = entry.getValue();     
+
+            String username = "Player" + playerId;  
+            DB.updatePlayer(username, score);
+
+            System.out.println("The database is updated" + username + " = " + score);
+        }
     }
 
     // This method will confirm if the results were successfully stored in the database
