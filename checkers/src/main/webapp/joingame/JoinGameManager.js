@@ -178,6 +178,10 @@ class JoinGameManager
             this.playerWaitlist.add(player);
           });
           this.playerWaitlist.displayWaitlist();
+
+          this.playerWaitlist.waitlist.forEach((player, index) =>{
+            console.log(`${index + 1}. ${player.username} (${player.id})`);
+          });
         }
   
         if (waitlistData && waitlistData.bots) 
@@ -190,10 +194,6 @@ class JoinGameManager
           });
           this.botWaitlist.displayWaitlist();
         }
-
-        this.playerWaitlist.waitlist.forEach((player, index) =>{
-          console.log(`${index + 1}. ${player.username} (${player.id})`);
-        });
       });
   
       // Listen for join response events
