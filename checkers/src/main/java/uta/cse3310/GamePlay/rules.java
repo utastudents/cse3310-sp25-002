@@ -392,7 +392,7 @@ static protected boolean hasLegalCapture(Game game, Move move) {
             Square temp = board.getSquare(row+rowAdd, col+colAdd);
 
             if(temp.hasPiece()){ // this will break of temp or square have a color of type NULL, so make sure that never happens
-                if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7 || (temp.getColor() ? 1 : -1) == colorNum){
+                if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7 || (temp.getColor() ? -1 : 1) == colorNum){
                     colAdd = colAdd*(-1); // if the diagonal square is on any edge, or the piece is the same color, break
                     continue;
                 }
