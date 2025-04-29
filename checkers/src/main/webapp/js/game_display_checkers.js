@@ -144,8 +144,8 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             return;
         };
         console.log("game display",data)
-        if (data?.clientId){
-            data.id = data.clientId;
+        if (data?.playerId){
+            data.id = data.playerId;
         }
         if (data.type==="valid_moves") {
             // assuming that websocket sends the json string {"type":"valid_moves", "legal_moves":[[x1,y1],[x2,y2],...]}

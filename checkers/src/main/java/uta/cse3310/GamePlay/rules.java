@@ -281,14 +281,12 @@ static protected boolean hasLegalCapture(Game game, Move move) {
     //Does the color of the player match the color of the piece
     static protected boolean canMovePiece(Board board, Square square, Game game)
     {
-        // is there something on the current square
-        boolean boardColor = square.getColor(); //finds the color of the piece trying to be moved
 
         Player currentPlayer = game.getCurrentTurn(); //who's turn is it
         boolean currentPlayerColor = currentPlayer.getColor(); //what color is associated with that player
 
         // checks to see if there is no piece on the current square or if the player's assigned color doesn't the peice they're trying to move
-        if(!square.hasPiece()|| boardColor != currentPlayerColor)
+        if(!square.hasPiece()|| square.getColor() != currentPlayerColor)
         {
             return false;
         }

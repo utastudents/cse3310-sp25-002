@@ -143,6 +143,10 @@ public class App extends WebSocketServer {
     for (Integer id : Reply.recipients) {
       Reply.status.clientId = id;
       WebSocket destination = id2con.get(id);
+      if (destination == null) {
+        System.out.println("no connection for id " + id);
+        continue;
+      }
       String jsonString = gson.toJson(Reply.status);
       destination.send(jsonString);
       System.out.println("sending " + jsonString + " to " + id);
