@@ -149,8 +149,8 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             return;
         };
         console.log("game display",data)
-        if (data?.playerId){
-            data.id = data.playerId;
+        if (data?.clientId){
+            data.id = data.clientId;
         }
         if (data.type==="valid_moves") {
             // assuming that websocket sends the json string {"type":"valid_moves", "legal_moves":[[x1,y1],[x2,y2],...]}
@@ -196,7 +196,7 @@ const game_display_handle_websocket_received_data = (connection, data) => {
         } else if(data.type === 'show_game_display') {
             // this function is used to show the game display. It is called when the game is started.
             console.log("game display initialized")
-            show_game_display(connection, data.game_id, data.starting_player, data.player, data.player_color, data.playerId);
+            show_game_display(connection, data.game_id, data.starting_player, data.player, data.player_color, data.clientId);
 
         } else if(data.type === 'hide_game_display') {
             hide_game_display();
