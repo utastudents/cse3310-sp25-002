@@ -24,6 +24,7 @@ public class PageManager {
     private GameManagerSubsys gameManagerSubsys;
     private GamePageController gamePageController;
     private App appServer;
+    private GameManager gameManager;
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // key = gameId, value = player IDs
 
@@ -35,12 +36,13 @@ public class PageManager {
         DB.createTable();
 
         // Create GameManager and pass it into both controllers
-        GameManager gameManager = new GameManager();
+        this.gameManager = new GameManager();
+        gameManager.initializeGames();
         gamePageController = new GamePageController(gameManager);
         gameManagerSubsys = new GameManagerSubsys(gamePageController);
         GameTermination gameTermination = new GameTermination();
 
-        displayConnector = new GameDisplayConnector(gamePageController, gameTermination, gameManager);
+        displayConnector = new GameDisplayConnector(gamePageController, gameTermination, this.gameManager, this.appServer);
 
         accountHandler = new NewAcctLogin();
         this.pairUp = new PairUp(this);
@@ -58,6 +60,11 @@ public class PageManager {
     // Remove a player from matchmaking
     public void handlePlayerRemoval(int clientId) {
         pairUp.removePlayer(clientId);
+    }
+
+
+    public GameManager getGameManager() {
+        return gameManager;
     }
 
     // Create a new bot vs bot game and send the board

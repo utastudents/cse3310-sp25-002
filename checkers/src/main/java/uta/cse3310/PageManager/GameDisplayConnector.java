@@ -11,7 +11,10 @@ import uta.cse3310.PageManager.UserEventReply;
 import uta.cse3310.PageManager.game_status;
 import uta.cse3310.GameManager.Player;
 import uta.cse3310.GameManager.GameManager;
-
+import uta.cse3310.App;
+import uta.cse3310.GameManager.Player;
+import uta.cse3310.GamePlay.GamePlay;
+import java.lang.InterruptedException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +30,16 @@ public class GameDisplayConnector {
     private GamePageController gamePageController;
     private GameTermination gameTermination;
     private GameManager gameManager;
+    private GamePlay gp;
+    private App appServer;
 
-    public GameDisplayConnector(GamePageController gamePageController, GameTermination gameTermination, GameManager gameManager) {
+
+    public GameDisplayConnector(GamePageController gamePageController, GameTermination gameTermination, GameManager gameManager, App appServer) {
         this.gamePageController = gamePageController;
         this.gameTermination = gameTermination;
         this.gameManager = gameManager;
+        this.appServer = appServer;
+        this.gp = new GamePlay();
     }
 
     public String getPlayerName(int playerId) {
@@ -45,44 +53,143 @@ public class GameDisplayConnector {
         System.out.println("[DEBUG] Received move from player " + event.id);
 
         // Get client ID from event
-        UserEventReply reply = new UserEventReply();
-        reply.status = new game_status();
-        reply.recipients = new ArrayList<>();
+        UserEventReply humanMoveReply  = new UserEventReply();
+        humanMoveReply.status = new game_status();
+        humanMoveReply.recipients = new ArrayList<>();
 
-        // Validate game move is valid
+        Game game = gamePageController.returnGame(event.id);
+        int gameNumber = game.gameNumber();
+        int[] allPlayerIds = gamePageController.getAllPlayerIDs(event.id);
+
         if (event.from != null && event.to != null) {
-            Move move = new Move(event.from[0], event.from[1], event.to[0], event.to[1]);
-            gamePageController.processMove(event.id, move);
+            Move humanPlayerMove = new Move(event.from[0], event.from[1], event.to[0], event.to[1]);
+            gamePageController.processMove(event.id, humanPlayerMove);
 
-            reply.status.type = "move_made_by_other_player_or_bot";
-            reply.status.game_id = event.gameId;
-            reply.status.player = getPlayerName(event.id);
-            reply.status.from = List.of(event.from[0], event.from[1]);
-            reply.status.to = List.of(event.to[0], event.to[1]);
+            humanMoveReply.status.type = "move_made_by_other_player_or_bot";
+            humanMoveReply.status.game_id = gameNumber;
+            humanMoveReply.status.player = getPlayerName(event.id);
+            humanMoveReply.status.from = List.of(event.from[0], event.from[1]);
+            humanMoveReply.status.to = List.of(event.to[0], event.to[1]);
 
-            // next player's id make it ready because it will be sent in game display
-            int nextPlayerId = gamePageController.playerTurn(event.id);
-            String nextPlayerName = getPlayerName(nextPlayerId);
-            reply.status.current_move = nextPlayerName;
-            reply.status.id = event.id;
-            System.out.println("[DEBUG] Move processed. Next turn: Player " + nextPlayerId);
+
+            Player playerAfterHumanMove = game.getCurrentTurn();
+            humanMoveReply.status.current_move = getPlayerName(playerAfterHumanMove.getPlayerId());
+            humanMoveReply.status.id = playerAfterHumanMove.getPlayerId();
+
+
+            if (allPlayerIds != null) {
+                for (int id : allPlayerIds) {
+                    humanMoveReply.recipients.add(id);
+                }
+            }
+
+            Player winner = game.getWinner();
+            boolean draw = gamePageController.getDraw(event.id);
+            if (winner != null || draw) {
+                humanMoveReply.status.type = "game_over";
+                humanMoveReply.status.gameOver = true;
+                humanMoveReply.status.winner = (winner != null) ? winner.getPlayerId() : null;
+                humanMoveReply.status.draw = draw;
+                humanMoveReply.status.msg = draw ? "Game ended in a draw!" : "Player " + getPlayerName(winner.getPlayerId()) + " wins!";
+                System.out.println("[DEBUG DisplayConnector] Game over after human move. " + humanMoveReply.status.msg);
+                return humanMoveReply;
+            }
+
+
+
+
+            Player currentPlayer = playerAfterHumanMove;
+            int currentPlayerId = currentPlayer.getPlayerId();
+            boolean isBotTurn = (currentPlayerId == 0 || currentPlayerId == 1);
+
+            if (isBotTurn && game.gameActive()) {
+                System.out.println("[DEBUG DisplayConnector] Bot's turn (Player " + currentPlayerId + "). Requesting move...");
+
+                Moves botMoves = gameManager.requestBotMoves(game, currentPlayerId);
+
+                if (botMoves != null && botMoves.size() > 0) {
+                    Move botMove = botMoves.getFirst();
+                    System.out.println("[DEBUG DisplayConnector] Bot " + currentPlayerId + " chose move: " + botMove.getStart().getRow()+","+botMove.getStart().getCol() + " -> " + botMove.getDest().getRow()+","+botMove.getDest().getCol());
+
+                    gp.returnBoard(game, botMoves);
+                    game.switchTurn();
+                    System.out.println("[DEBUG DisplayConnector] Bot move processed for game " + game.gameNumber());
+
+                    UserEventReply botMoveReply = new UserEventReply();
+                    botMoveReply.status = new game_status();
+                    botMoveReply.recipients = new ArrayList<>();
+
+                    botMoveReply.status.type = "move_made_by_other_player_or_bot";
+                    botMoveReply.status.game_id = game.gameNumber();
+                    botMoveReply.status.player = getPlayerName(currentPlayerId);
+                    botMoveReply.status.from = List.of(botMove.getStart().getRow(), botMove.getStart().getCol());
+                    botMoveReply.status.to = List.of(botMove.getDest().getRow(), botMove.getDest().getCol());
+
+                    Player nextPlayerAfterBot = game.getCurrentTurn();
+                    botMoveReply.status.current_move = getPlayerName(nextPlayerAfterBot.getPlayerId());
+                    botMoveReply.status.id = nextPlayerAfterBot.getPlayerId();
+
+                    winner = game.getWinner();
+                    draw = gamePageController.getDraw(event.id);
+
+                    if (winner != null || draw) {
+                        botMoveReply.status.type = "game_over";
+                        botMoveReply.status.gameOver = true;
+                        botMoveReply.status.winner = (winner != null) ? winner.getPlayerId() : null;
+                        botMoveReply.status.draw = draw;
+                        botMoveReply.status.msg = draw ? "Game ended in a draw!" : "Player " + getPlayerName(winner.getPlayerId()) + " wins!";
+                        System.out.println("[DEBUG DisplayConnector] Game over after bot move. " + botMoveReply.status.msg);
+                    }
+
+
+                    if (allPlayerIds != null) {
+                        for (int id : allPlayerIds) {
+                            botMoveReply.recipients.add(id);
+                        }
+                    }
+
+                    try {
+                        System.out.println("[DEBUG DisplayConnector] Adding 1-second delay before sending bot move...");
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        System.err.println("[ERROR DisplayConnector] Thread sleep interrupted: " + e.getMessage());
+                        Thread.currentThread().interrupt();
+                    }
+
+                    this.appServer.queueMessage(botMoveReply);
+
+                } else {
+                    System.out.println("[WARN DisplayConnector] Bot " + currentPlayerId + " did not return any moves.");
+                    if (gamePageController.getDraw(event.id)) {
+                        UserEventReply drawReply = new UserEventReply();
+                        drawReply.status = new game_status();
+                        drawReply.recipients = new ArrayList<>();
+                        drawReply.status.type = "game_over";
+                        drawReply.status.gameOver = true;
+                        drawReply.status.draw = true;
+                        drawReply.status.msg = "Game ended in a draw (no moves available)!";
+                        if (allPlayerIds != null) {
+                            for (int id : allPlayerIds) drawReply.recipients.add(id);
+                        }
+                        if (this.appServer != null) {
+                            this.appServer.queueMessage(drawReply);
+                            System.out.println("[DEBUG DisplayConnector] Queued message for draw after bot had no moves.");
+                        }
+                        humanMoveReply = drawReply;
+                    }
+                }
+            } else {
+                System.out.println("[DEBUG DisplayConnector] It's human player " + currentPlayerId + "'s turn. Waiting for input.");
+            }
         } else {
-            reply.status.type = "error";
-            reply.status.msg = "Invalid move data.";
+            humanMoveReply.status.type = "error";
+            humanMoveReply.status.msg = "Invalid move data.";
+            humanMoveReply.recipients.add(event.id);
             System.out.println("[ERROR] Invalid move data received from player " + event.id);
         }
 
-        // Get all player IDs from GameManager
-        int[] playerIds = gamePageController.getAllPlayerIDs(event.id);
-        if (playerIds != null) {
-            for (int id : playerIds) {
-                reply.recipients.add(id);
-            }
-        } else {
-            System.out.println("[WARN] Could not get player IDs for game involving player " + event.id + ".");
-        }
 
-        return reply;
+        return humanMoveReply;
     }
 
     // Handle resignation

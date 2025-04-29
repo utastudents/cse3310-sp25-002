@@ -11,6 +11,11 @@ import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Player;
 import uta.cse3310.GameManager.Square;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
+
+
 
 //class rules checks if the move is legal
 public class rules
@@ -26,6 +31,7 @@ public class rules
             return false;
         return true;
     }
+
 
     //checks if a move is legal based on checkers rules
     //returns true if:
@@ -92,7 +98,14 @@ public class rules
                         if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != playerColor)
                         {
                             legality = true;
+
+                            System.out.println("[DEBUG rules.isLegal] Removing captured piece at ("+middleSquare.getRow()+","+middleSquare.getCol()+")");
+                            System.out.println("[DEBUG rules.isLegal] Middle square state before remove: hasPiece="+middleSquare.hasPiece()+", color="+(middleSquare.getColor() == null ? "null" : (middleSquare.getColor() ? "W" : "B")));
+
                             middleSquare.remove();
+                            System.out.println("[DEBUG rules.isLegal] Removing captured piece at ("+middleSquare.getRow()+","+middleSquare.getCol()+")");
+                            System.out.println("[DEBUG rules.isLegal] Middle square state before remove: hasPiece="+middleSquare.hasPiece()+", color="+(middleSquare.getColor() == null ? "null" : (middleSquare.getColor() ? "W" : "B")));
+
                             game.newCapture();
                         }
                     }

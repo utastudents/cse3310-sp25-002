@@ -94,7 +94,7 @@ public class GameManager {
         }
     }
 
-    private Moves requestBotMoves(Game game, int botId){
+    public Moves requestBotMoves(Game game, int botId){
         if(botId == 0){
             BotI bot = new BotI();
             bot.setColor(game.getCurrentTurn().getColor());

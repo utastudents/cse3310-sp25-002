@@ -15,7 +15,7 @@ public class GamePlay
     public Board returnBoard(Game game, Moves moves)
     {
         rules rule = new rules();
-        
+
         // Default is return NULL as it assumes the move is illegal until proven legal
         Board updatedBoard = null;
         Board currentGameBoard = game.getBoard();

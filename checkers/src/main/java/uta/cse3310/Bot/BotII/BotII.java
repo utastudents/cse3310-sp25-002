@@ -6,7 +6,6 @@ import uta.cse3310.GameManager.GameManager;
 import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Square;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -132,6 +131,7 @@ public class BotII extends Bot {
 
         // Set the current game board to the one provided by the game manager
         setCurrentGameBoard(board);
+        this.currentGameBoard = board;
 
         if (isFirstMove()) {
             return startMove();
@@ -272,10 +272,10 @@ public class BotII extends Bot {
         int pieceRow = start.getRow();
 
         // Determine forward direction for this piece
-        int forward = (this.color && pieceRow > 4) || (!this.color && pieceRow < 3) ? 1 : -1;
+        int forwardDirection = this.color ? -1 : 1;
 
         // Determine the row sign based on the direction
-        int rowSign = (direction == 'F') ? forward : -forward;
+        int rowSign = (direction == 'F') ? forwardDirection : -forwardDirection;
 
         // Determine the step size based on whether it's a capturing move
         // For capturing moves, we need to move two squares forward
@@ -289,12 +289,18 @@ public class BotII extends Bot {
 
         // Check left diagonal
         if (isValidMove(start, destRow, destColLeft, isCapture)) {
-            diagonalMoves.addNext(new Move(start, this.currentGameBoard.getSquare(destRow, destColLeft)));
+            Square destSquare = this.currentGameBoard.getSquare(destRow, destColLeft);
+            if (destSquare != null) {
+                diagonalMoves.addNext(new Move(start, destSquare));
+            }
         }
 
         // Check right diagonal
         if (isValidMove(start, destRow, destColRight, isCapture)) {
-            diagonalMoves.addNext(new Move(start, this.currentGameBoard.getSquare(destRow, destColRight)));
+            Square destSquare = this.currentGameBoard.getSquare(destRow, destColRight);
+            if (destSquare != null) {
+                diagonalMoves.addNext(new Move(start, destSquare));
+            }
         }
 
         return diagonalMoves;
@@ -374,17 +380,38 @@ public class BotII extends Bot {
         // determine strategy
         // if aggr , sort by ELO and use highest
         // // if passive , sort by ELo and use lowest
-        
+        if (possibleMoves == null || possibleMoves.isEmpty()) {
+        System.out.println("[WARN BotII] implementBotStrategy called with no possible moves. Returning empty move.");
+        if (this.moves == null) {
+            this.moves = new Moves();
+        } else {
+            this.moves.getMoves().clear();
+        }
+        return;
+    }
         possibleMoves.sort(Comparator.comparing((Pair<Square, LinkedList<MoveRating>> pair) -> pair.getValue().getFirst().getEloRating()));
 
         // if strategy is aggressive, reverse the order of the list (highest elo first)
         if (strategy)
             Collections.reverse(possibleMoves);
-        
+
+        if (possibleMoves.getFirst().getValue() == null || possibleMoves.getFirst().getValue().isEmpty()) {
+            System.err.println("[ERROR BotII] implementBotStrategy: Found Pair with empty MoveRating list!");
+            if (this.moves == null) {
+                this.moves = new Moves();
+            } else {
+                this.moves.getMoves().clear();
+            }
+            return;
+        }
+
+
         // after set isMoves , add move to Move obj
         Move m = possibleMoves.getFirst().getValue().getFirst().getMove();
+        if (this.moves == null) {
+            this.moves = new Moves();
+        }
         this.moves.addNext(m);
-        
     }
 
     /**

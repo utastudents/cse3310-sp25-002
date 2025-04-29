@@ -32,11 +32,18 @@ public class Board {
           Square start = board[move.getStart().getRow()][move.getStart().getCol()];
           boolean pieceColor = start.getColor();
           boolean isKing = start.isKing();
-
           Square end = board[move.getDest().getRow()][move.getDest().getCol()];
+
+          System.out.println("[DEBUG Board.execute] Executing move: ("+start.getRow()+","+start.getCol()+") -> ("+end.getRow()+","+end.getCol()+")");
+          System.out.println("[DEBUG Board.execute] Start square state before remove: hasPiece="+start.hasPiece()+", color="+(start.getColor() == null ? "null" : (start.getColor() ? "W" : "B")));
+          System.out.println("[DEBUG Board.execute] End square state before place: hasPiece="+end.hasPiece()+", color="+(end.getColor() == null ? "null" : (end.getColor() ? "W" : "B")));
+
           end.place(pieceColor, isKing);
           if(promote){end.makeKing();}
           start.remove();
+
+          System.out.println("[DEBUG Board.execute] Start square state AFTER remove: hasPiece="+start.hasPiece()+", color="+(start.getColor() == null ? "null" : "null"));
+          System.out.println("[DEBUG Board.execute] End square state AFTER place: hasPiece="+end.hasPiece()+", color="+(end.getColor() ? "W" : "B")); 
      }
 
      public String toString(){

@@ -339,6 +339,7 @@ class CheckersBoard {
                 // https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttribute
                 let checkers_piece_type = move_from_square.el.getAttribute("data-piece");
                 move_from_square.el.setAttribute("data-piece", ".");
+                
 
                 move_to_square.el.style.background = "rgb(209, 150, 111)";
                 move_to_square.el.dataset.shownStep = "true";
