@@ -216,6 +216,10 @@ const game_display_handle_websocket_received_data = (connection, data) => {
         } else if (data.type === 'move_ack') {
             if (!checkerBoard) return;
 
+            if (data.capturedSquare && data.capturedSquare.length === 2) {
+                console.log(`Move acknowledged with capture. Removing piece at [${data.capturedSquare[0]}, ${data.capturedSquare[1]}]`);
+                handleCapture(data.capturedSquare);
+            }
             if (data.current_move && data.id !== undefined) {
                 console.log(`Received move_ack, updating current player view to: ${data.current_move} (ID: ${data.id})`);
                 checkerBoard.update_current_player(data.current_move, data.id);
