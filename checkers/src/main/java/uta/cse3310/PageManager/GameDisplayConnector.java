@@ -357,7 +357,9 @@ public class GameDisplayConnector {
         Game game = gamePageController.returnGame(event.id);
 
 
-            boolean playerColor;
+        boolean playerColor;
+        game.lockBoard();
+        try {
             if (game.getPlayer1ID() == event.id) playerColor = game.getPlayer1Color();
             else if (game.getPlayer2ID() == event.id) playerColor = game.getPlayer2Color();
             else {
@@ -365,41 +367,38 @@ public class GameDisplayConnector {
                 reply.status.msg = "Only players can request moves.";
                 reply.status.legal_moves = new ArrayList<>();
                 return reply;
-        }
+            }
 
-        Moves movesForPiece = rules.getMovesForSquare(game.getBoard(), playerColor, event.square);
+            Moves movesForPiece = rules.getMovesForSquare(game.getBoard(), playerColor, event.square);
 
-        List<List<Integer>> legalMovesList = new ArrayList<>();
-        if (movesForPiece != null) {
-            LinkedList<Move> piece_moves = movesForPiece.getMoves();
-            if (piece_moves != null) {
-                for (Move move : piece_moves) {
-                    if (move != null && move.getDest() != null) {
-                        Square destSquare = move.getDest();
-                        List<Integer> destCoords = new ArrayList<>();
-                        destCoords.add(destSquare.getRow());
-                        destCoords.add(destSquare.getCol());
-                        legalMovesList.add(destCoords);
+            List<List<Integer>> legalMovesList = new ArrayList<>();
+            if (movesForPiece != null) {
+                LinkedList<Move> piece_moves = movesForPiece.getMoves();
+                if (piece_moves != null) {
+                    for (Move move : piece_moves) {
+                        if (move != null && move.getDest() != null) {
+                            Square destSquare = move.getDest();
+                            List<Integer> destCoords = new ArrayList<>();
+                            destCoords.add(destSquare.getRow());
+                            destCoords.add(destSquare.getCol());
+                            legalMovesList.add(destCoords);
+                        }
                     }
                 }
             }
+
+
+
+            System.out.println("[DEBUG] legalMoves size: " + legalMovesList.size());
+
+            reply.status.legal_moves = legalMovesList;
+
+        }finally {
+            game.unlockBoard();
         }
-
-
-
-        System.out.println("[DEBUG] legalMoves size: " + legalMovesList.size());
-
-        reply.status.legal_moves = legalMovesList;
-        // Get all player IDs from GameManager
-        // int[] playerIds = gamePageController.getAllPlayerIDs(event.id);
-        // if (playerIds != null) {
-        //     for (int id : playerIds) {
-        //         reply.recipients.add(id);
-        //     }
-        // }
-
         // imp remember this later HL reply.recipients.add(event.id);
         return reply;
+    
     }
 
     // Send game board to creator for a Bot vs Bot match

@@ -578,14 +578,16 @@ static protected boolean hasLegalCapture(Game game, Move move) {
         if (board == null || originalStart == null || currentSquare == null || jumpMoves == null || visitedInSequence == null) return;
 
         boolean isKing = currentSquare.isKing();
-        boolean color = originalStart.getColor();
-        int[] rowOffsets = isKing ? new int[]{-2, 2} : (color ? new int[]{-2} : new int[]{2});
+        boolean movingPieceColor = originalStart.getColor();
+        int[] rowOffsets = isKing ? new int[]{-2, 2} : (movingPieceColor ? new int[]{-2} : new int[]{2});
         int[] colOffsets = {-2, 2};
         boolean foundFurtherJump = false;
         String currentKey = currentSquare.getRow() + "," + currentSquare.getCol();
 
+        if (visitedInSequence.containsKey(currentKey)) {
+            return;
+        }
         visitedInSequence.put(currentKey, true);
-        System.out.println("[DEBUG rules.findJumpsRec] Exploring from ("+currentKey+") path: " + visitedInSequence.keySet());
 
 
         for (int rOff : rowOffsets) {
@@ -596,14 +598,22 @@ static protected boolean hasLegalCapture(Game game, Move move) {
                 int midCol = currentSquare.getCol() + cOff / 2;
                 String destKey = destRow + "," + destCol;
 
-                if (inBounds(destRow, destCol) && !visitedInSequence.containsKey(destKey)) {
+                if (inBounds(destRow, destCol)) {
                     Square dest = board.getSquare(destRow, destCol);
                     Square middle = board.getSquare(midRow, midCol);
-
-                    if (dest != null && !dest.hasPiece() && middle != null && middle.hasPiece() && middle.getColor() != color) {
-                        System.out.println("[DEBUG rules.findJumpsRec] Potential next jump: ("+currentKey+") -> ("+destKey+") over ("+midRow+","+midCol+")");
-                        foundFurtherJump = true;
-                        findPossibleJumpsRecursive(board, originalStart, dest, jumpMoves, new HashMap<>(visitedInSequence));
+                    if (dest != null && middle != null && middle.hasPiece() && middle.getColor() != movingPieceColor) {
+                        if (!dest.hasPiece()) {
+                            foundFurtherJump = true;
+                            findPossibleJumpsRecursive(board, originalStart, dest, jumpMoves, new HashMap<>(visitedInSequence));
+                        }
+                        else {
+                            Boolean destColor = dest.getColor();
+                            if (destColor != null && destColor == movingPieceColor) {
+                                System.out.println("[WARN rules.findJumpsRec] Invalid jump: Dest ("+destRow+","+destCol+") occupied by friendly piece. Stale board read likely.");
+                            } else if (destColor != null && destColor != movingPieceColor) {
+                                System.out.println("[WARN rules.findJumpsRec] Invalid jump: Dest ("+destRow+","+destCol+") occupied by opponent piece.");
+                            }
+                        }
                     }
                 }
             }
@@ -612,13 +622,15 @@ static protected boolean hasLegalCapture(Game game, Move move) {
         if (!foundFurtherJump && !currentSquare.equals(originalStart)) {
             boolean alreadyAdded = false;
             for(Move existingMove : jumpMoves.getMoves()) {
-                if (existingMove.getStart().equals(originalStart) && existingMove.getDest().equals(currentSquare)) {
+                if (existingMove.getStart().getRow() == originalStart.getRow() &&
+                    existingMove.getStart().getCol() == originalStart.getCol() &&
+                    existingMove.getDest().getRow() == currentSquare.getRow() &&
+                    existingMove.getDest().getCol() == currentSquare.getCol()) {
                     alreadyAdded = true;
                     break;
                 }
             }
             if (!alreadyAdded) {
-                System.out.println("[DEBUG rules.findJumpsRec] Adding final jump destination: ("+currentSquare.getRow()+","+currentSquare.getCol()+") originating from ("+originalStart.getRow()+","+originalStart.getCol()+")");
                 jumpMoves.addNext(originalStart, currentSquare);
             }
         }

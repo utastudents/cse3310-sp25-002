@@ -12,7 +12,6 @@ import uta.cse3310.GameManager.Player;
 import java.util.Arrays;
 
 
-
 public class GamePlay
 {
 
@@ -25,6 +24,8 @@ public class GamePlay
         }
 
         Board currentGameBoard = game.getBoard();
+        game.lockBoard();
+        try {
         Player activePlayer = game.getCurrentTurn();
 
         if (currentGameBoard == null || activePlayer == null) {
@@ -53,6 +54,9 @@ public class GamePlay
             System.out.println("[WARN GamePlay.processAndExecuteMove] Board state remains unchanged:\n" + currentGameBoard.toString());
             return false;
         }
+        } finally {
+            game.unlockBoard();
+        }
     }
 
 
@@ -80,63 +84,6 @@ public class GamePlay
     }
 
 
-
-    public Board returnBoard(Game game, Moves moves)
-    {
-
-        // Default is return NULL as it assumes the move is illegal until proven legal
-        Board updatedBoard = null;
-        Board currentGameBoard = game.getBoard();
-        Move currentMove = moves.getFirst();
-        Square currentSquare = currentMove.getStart();
-        Square destinationSquare = currentMove.getDest();
-        Player activePlayer = game.getCurrentTurn();
-        int numMoves = moves.size();
-        int counter = 0;
-
-        // Loop to go through each move in the linked list
-        while(counter < numMoves)
-        {
-            // Check if there is at least one legal move the player can make with this piece
-            if(rules.canMovePiece(game, currentMove))
-            {
-                if(rules.isLegal(currentMove, game))
-                {
-                    if(activePlayer.getColor())
-                    {
-                        if(destinationSquare.getRow() == 0)
-                        {
-                            currentGameBoard.execute(currentMove, true);
-                        }
-                        else
-                        {
-                            currentGameBoard.execute(currentMove, false);
-                        }
-                    }
-                    else
-                    {
-                        if(destinationSquare.getRow() == 7)
-                        {
-                            currentGameBoard.execute(currentMove, true);
-                        }
-                        else
-                        {
-                            currentGameBoard.execute(currentMove, false);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                break;
-            }
-
-            // Counter to make sure all moves are processed
-            counter++;
-            currentMove = moves.getNext(currentMove);
-        }
-        return updatedBoard;
-    }
 
     public Map<Square, Moves> returnMoves(Game game)
     {

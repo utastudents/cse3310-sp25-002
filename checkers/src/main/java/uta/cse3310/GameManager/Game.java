@@ -7,7 +7,7 @@ import uta.cse3310.GamePlay.rules;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.concurrent.locks.ReentrantLock;
 
 
 
@@ -15,6 +15,7 @@ import java.util.HashMap;
 public class Game
 {
     private Board board;
+    private final ReentrantLock boardLock = new ReentrantLock();
     private Player player1;
     private Player player2;
     private String player1Name;
@@ -77,6 +78,18 @@ public class Game
         this.player2quit = false;
 
     }
+
+    public void lockBoard() {
+        boardLock.lock();
+    }
+
+    public void unlockBoard() {
+        boardLock.unlock();
+    }
+
+
+
+
 
     public Game(int player1id, int player2id, boolean player1color, boolean player2color, int gameNumber){
         this(player1id, player2id, player1color, player2color, gameNumber, (player1id == 0 ? "Bot I" : (player1id == 1 ? "Bot II" : "Player " + player1id)),(player2id == 0 ? "Bot I" : (player2id == 1 ? "Bot II" : "Player " + player2id)));
@@ -175,7 +188,14 @@ public class Game
     //switch player turns
     public void switchTurn(){turn = !turn;}
     //update the board
-    public void updateBoard(Board board){this.board = board;}
+    public void updateBoard(Board newBoard) {
+        try {
+            boardLock.lock();
+            this.board = newBoard;
+        } finally {
+            boardLock.unlock();
+        }
+    }
     //return player1's ID
     public int getPlayer1ID(){return player1.getPlayerId();}
     //return player2's ID
