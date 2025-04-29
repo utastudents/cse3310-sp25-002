@@ -260,50 +260,33 @@
       window.dispatchEvent(joinResponseEvent);
 
       console.log("Received join response:", inputData);
-    
+
     // Forward the response to our JoinGameManager
     if (window.dispatchEvent) {
       window.dispatchEvent(new CustomEvent('joinResponseReceived', {
         detail: inputData
       }));
     }
-    
-    // Check if we need to transition to game display
-    // Play vs Bot option
-    if (inputData.msg && inputData.msg.includes("Matched with Bot")) {
-    console.log("Bot match confirmed - transitioning to game display");
-    // Hide join game, show game display
     document.getElementById("game_lobby").style.display = "none";
     document.getElementById("join_game").style.display = "none";
 
-  } 
+    // Play vs Bot option
+    if (inputData.msg && inputData.msg.includes("Matched with Bot")) {
+    console.log("Bot match confirmed - transitioning to game display");
+  }
   else if (inputData.msg && inputData.msg.includes("Waiting for another player...")) {
     console.log("Player match confirmed - transitioning to game display");
-    // Hide join game, show game display
-    document.getElementById("game_lobby").style.display = "none";
-    document.getElementById("join_game").style.display = "none";
-    
     // Extract opponent name if available
     let opponentName = "Opponent";
     if (inputData.opponentName) {
       opponentName = inputData.opponentName;
     }
- 
   }
   else if (inputData.msg && inputData.msg.includes("Bot vs Bot")) {
     console.log("Bot vs Bot match - transitioning to game display (spectator mode)");
-    // Hide join game, show game display
-    document.getElementById("game_lobby").style.display = "none";
-    document.getElementById("join_game").style.display = "none";
-
     }
   }
 
-  else {
-
-      // previous comment, not sure if it is valid or a misunderstanding.  leaving it here for now.
-      //console.log("msg received, but unknown");
-    }
 
     // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details
     // DO NOT REMOVE OR MODIFY THIS FUNCTION WIHTOUT OUR KNOWLEDGE. IT IS CRUCIAL FOR THE GAME DISPLAY TO WORK PROPERLY.

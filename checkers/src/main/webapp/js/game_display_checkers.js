@@ -162,6 +162,10 @@ const game_display_handle_websocket_received_data = (connection, data) => {
                 // this function is used to move the checkers piece from one square to another. This function is called when the opponent makes a move.
                 checkerBoard.move_made_by_other_player_or_bot(data.from[0],data.from[1],data.to[0],data.to[1]);
             };
+            // update the current player display after the opponent's move
+            if (data.current_move && data.id !== undefined) {
+                checkerBoard.update_current_player(data.current_move, data.id);
+            }
 
         } else if(data.type === "resign") {
             // assuming that websocket sends the json string {"type":"resign", "player":"NAME OF PLAYER THAT RESIGNED (STRING)"}
@@ -355,7 +359,7 @@ class CheckersBoard {
                 console.log({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
                 //Does not send a move request to the backend if it is the opponent's turn
                 if(this.player === this.current_player){
-                    this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, id: this.player_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
+                    this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, id: this.player_id, player: this.current_player, from:[move_from_x, move_from_y],to:[move_to_x, move_to_y]}));
                 }
             }
 

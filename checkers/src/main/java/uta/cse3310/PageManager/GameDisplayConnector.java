@@ -9,6 +9,8 @@ import uta.cse3310.GameTermination.GameTermination;
 import uta.cse3310.PageManager.UserEvent;
 import uta.cse3310.PageManager.UserEventReply;
 import uta.cse3310.PageManager.game_status;
+import uta.cse3310.GameManager.Player;
+import uta.cse3310.GameManager.GameManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,10 +25,12 @@ public class GameDisplayConnector {
 
     private GamePageController gamePageController;
     private GameTermination gameTermination;
+    private GameManager gameManager;
 
-    public GameDisplayConnector(GamePageController gamePageController, GameTermination gameTermination) {
+    public GameDisplayConnector(GamePageController gamePageController, GameTermination gameTermination, GameManager gameManager) {
         this.gamePageController = gamePageController;
         this.gameTermination = gameTermination;
+        this.gameManager = gameManager;
     }
 
     // Handle a move from the front-end
@@ -45,12 +49,21 @@ public class GameDisplayConnector {
 
             reply.status.type = "move_made_by_other_player_or_bot";
             reply.status.game_id = event.gameId;
-            reply.status.player = event.playerName + " (ID: " + event.id + ")";
+            reply.status.player = getPlayerName(event.id);
             reply.status.from = List.of(event.from[0], event.from[1]);
             reply.status.to = List.of(event.to[0], event.to[1]);
+
+            // next player's id make it ready because it will be sent in game display
+            int nextPlayerId = gamePageController.playerTurn(event.id);
+            String nextPlayerName = getPlayerName(nextPlayerId);
+
+            reply.status.current_move = nextPlayerName;
+            reply.status.id = nextPlayerId;
+            System.out.println("[DEBUG] Move processed. Next turn: Player " + nextPlayerId);
         } else {
             reply.status.type = "error";
             reply.status.msg = "Invalid move data.";
+            System.out.println("[ERROR] Invalid move data received from player " + event.id);
         }
 
         // Get all player IDs from GameManager
@@ -59,6 +72,8 @@ public class GameDisplayConnector {
             for (int id : playerIds) {
                 reply.recipients.add(id);
             }
+        } else {
+            System.out.println("[WARN] Could not get player IDs for game involving player " + event.id + ".");
         }
 
         return reply;
@@ -77,7 +92,8 @@ public class GameDisplayConnector {
         //gameTermination.terminateGame(event.gameId, event.id);
 
         reply.status.type = "resign";
-        reply.status.player = event.playerName + " (ID: " + event.id + ")";
+        // hl reply.status.player = event.playerName + " (ID: " + event.id + ")";
+        reply.status.player = getPlayerName(event.id);
 
         // Get all player IDs from GameManager
         int[] playerIds = gamePageController.getAllPlayerIDs(event.id);
@@ -101,13 +117,16 @@ public class GameDisplayConnector {
 
         // Send draw offer to other player
         reply.status.type = "draw_offer";
-        reply.status.player = event.playerName + " (ID: " + event.id + ")";
+        // hl reply.status.player = event.playerName + " (ID: " + event.id + ")";
+        reply.status.player = getPlayerName(event.id);
 
         // Get all player IDs from GameManager
         int[] playerIds = gamePageController.getAllPlayerIDs(event.id);
         if (playerIds != null) {
             for (int id : playerIds) {
-                reply.recipients.add(id);
+                if (id != event.id) {
+                    reply.recipients.add(id);
+                }
             }
         }
 
@@ -116,7 +135,7 @@ public class GameDisplayConnector {
 
     // Get allowed moves 
     public UserEventReply handleGetAllowedMoves(UserEvent event) {
-        System.out.println("[DEBUG] Getting allowed moves for square " + Arrays.toString(event.square) + " from player " + event.id);
+        System.out.println("[DEBUG] Getting allowed moves for square " + Arrays.toString(event.square) + " from" + getPlayerName(event.id));
 
         // Get client ID from event
         UserEventReply reply = new UserEventReply();
@@ -189,6 +208,21 @@ public class GameDisplayConnector {
         reply.status.game_id = gameId;
         reply.status.msg = "You are now watching a Bot vs Bot match.";
 
+
+        reply.status.player = getPlayerName(creatorId); // spectator name
+        reply.status.playerId = creatorId; // spectator id
+        reply.status.player_color = "S"; // spectator
+
+
+        Game game = gamePageController.returnGame(gameId);
+        if (game != null) {
+            reply.status.starting_player = getPlayerName(game.getCurrentTurn().getPlayerId());
+        } else {
+            reply.status.starting_player = "Bot";
+            System.out.println("[WARN] Could not get game details for BotVsBot game ID: " + gameId);
+        }
+
+
         reply.status.clientId = creatorId;
         reply.recipients.add(creatorId);
 
@@ -209,19 +243,27 @@ public class GameDisplayConnector {
 
         reply.status.type = "show_game_display";
         reply.status.game_id = game.gameNumber();
-        reply.status.player = "Player " + clientId; // Needs PlayerName from GM
-        reply.status.playerId = clientId; 
+        reply.status.player = getPlayerName(clientId);
+        reply.status.playerId = clientId;
 
         // get player color from Game
         boolean colorIsWhite;
         if (game.getPlayer1ID() == clientId) {
             colorIsWhite = game.getPlayer1Color();
-        } else {
+        } else if  (game.getPlayer2ID() == clientId)  {
             colorIsWhite = game.getPlayer2Color();
+        } else {
+            System.out.println("[WARN] Client ID " + clientId + " not found as P1 or P2 in game " + game.gameNumber() + ". Assigning spectator.");
+            reply.status.player_color = "S";
+            colorIsWhite = true;
         }
-        reply.status.player_color = colorIsWhite ? "W" : "B";
 
-        reply.status.starting_player = "Player " + game.getCurrentTurn().getPlayerId();
+        // skip color if the person is a spectator we only set B/W for players
+        if (!"S".equals(reply.status.player_color)) {
+            reply.status.player_color = colorIsWhite ? "W" : "B";
+        }
+
+        reply.status.starting_player = getPlayerName(game.getCurrentTurn().getPlayerId());
 
         reply.recipients.add(clientId);
 
@@ -239,13 +281,23 @@ public class GameDisplayConnector {
         reply.status.game_id = 123; // dummy game ID
         reply.status.player = "Luigi (ID: 1)";
         reply.status.player_color = "B"; // or "W"
-        reply.status.starting_player = "1"; // i changed this from int to a string
+        reply.status.starting_player = "Mario (ID: 2)"; // i changed this from int to a string
 
         // Send to both players (hardcoded values for test)
         reply.recipients.add(1); // Luigi
         reply.recipients.add(2); // Mario
 
         return reply;
+    }
+
+
+    public String getPlayerName(int playerId) {
+        if (this.gameManager == null) {
+            System.out.println("[ERROR] GameManager instance is null in getPlayerName. Cannot find player name.");
+            return "Player " + playerId;
+        }
+        String formattedName = "Player " + playerId;
+        return formattedName;
     }
 
 }
