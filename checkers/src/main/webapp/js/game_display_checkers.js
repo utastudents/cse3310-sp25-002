@@ -138,6 +138,19 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             return;
         };
 
+        const handleCapture = (capturedData) => {
+            if (capturedData && capturedData.length === 2) {
+                console.log(`Received captured piece info: [${capturedData[0]}, ${capturedData[1]}] in message type: ${data.type}`);
+                if (checkerBoard) {
+                    checkerBoard.remove_captured_piece(capturedData[0], capturedData[1]);
+                } else {
+                    console.error("checkerBoard not initialized when trying to remove captured piece.");
+                }
+            }
+        };
+
+
+
         let game_display_event_types = ["move_ack","game_over","valid_moves", "move_made_by_other_player_or_bot", "resign", "draw_offer", "draw_accept", "player_name_update", "notify_players", "show_game_display", "hide_game_display"];
 
         // this ignores any data that is not related to the game display.
@@ -164,18 +177,14 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             }
 
         } else if(data.type === "move_made_by_other_player_or_bot") {
-            // assuming that websocket sends the json string {"type":"move_made_by_other_player_or_bot", "game_id": "GAME_ID_IF_PROVIDED", "player":"NAME OF PLAYER THAT MADE THE MOVE (STRING),"from": [move_from_x, move_from_y],"to": [move_to_x, move_to_y]"}
-            //checks to make sure that it is a move from the opponent
+            if (!checkerBoard) return;
             if(data.player != checkerBoard.player){
-                // move_from_x, move_from_y, move_to_x, move_to_y = data.from[0], data.from[1], data.to[0], data.to[1];
-                // this function is used to move the checkers piece from one square to another. This function is called when the opponent makes a move.
                 checkerBoard.move_made_by_other_player_or_bot(data.from[0],data.from[1],data.to[0],data.to[1]);
+                    handleCapture(data.capturedSquare);
             }
-            console.log(data)
-            if (data.player != checkerBoard.player && data.current_move && data.id !== undefined) {
+            if (data.current_move && data.id !== undefined) {
                 checkerBoard.update_current_player(data.current_move, data.id);
             }
-
         } else if(data.type === "resign") {
             // assuming that websocket sends the json string {"type":"resign", "player":"NAME OF PLAYER THAT RESIGNED (STRING)"}
             alert(`${data.player} has resigned. The game is now over.`);
@@ -205,12 +214,19 @@ const game_display_handle_websocket_received_data = (connection, data) => {
         } else if(data.type === 'hide_game_display') {
             hide_game_display();
         } else if (data.type === 'move_ack') {
-            if (checkerBoard && data.current_move && data.id !== undefined) {
+            if (!checkerBoard) return;
+
+            if (data.current_move && data.id !== undefined) {
                 console.log(`Received move_ack, updating current player view to: ${data.current_move} (ID: ${data.id})`);
                 checkerBoard.update_current_player(data.current_move, data.id);
             } else {
                 console.log("Received move_ack without sufficient data or checkerBoard not initialized.");
             }
+        }  else if (data.type === 'game_over') {
+            if (!checkerBoard) return;
+            handleCapture(data.capturedSquare);
+            alert(data.message);
+            hide_game_display()
         }
 
     } catch (error) {
@@ -364,12 +380,12 @@ class CheckersBoard {
 
                 // if the piece reaches the end of the board, it should be kinged
                 if ((checkers_piece_type === 'b' && move_to_x === 7) || (checkers_piece_type === 'w' && move_to_x === 0)) {
-                    // change piece type to (uppercase, W or B to indicate this)
-                    // https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute
-                    move_to_square.el.setAttribute("data-piece", checkers_piece_type.toUpperCase());
-                } else {
-                    move_to_square.el.setAttribute("data-piece", checkers_piece_type);
+                    if (checkers_piece_type === checkers_piece_type.toLowerCase()) {
+                        checkers_piece_type = checkers_piece_type.toUpperCase();
+                        console.log(`Piece promoted at [${move_to_x}, ${move_to_y}]`);
+                    }
                 }
+                move_to_square.el.setAttribute("data-piece", checkers_piece_type);
 
                 this.update_board_style();
                 // relay the move to the backend through the ws connection
@@ -408,6 +424,31 @@ class CheckersBoard {
         }
     }
 
+
+
+
+    remove_captured_piece(row, col) {
+        try {
+            let captured_square = this.checkers_board.find(sq => sq.x === row && sq.y === col);
+            if (captured_square && captured_square.el) {
+                console.log(`Attempting to remove captured piece from display at [${row}, ${col}]`);
+                captured_square.el.setAttribute("data-piece", ".");
+                const pieceElement = captured_square.el.querySelector('.piece');
+                if (pieceElement) {
+                    pieceElement.style.display = "none";
+                    console.log(`Piece element hidden for square [${row}, ${col}]`);
+                } else {
+                    console.warn(`No piece element found in square [${row}, ${col}] to hide.`);
+                }
+                this.update_board_style();
+            } else {
+                console.error(`Could not find square element to remove captured piece at [${row}, ${col}]`);
+            }
+        } catch (error) {
+            console.error("Error in remove_captured_piece: ", error);
+            game_display_popup_messages(`(gd) remove_captured_piece: An error occurred. Please check the console.`);
+        }
+    }
 
     /*
     Reference:

@@ -63,8 +63,12 @@ public class Matchmaking {
         System.out.println("[DEBUG] Created a Bot vs Player game with ClientID: " + p1.getPlayerID() + " and BotID: " + botID);
         Game newGame = gameManagerCommunication.createGame(match);
 
+        System.out.println("[DEBUG-Matchmaking PvB] Game created: " + (newGame != null ? newGame.gameNumber() : "NULL"));
         if (pageManager != null && newGame != null) {
+            System.out.println("[DEBUG-Matchmaking PvB] Calling triggerGameDisplay for GameID: " + newGame.gameNumber() + ", P1=" + p1.getPlayerID() + ", BotID=" + botID);
             pageManager.triggerGameDisplay(newGame.gameNumber(), p1.getPlayerID(), botID);
+        } else {
+            System.out.println("[ERROR-Matchmaking PvB] Cannot trigger game display. pageManager is null? " + (pageManager == null) + ", newGame is null? " + (newGame == null));
         }
 
         return newGame;
@@ -73,12 +77,12 @@ public class Matchmaking {
     // Pairs a bot and bot
     public Game pair(int bot1ID, int bot2ID, int creatorID) {
         Match match = new Match(bot1ID, bot2ID, gameId++, creatorID);
-        Game newGame = gameManagerCommunication.createGame(match); // Sends match info to GameManager and creates game
-        
+        Game newGame = gameManagerCommunication.createGame(match);
+
         if (pageManager != null && newGame != null) {
             pageManager.triggerGameDisplay(newGame.gameNumber(), bot1ID, bot2ID);
         }
-        
+
         return newGame;
     }
 

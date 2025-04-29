@@ -159,7 +159,7 @@ public class PageManager {
                 Map<String, String> joinData = new HashMap<>();
                 joinData.put("clientId", String.valueOf(U.id));
                 joinData.put("gameMode", U.msg);
-
+                System.out.println("[DEBUG PageManager ProcessInput] Handling 'join_game' for ID: " + U.id + " with msg: " + U.msg);
                 if (U.msg != null && U.msg.equalsIgnoreCase("Spectate")) {
                     joinData.put("gameMode", "BotvBot");
                 }
