@@ -6,8 +6,12 @@ import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.GameManager;
 import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Square;
-
+import uta.cse3310.GameManager.Game;
 import java.util.LinkedList;
+import uta.cse3310.GamePlay.rules;
+import java.util.Collections;
+import java.util.Comparator;
+
 
 public class BotI extends Bot {
 
@@ -20,20 +24,102 @@ public class BotI extends Bot {
         setCurrentGameBoard(board);
         flushMoves();
 
-        LinkedList<Move> possibleMoves = determineMoves(board);
-        boolean isAggressive = isAggressive(board);
 
-        Moves playMove;
-        if (isAggressive) {
-            playMove = aggressiveStrategyImplementation(possibleMoves, board);
+        Game tempGameContext = new Game(
+                this.color ? 0 : 1,
+                this.color ? 1 : 0,
+                this.color,
+                !this.color,
+                999,
+                "BotITemp", "OppTemp"
+        );
+        tempGameContext.updateBoard(this.currentGameBoard.copy());
+        while (tempGameContext.getCurrentTurn().getColor() != this.color) {
+            tempGameContext.switchTurn();
+        }
+        boolean captureIsMandatory = rules.isCaptureAvailableForPlayer(tempGameContext);
+        System.out.println("[DEBUG BotI] rules.isCaptureAvailableForPlayer reports: " + captureIsMandatory);
+
+
+        LinkedList<Move> allPossibleMoves = determineMoves(board);
+        LinkedList<Move> movesToConsider = new LinkedList<>();
+
+        if (captureIsMandatory) {
+            System.out.println("[DEBUG BotI] Filtering FOR captures.");
+            for (Move move : allPossibleMoves) {
+                if (rules.isCapture(move, this.currentGameBoard)) {
+                    movesToConsider.add(move);
+                }
+            }
+            if (movesToConsider.isEmpty() && !allPossibleMoves.isEmpty()) {
+                System.err.println("[ERROR BotI] Discrepancy: rules.isCaptureAvailable=true, but no capture moves found by determineMoves!");
+            }
         } else {
-            playMove = passiveStrategyImplementation(possibleMoves, board);
+            System.out.println("[DEBUG BotI] Filtering FOR normal moves.");
+            for (Move move : allPossibleMoves) {
+                if (!rules.isCapture(move, this.currentGameBoard)) {
+                    movesToConsider.add(move);
+                }
+            }
         }
 
-        this.moves = playMove;
-        return sendMove();
+        boolean isAggressive = isAggressive(board);
+        movesToConsider.sort((move1, move2) -> {
+            int score1 = calculateMoveScore(move1, board, isAggressive);
+            int score2 = calculateMoveScore(move2, board, isAggressive);
+            return isAggressive ? Integer.compare(score2, score1) : Integer.compare(score1, score2);
+        });
 
+        if (this.moves == null) this.moves = new Moves();
+        else this.moves.getMoves().clear();
+
+        if (movesToConsider.isEmpty()) {
+            System.err.println("[ERROR BotI] No valid moves to return after filtering/sorting.");
+        } else {
+            System.out.println("[DEBUG BotI] Providing ordered list of " + movesToConsider.size() + " potential moves.");
+            for (Move move : movesToConsider) {
+                this.moves.addNext(move);
+            }
+        }
+
+        return sendMove();
     }
+
+
+    private int calculateMoveScore(Move move, Board board, boolean isAggressive) {
+        int score = 0;
+        boolean isCapture = rules.isCapture(move, board);
+
+        if (isAggressive) {
+            score = isCapture ? 100 : 1;
+            if (!move.getStart().isKing() && ((move.getStart().getColor() && move.getDest().getRow() == 0) ||( !move.getStart().getColor() && move.getDest().getRow() == 7))) {
+                score += 50;
+            }
+        } else {
+            score = isCapture ? 10 : 0;
+            if (insideDangerRegion(move, board)) {
+                score += 500;
+            }
+            if (!move.getStart().isKing()) {
+            int startRow = move.getStart().getRow();
+            int destRow = move.getDest().getRow();
+            if ((this.color && destRow > startRow) || (!this.color && destRow < startRow)) {
+                score += 5;
+            }
+        }
+        int col = move.getDest().getCol();
+        if (col == 0 || col == 7) score += 3;
+        else if (col == 1 || col == 6) score += 2;
+        else if (col == 2 || col == 5) score += 1;
+        if (!hasBackupAfterMove(move, board)) {
+            score += 20;
+        }
+    }
+        return score;
+    }
+
+
+
 
     /* Sending Moves from Bot 1 to the GameManager */
     @Override

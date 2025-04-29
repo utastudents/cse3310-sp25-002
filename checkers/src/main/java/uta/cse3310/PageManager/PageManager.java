@@ -191,7 +191,36 @@ public class PageManager {
                 ret.status.msg = "cancelled";
                 break;
             }
-
+            case "resign": {
+                System.out.println("[DEBUG] Handling resign request from player: " + U.id);
+                ret = displayConnector.handleResign(U);
+                if (ret != null && !ret.recipients.isEmpty()) {
+                        appServer.queueMessage(ret);
+                }
+                ret = new UserEventReply();
+                ret.recipients = new ArrayList<>();
+                break;
+            }
+            case "draw": {
+                System.out.println("[DEBUG] Handling draw offer request from player: " + U.id);
+                ret = displayConnector.handleDrawOffer(U);
+                if (ret != null && !ret.recipients.isEmpty()) {
+                    appServer.queueMessage(ret);
+                }
+                ret = new UserEventReply();
+                ret.recipients = new ArrayList<>();
+                break;
+            }
+            case "draw_accept": {
+                System.out.println("[DEBUG] Handling draw accept request from player: " + U.id);
+                ret = displayConnector.handleDrawAccept(U);
+                if (ret != null && !ret.recipients.isEmpty()) {
+                    appServer.queueMessage(ret);
+                }
+                ret = new UserEventReply();
+                ret.recipients = new ArrayList<>();
+                break;
+            }
             case "get_allowed_moves": {
                 System.out.println("[DEBUG] Handling get_allowed_moves from player: " + U.id);
                 return displayConnector.handleGetAllowedMoves(U);

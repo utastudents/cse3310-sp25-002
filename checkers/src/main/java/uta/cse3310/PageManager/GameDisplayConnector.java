@@ -73,7 +73,7 @@ public class GameDisplayConnector {
             finalReply.status.winner = game.getWinner() != null ? game.getWinner().getPlayerId() : null;
             finalReply.status.draw = game.isDraw();
             return finalReply;
-    }
+        }
 
         Player currentTurnPlayer = game.getCurrentTurn();
         if (currentTurnPlayer == null || currentTurnPlayer.getPlayerId() != event.id) {
@@ -81,7 +81,6 @@ public class GameDisplayConnector {
             finalReply.status.msg = "Error: Not your turn.";
             return finalReply;
         }
-
 
         if (event.from == null || event.to == null || event.from.length != 2 || event.to.length != 2) {
             System.err.println("[ERROR DisplayConnector] Invalid move data format from player " + event.id);
@@ -94,7 +93,6 @@ public class GameDisplayConnector {
             new Square(event.from[0], event.from[1]),
             new Square(event.to[0], event.to[1])
         );
-
 
         boolean moveExecuted = gp.processAndExecuteMove(game, humanPlayerMove);
 
@@ -110,15 +108,14 @@ public class GameDisplayConnector {
         Player winner = game.getWinner();
         boolean draw = game.checkDrawCondition();
 
+        UserEventReply notify_opponent = new UserEventReply();
+        notify_opponent.status = new game_status();
+        notify_opponent.recipients = new ArrayList<>();
 
-        UserEventReply notify_players = new UserEventReply();
-        notify_players.status = new game_status();
-        notify_players.recipients = new ArrayList<>();
-
-        notify_players.status.game_id = game.gameNumber();
-        notify_players.status.player = getPlayerName(event.id);
-        notify_players.status.from = List.of(event.from[0], event.from[1]);
-        notify_players.status.to = List.of(event.to[0], event.to[1]);
+        notify_opponent.status.game_id = game.gameNumber();
+        notify_opponent.status.player = getPlayerName(event.id);
+        notify_opponent.status.from = List.of(event.from[0], event.from[1]);
+        notify_opponent.status.to = List.of(event.to[0], event.to[1]);
 
         int player1Id = game.getPlayer1ID();
         int player2Id = game.getPlayer2ID();
@@ -130,47 +127,52 @@ public class GameDisplayConnector {
         }
 
         if (winner != null || draw) {
-            notify_players.status.type = "game_over";
-            notify_players.status.gameOver = true;
-            notify_players.status.winner = (winner != null) ? winner.getPlayerId() : null;
-            notify_players.status.draw = draw;
-            notify_players.status.msg = draw ? "Game ended in a draw!" : "Player " + getPlayerName(winner.getPlayerId()) + " wins!";
-            System.out.println("[DEBUG DisplayConnector] Game over after human move. " + notify_players.status.msg);
+            UserEventReply gameOverNotification = new UserEventReply();
+            gameOverNotification.status = new game_status();
+            gameOverNotification.recipients = new ArrayList<>();
+
+            gameOverNotification.status.type = "game_over";
+            gameOverNotification.status.gameOver = true;
+            gameOverNotification.status.winner = (winner != null) ? winner.getPlayerId() : null;
+            gameOverNotification.status.draw = draw;
+            gameOverNotification.status.msg = draw ? "Game ended in a draw!" : "Player " + getPlayerName(winner.getPlayerId()) + " wins!";
+            gameOverNotification.status.game_id = game.gameNumber();
+
+            System.out.println("[DEBUG DisplayConnector] Game over after human move. " + gameOverNotification.status.msg);
 
             game.endGame();
 
-            if (player1Id > 1) notify_players.recipients.add(player1Id);
-            if (player2Id > 1) notify_players.recipients.add(player2Id);
+            if (player1Id > 1) gameOverNotification.recipients.add(player1Id);
+            if (player2Id > 1) gameOverNotification.recipients.add(player2Id);
 
-            if (!notify_players.recipients.isEmpty()) {
-                appServer.queueMessage(notify_players);
+            if (!gameOverNotification.recipients.isEmpty()) {
+                appServer.queueMessage(gameOverNotification);
             }
+
             finalReply.status.type = "hide_game_display";
             finalReply.status.msg = "Move processed. Game Over.";
             finalReply.status.gameOver = true;
-            finalReply.status.winner = notify_players.status.winner;
-            finalReply.status.draw = notify_players.status.draw;
+            finalReply.status.winner = gameOverNotification.status.winner;
+            finalReply.status.draw = gameOverNotification.status.draw;
 
             return finalReply;
-
 
         } else {
             game.switchTurn();
             Player nextPlayer = game.getCurrentTurn();
 
-            notify_players.status.type = "move_made_by_other_player_or_bot";
-            notify_players.status.current_move = getPlayerName(nextPlayer.getPlayerId());
-            notify_players.status.id = nextPlayer.getPlayerId();
+            notify_opponent.status.type = "move_made_by_other_player_or_bot";
+            notify_opponent.status.current_move = getPlayerName(nextPlayer.getPlayerId());
+            notify_opponent.status.id = nextPlayer.getPlayerId();
 
             if (opponentId > 1) {
-                notify_players.recipients.add(opponentId);
+                notify_opponent.recipients.add(opponentId);
             }
 
-            if (!notify_players.recipients.isEmpty()) {
-                appServer.queueMessage(notify_players);
+            if (!notify_opponent.recipients.isEmpty()) {
+                appServer.queueMessage(notify_opponent);
                 System.out.println("[DEBUG DisplayConnector] Queued move notification to opponent: " + opponentId);
             }
-
 
             boolean isNextTurnBot = (nextPlayer.getPlayerId() == 0 || nextPlayer.getPlayerId() == 1);
             if (isNextTurnBot && game.gameActive()) {
@@ -181,57 +183,90 @@ public class GameDisplayConnector {
                 boolean botMoveExecuted = false;
                 Move successfulBotMove = null;
 
-                    if (botMovesList != null && botMovesList.size() > 0) {
-                        for (Move botAttempt : botMovesList.getMoves()) {
-                            if (rules.canMovePiece(game, botAttempt)) {
-                                if (gp.processAndExecuteMove(game, botAttempt)) {
-                                    botMoveExecuted = true;
-                                    successfulBotMove = botAttempt;
-                                    break;
-                                } else {
-                                    System.err.println("[ERROR DisplayConnector] Bot move failed execution even though rules said OK.");
-                                }
+                if (botMovesList != null && botMovesList.size() > 0) {
+                    for (Move botAttempt : botMovesList.getMoves()) {
+                        if (rules.canMovePiece(game, botAttempt)) {
+                            if (gp.processAndExecuteMove(game, botAttempt)) {
+                                botMoveExecuted = true;
+                                successfulBotMove = botAttempt;
+                                break;
                             } else {
-                                System.out.println("[WARN DisplayConnector] Bot attempt " + botAttempt + " illegal, trying next.");
+                                System.err.println("[ERROR DisplayConnector] Bot move failed execution even though rules said OK.");
                             }
+                        } else {
+                            System.out.println("[WARN DisplayConnector] Bot attempt " + botAttempt.getStart().getRow() + "," + botAttempt.getStart().getCol() + " -> " + botAttempt.getDest().getRow() + "," + botAttempt.getDest().getCol() + " illegal, trying next.");
                         }
                     }
+                }
 
-                    if (botMoveExecuted) {
-                        System.out.println("[DEBUG DisplayConnector] Bot move executed successfully for game " + game.gameNumber());
-                        Player botWinner = game.getWinner();
-                        boolean botDraw = game.checkDrawCondition();
+                if (botMoveExecuted) {
+                    System.out.println("[DEBUG DisplayConnector] Bot move executed successfully for game " + game.gameNumber());
+                    Player botWinner = game.getWinner();
+                    boolean botDraw = game.checkDrawCondition();
 
-                        UserEventReply botResponseNotification = new UserEventReply();
-                        botResponseNotification.status = new game_status();
-                        botResponseNotification.recipients = new ArrayList<>();
-                        if (player1Id > 1) botResponseNotification.recipients.add(player1Id);
-                        if (player2Id > 1) botResponseNotification.recipients.add(player2Id);
+                    UserEventReply botResponseNotification = new UserEventReply();
+                    botResponseNotification.status = new game_status();
+                    botResponseNotification.recipients = new ArrayList<>();
+                    if (player1Id > 1) botResponseNotification.recipients.add(player1Id);
+                    if (player2Id > 1) botResponseNotification.recipients.add(player2Id);
 
-                        botResponseNotification.status.game_id = game.gameNumber();
-                        botResponseNotification.status.player = getPlayerName(nextPlayer.getPlayerId());
-                        botResponseNotification.status.from = List.of(successfulBotMove.getStart().getRow(), successfulBotMove.getStart().getCol());
-                        botResponseNotification.status.to = List.of(successfulBotMove.getDest().getRow(), successfulBotMove.getDest().getCol());
+                    botResponseNotification.status.game_id = game.gameNumber();
+                    botResponseNotification.status.player = getPlayerName(nextPlayer.getPlayerId());
+                    botResponseNotification.status.from = List.of(successfulBotMove.getStart().getRow(), successfulBotMove.getStart().getCol());
+                    botResponseNotification.status.to = List.of(successfulBotMove.getDest().getRow(), successfulBotMove.getDest().getCol());
 
-                        if (botWinner != null || botDraw) {
-                            botResponseNotification.status.type = "game_over";
-                            game.endGame();
-                        } else {
-                            game.switchTurn();
-                            Player finalNextPlayer = game.getCurrentTurn();
-                            botResponseNotification.status.type = "move_made_by_other_player_or_bot";
-                        }
-                        if (!botResponseNotification.recipients.isEmpty()) {
-                            appServer.queueMessage(botResponseNotification);
-                        }
+                    if (botWinner != null || botDraw) {
+                        UserEventReply botGameOverNotification = new UserEventReply();
+                        botGameOverNotification.status = new game_status();
+                        botGameOverNotification.recipients = new ArrayList<>();
+                        if (player1Id > 1) botGameOverNotification.recipients.add(player1Id);
+                        if (player2Id > 1) botGameOverNotification.recipients.add(player2Id);
+
+                        botGameOverNotification.status.game_id = game.gameNumber();
+                        botGameOverNotification.status.type = "game_over";
+                        botGameOverNotification.status.gameOver = true;
+                        botGameOverNotification.status.winner = (botWinner != null) ? botWinner.getPlayerId() : null;
+                        botGameOverNotification.status.draw = botDraw;
+                        botGameOverNotification.status.msg = botDraw ? "Game ended in a draw!" : "Player " + getPlayerName(botWinner.getPlayerId()) + " wins!";
+                        game.endGame();
+                        appServer.queueMessage(botGameOverNotification);
 
                     } else {
-                        System.err.println("[ERROR DisplayConnector] Bot " + nextPlayer.getPlayerId() + " failed to make a valid move.");
+                        game.switchTurn();
+                        Player humanPlayerNext = game.getCurrentTurn();
+                        botResponseNotification.status.type = "move_made_by_other_player_or_bot";
+                        botResponseNotification.status.current_move = getPlayerName(humanPlayerNext.getPlayerId());
+                        botResponseNotification.status.id = humanPlayerNext.getPlayerId();
+
+                        if (!botResponseNotification.recipients.isEmpty()) {
+                            appServer.queueMessage(botResponseNotification);
+                            System.out.println("[DEBUG DisplayConnector] Queued bot move notification to players: " + botResponseNotification.recipients);
+                        }
                     }
 
-                } else if (!isNextTurnBot) {
-                    System.out.println("[DEBUG DisplayConnector] It's human player " + nextPlayer.getPlayerId() + "'s turn after previous human move. Waiting for input.");
-                }
+                } else {
+                    System.err.println("[ERROR DisplayConnector] Bot " + nextPlayer.getPlayerId() + " failed to make a valid move.");
+                    if (!game.isDraw() && game.checkDrawCondition()) {
+                        UserEventReply drawNotification = new UserEventReply();
+                        drawNotification.status = new game_status();
+                        drawNotification.recipients = new ArrayList<>();
+                        if (player1Id > 1) drawNotification.recipients.add(player1Id);
+                        if (player2Id > 1) drawNotification.recipients.add(player2Id);
+                        drawNotification.status.type = "game_over";
+                        drawNotification.status.gameOver = true;
+                        drawNotification.status.draw = true;
+                        drawNotification.status.msg = "Game ended in a draw (Bot has no moves)!";
+                        appServer.queueMessage(drawNotification);
+                        game.endGame();
+                    } else if (!game.isDraw()){
+                        System.err.println("[ERROR PageManager] Bot could not move, forcing draw.");
+                        game.GameDeclareDraw();
+                    }
+            }
+
+            } else if (!isNextTurnBot) {
+                System.out.println("[DEBUG DisplayConnector] It's human player " + nextPlayer.getPlayerId() + "'s turn after previous human move. Waiting for input.");
+            }
 
             finalReply.status.type = "move_ack";
             finalReply.status.msg = "Move processed successfully.";
@@ -245,19 +280,16 @@ public class GameDisplayConnector {
     public UserEventReply handleResign(UserEvent event) {
         System.out.println("[DEBUG] Player " + event.id + " resigned.");
 
-        // Get client ID from event
         UserEventReply reply = new UserEventReply();
         reply.status = new game_status();
         reply.recipients = new ArrayList<>();
 
-        // Trigger game termination logic
-        //gameTermination.terminateGame(event.gameId, event.id);
 
         reply.status.type = "resign";
-        // hl reply.status.player = event.playerName + " (ID: " + event.id + ")";
+
         reply.status.player = getPlayerName(event.id);
         reply.status.gameOver = true;
-        // Get all player IDs from GameManager
+
         int[] playerIds = gamePageController.getAllPlayerIDs(event.id);
         if (playerIds != null) {
             for (int id : playerIds) {
@@ -272,17 +304,13 @@ public class GameDisplayConnector {
     public UserEventReply handleDrawOffer(UserEvent event) {
         System.out.println("[DEBUG] Player " + event.id + " offered a draw.");
 
-        // Get client ID from event
         UserEventReply reply = new UserEventReply();
         reply.status = new game_status();
         reply.recipients = new ArrayList<>();
 
-        // Send draw offer to other player
         reply.status.type = "draw_offer";
-        // hl reply.status.player = event.playerName + " (ID: " + event.id + ")";
         reply.status.player = getPlayerName(event.id);
 
-        // Get all player IDs from GameManager
         int[] playerIds = gamePageController.getAllPlayerIDs(event.id);
         if (playerIds != null) {
             for (int id : playerIds) {
