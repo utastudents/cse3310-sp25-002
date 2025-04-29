@@ -1,5 +1,6 @@
 package uta.cse3310.Bot.BotII;
-
+import uta.cse3310.GamePlay.rules;
+import uta.cse3310.GameManager.Game;
 import uta.cse3310.Bot.Bot;
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.GameManager;
@@ -127,27 +128,104 @@ public class BotII extends Bot {
     public Moves requestMove(Board board) {
 
         // Clear the moves object before making a new move
+        setCurrentGameBoard(board);
         flushMoves();
 
         // Set the current game board to the one provided by the game manager
-        setCurrentGameBoard(board);
-        this.currentGameBoard = board;
 
-        if (isFirstMove()) {
-            return startMove();
-        }
+        // if (isFirstMove()) {
+        //     return startMove();
+        // }
 
         // Determine the bot's strategy based on the game state
         // If the bot is at a numerical disadvantage, it will play aggressively
         boolean strategy = playStyle();
 
-        LinkedList<Pair<Square, LinkedList<MoveRating>>> possibleMoves = determineMoves(strategy);
+        Game tempGameContext = new Game(
+                this.color ? 0 : 1,
+                this.color ? 1 : 0,
+                this.color,
+                !this.color,
+                999,
+                "BotTemp", "OppTemp"
+        );
+        tempGameContext.updateBoard(this.currentGameBoard.copy());
 
-        // Implement the bot's strategy based on the possible moves
-        implementBotStrategy(strategy, possibleMoves);
+        while (tempGameContext.getCurrentTurn().getColor() != this.color) {
+            tempGameContext.switchTurn();
+        }
 
-        return sendMove(); // Send the moves to the game manager
+        boolean captureIsPossible = rules.isCaptureAvailableForPlayer(tempGameContext);
+        System.out.println("[DEBUG BotII] rules.isCaptureAvailableForPlayer reports: " + captureIsPossible);
+
+        LinkedList<MoveRating> allPossibleRatedMoves = new LinkedList<>();
+        LinkedList<Pair<Square, LinkedList<MoveRating>>> movesPerPiece = determineMoves(strategy);
+        for (Pair<Square, LinkedList<MoveRating>> pair : movesPerPiece) {
+            allPossibleRatedMoves.addAll(pair.getValue());
+        }
+
+
+        LinkedList<MoveRating> movesToConsider = new LinkedList<>();
+        if (captureIsPossible) {
+            System.out.println("[DEBUG BotII] Filtering FOR captures based on rules check.");
+            for (MoveRating mr : allPossibleRatedMoves) {
+                if (rules.isCapture(mr.getMove(), this.currentGameBoard)) {
+                    movesToConsider.add(mr);
+                }
+            }
+            if (movesToConsider.isEmpty() && !allPossibleRatedMoves.isEmpty()) {
+                System.err.println("[ERROR BotII] Discrepancy: rules.isCaptureAvailable=true, but no capture moves found by determineMoves!");
+            }
+
+        } else {
+            System.out.println("[DEBUG BotII] Filtering AGAINST captures based on rules check.");
+            for (MoveRating mr : allPossibleRatedMoves) {
+                if (!rules.isCapture(mr.getMove(), this.currentGameBoard)) {
+                    movesToConsider.add(mr);
+                }
+            }
+        }
+
+        movesToConsider.sort(Comparator.comparingInt(MoveRating::getEloRating));
+        if (strategy) {
+            Collections.reverse(movesToConsider);
+        }
+
+        if (this.moves == null) this.moves = new Moves();
+        else this.moves.getMoves().clear();
+
+
+        if (movesToConsider.isEmpty()) {
+            System.err.println("[ERROR BotII] No valid moves found to add after filtering/sorting.");
+        } else {
+            System.out.println("[DEBUG BotII] Providing ordered list of " + movesToConsider.size() + " potential moves.");
+            for (MoveRating mr : movesToConsider) {
+                this.moves.addNext(mr.getMove());
+            }
+        }
+
+
+        return sendMove();
     }
+
+
+    private void implementBotStrategyFromList(boolean strategy, LinkedList<MoveRating> possibleMoves) {
+        if (this.moves == null) this.moves = new Moves();
+        else this.moves.getMoves().clear();
+
+        if (possibleMoves == null || possibleMoves.isEmpty()) {
+            System.err.println("[ERROR BotII] implementBotStrategyFromList called with no possible moves. Cannot make a move.");
+            return;
+        }
+
+        Move m = possibleMoves.getFirst().getMove();
+        this.moves.addNext(m);
+        System.out.println("[DEBUG BotII] Selected move: " + m.getStart().getRow()+","+m.getStart().getCol() + " -> " + m.getDest().getRow()+","+m.getDest().getCol());
+    }
+
+
+
+
 
     /**
      * This function will be called to determine the all possible moves per piece
@@ -177,79 +255,39 @@ public class BotII extends Bot {
 
                 // Check if the square contains a piece of this bot's color
                 if (square.hasPiece() && square.getColor() == this.color) {
-                    boolean isKing = square.isKing();
+                    LinkedList<MoveRating> pieceMovesWithRatings = new LinkedList<>();
 
-                    // Determine possible directions based on whether the piece is a king
-                    char[] directions = isKing ? new char[] { 'F', 'B' } : new char[] { 'F' };
+                    Moves legalMovesForSquare = rules.getMovesForSquare(this.currentGameBoard, this.color, new int[]{row, col});
 
-                    // Create a Moves object for this piece
-                    LinkedList<MoveRating> pieceMoves = new LinkedList<>();
 
-                    // Check moves in each direction
-                    for (char direction : directions) {
+                    if (legalMovesForSquare != null && legalMovesForSquare.size() > 0) {
+                        for (Move move : legalMovesForSquare.getMoves()) {
+                            if (move == null || move.getStart() == null || move.getDest() == null) continue;
 
-                        // Check for normal moves (non-capturing)
-                        Moves normalMoves = checkSingleMove(square, direction, false);
+                            boolean isCaptureMove = rules.isCapture(move, this.currentGameBoard);
+                            int elo = 1;
 
-                        // If there are normal moves diagonally, add them to the pieceMoves object
-                        if (!normalMoves.getMoves().isEmpty()) {
-                            normalMoves.getMoves().forEach(x -> {
-                                int rowsToKing = movesToKing(x.getDest(), this.color);
-
-                                // Base elo for normal move
-                                int elo = 1;
-
-                                // Add rows to king to elo rating
-                                elo += 7 - rowsToKing;
-                                MoveRating mr = new MoveRating(x, elo);
-
-                                pieceMoves.add(mr);
-                            });
-                        }
-
-                        // Check for capturing moves either diagonal for each direction
-                        Moves captureMove = checkSingleMove(square, direction, true);
-
-                        if (!captureMove.getMoves().isEmpty()) {
-                            normalMoves.getMoves().forEach(x -> {
-
-                                int rowsToKing = movesToKing(x.getDest(), this.color);
-
-                                // Base elo for capturing move
-                                int elo = 3;
-
-                                // Add rows to king to elo rating
-                                elo += 7 - rowsToKing;
-
-                                // Get the captured square (the square between start and dest) and check if it
-                                // is a king
+                            if (isCaptureMove) {
+                                elo = 3;
                                 Square capturedSquare = this.currentGameBoard.getSquare(
-                                        (x.getStart().getRow() + x.getDest().getRow()) / 2,
-                                        (x.getStart().getCol() + x.getDest().getCol()) / 2);
+                                    (move.getStart().getRow() + move.getDest().getRow()) / 2,
+                                    (move.getStart().getCol() + move.getDest().getCol()) / 2);
+                                if (capturedSquare != null && capturedSquare.isKing()) {
+                                    elo += 5;
+                                }
+                            }
 
-                                boolean capturedIsKing = capturedSquare.isKing();
+                            int rowsToKing = movesToKing(move.getDest(), this.color);
+                            elo += (7 - rowsToKing);
 
-                                // Add elo based on whether the captured piece is a king, 5 for king
-                                elo += capturedIsKing ? 5 : 0;
-
-                                MoveRating moveRating = new MoveRating(x, elo);
-
-                                pieceMoves.add(moveRating);
-                            });
+                            MoveRating moveRating = new MoveRating(move, elo);
+                            pieceMovesWithRatings.add(moveRating);
                         }
                     }
-                    // Sort the pieceMoves based on elo rating
-                    pieceMoves.sort(Comparator.comparingInt(MoveRating::getEloRating));
-
-                    // If strategy is aggressive, reverse the order of the  (highest elo first)
-                    if(strategy)
-                        Collections.reverse(pieceMoves);
-
-                        // Add the piece and its possible moves to the list
-                    if (!pieceMoves.isEmpty()) {
-                        possibleMoves.add(new Pair<>(square, pieceMoves));
+                    pieceMovesWithRatings.sort(Comparator.comparingInt(MoveRating::getEloRating));
+                    if (!pieceMovesWithRatings.isEmpty()) {
+                        possibleMoves.add(new Pair<>(square, pieceMovesWithRatings));
                     }
-
                 }
             }
         }

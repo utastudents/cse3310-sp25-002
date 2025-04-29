@@ -15,6 +15,12 @@ import uta.cse3310.GameManager.GamePageController;
 import uta.cse3310.GameTermination.GameTermination;
 import uta.cse3310.PairUp.PairUp;
 import uta.cse3310.App;
+import uta.cse3310.GamePlay.rules;
+import uta.cse3310.GamePlay.GamePlay;
+import uta.cse3310.GameManager.Game;
+import uta.cse3310.GameManager.Player;
+import uta.cse3310.GameManager.Moves;
+import uta.cse3310.GameManager.Move;
 
 public class PageManager {
     DB db;
@@ -25,6 +31,7 @@ public class PageManager {
     private GamePageController gamePageController;
     private App appServer;
     private GameManager gameManager;
+    private GamePlay gp;
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // key = gameId, value = player IDs
 
@@ -35,6 +42,7 @@ public class PageManager {
         db = new DB();
         DB.createTable();
 
+        this.gp = new GamePlay();
         // Create GameManager and pass it into both controllers
         this.gameManager = new GameManager();
         gameManager.initializeGames();
@@ -211,22 +219,124 @@ public class PageManager {
     }
 
     public void triggerGameDisplay(int gameId, int player1Id, int player2Id) {
-        if (player1Id > 1) { // 0 and 1 are bots
+        if (player1Id > 1) {
+            // 0 and 1 are bots
             UserEventReply reply1 = displayConnector.sendShowGameDisplay(player1Id);
-            if (reply1 != null) {
-                appServer.queueMessage(reply1);
-            } else {
-                System.out.println("[WARN PageManager] Null reply generated for player1Id: " + player1Id + " in triggerGameDisplay");
-            }
+            appServer.queueMessage(reply1); 
         }
 
         if (player2Id > 1) {
             UserEventReply reply2 = displayConnector.sendShowGameDisplay(player2Id);
-            if (reply2 != null) {
-                appServer.queueMessage(reply2);
+            appServer.queueMessage(reply2);
+        }
+        Game game = gameManager.findGameByPlayerId(player1Id > 1 ? player1Id : player2Id);
+
+        if (game != null && game.gameActive()) {
+            Player currentPlayer = game.getCurrentTurn();
+            boolean isBotTurn = (currentPlayer.getPlayerId() == 0 || currentPlayer.getPlayerId() == 1);
+
+            if (isBotTurn) {
+                System.out.println("[DEBUG PageManager] Initial turn detected for Bot " + currentPlayer.getPlayerId() + " in game " + game.gameNumber() + ". Triggering first move.");
+
+                try { Thread.sleep(200); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+
+                Moves botMovesList = gameManager.requestBotMoves(game, currentPlayer.getPlayerId());
+                boolean moveSuccessfullyExecuted = false; // Flag
+
+                if (botMovesList != null && botMovesList.size() > 0) {
+                    System.out.println("[DEBUG PageManager] Received " + botMovesList.size() + " potential moves from Bot " + currentPlayer.getPlayerId() + ". Attempting in order...");
+
+                    for (Move currentAttempt : botMovesList.getMoves()) {
+                        System.out.println("[DEBUG PageManager] Attempting bot move: " + currentAttempt.getStart().getRow()+","+currentAttempt.getStart().getCol()+" -> "+currentAttempt.getDest().getRow()+","+currentAttempt.getDest().getCol());
+
+                        if (!rules.canMovePiece(game, currentAttempt)) {
+                            System.out.println("[WARN PageManager] Bot's move attempt is illegal according to rules.canMovePiece. Trying next.");
+                            continue;
+                        }
+
+                        boolean executed = gp.processAndExecuteMove(game, currentAttempt);
+
+                        if (executed) {
+                            System.out.println("[DEBUG PageManager] Bot move executed successfully.");
+                            moveSuccessfullyExecuted = true;
+
+                            Player winner = game.getWinner();
+                            boolean draw = game.checkDrawCondition();
+
+                            UserEventReply botMoveNotification = new UserEventReply();
+                            botMoveNotification.status = new game_status();
+                            botMoveNotification.recipients = new ArrayList<>();
+                            if (player1Id > 1) botMoveNotification.recipients.add(player1Id);
+                            if (player2Id > 1) botMoveNotification.recipients.add(player2Id);
+
+
+                            botMoveNotification.status.game_id = game.gameNumber();
+                            botMoveNotification.status.player = displayConnector.getPlayerName(currentPlayer.getPlayerId()); // Bot's name
+                            botMoveNotification.status.from = List.of(currentAttempt.getStart().getRow(), currentAttempt.getStart().getCol());
+                            botMoveNotification.status.to = List.of(currentAttempt.getDest().getRow(), currentAttempt.getDest().getCol());
+
+
+                            if (winner != null || draw) {
+                                botMoveNotification.status.type = "game_over";
+                                botMoveNotification.status.gameOver = true;
+                                botMoveNotification.status.winner = (winner != null) ? winner.getPlayerId() : null;
+                                botMoveNotification.status.draw = draw;
+                                botMoveNotification.status.msg = draw ? "Game ended in a draw!" : "Player " + displayConnector.getPlayerName(winner.getPlayerId()) + " wins!";
+                                game.endGame();
+                                System.out.println("[DEBUG PageManager] Game over after initial bot move.");
+                            } else {
+                                game.switchTurn();
+                                Player nextPlayer = game.getCurrentTurn();
+                                botMoveNotification.status.type = "move_made_by_other_player_or_bot";
+                                botMoveNotification.status.current_move = displayConnector.getPlayerName(nextPlayer.getPlayerId());
+                                botMoveNotification.status.id = nextPlayer.getPlayerId();
+                                System.out.println("[DEBUG PageManager] Switched turn to " + nextPlayer.getPlayerId() + " after initial bot move.");
+                            }
+
+                            appServer.queueMessage(botMoveNotification);
+                            System.out.println("[DEBUG PageManager] Queued notification about successful bot move.");
+
+                            break;
+
+                        } else {
+                            System.err.println("[ERROR PageManager] gp.processAndExecuteMove failed for bot move: ("+ currentAttempt.getStart().getRow()+","+currentAttempt.getStart().getCol()+" -> "+currentAttempt.getDest().getRow()+","+currentAttempt.getDest().getCol() + "), although rules.canMovePiece passed.");
+                            continue;
+                        }
+                    }
+
+                } else {
+                    System.out.println("[WARN PageManager] Initial bot turn, but Bot " + currentPlayer.getPlayerId() + " returned no moves list.");
+                    if (game.checkDrawCondition()) {
+                        UserEventReply drawNotification = new UserEventReply();
+                        drawNotification.status = new game_status();
+                        drawNotification.recipients = new ArrayList<>();
+                        if (player1Id > 1) drawNotification.recipients.add(player1Id);
+                        if (player2Id > 1) drawNotification.recipients.add(player2Id);
+                        drawNotification.status.type = "game_over";
+                        drawNotification.status.gameOver = true;
+                        drawNotification.status.draw = true;
+                        drawNotification.status.msg = "Game ended in a draw (Bot has no moves)!";
+                        appServer.queueMessage(drawNotification);
+                        game.endGame();
+                    }
+                }
+
+                if (!moveSuccessfullyExecuted && botMovesList != null && botMovesList.size() > 0) {
+                    System.err.println("[ERROR PageManager] Bot " + currentPlayer.getPlayerId() + " failed to make any valid move from its provided list.");
+                    if (!game.isDraw() && game.checkDrawCondition()) {
+                        UserEventReply drawNotification = new UserEventReply();
+                        appServer.queueMessage(drawNotification);
+                        game.endGame();
+                    } else if (!game.isDraw()) {
+                        System.err.println("[ERROR PageManager] Bot could not move, forcing draw.");
+                        game.GameDeclareDraw();
+                    }
+                }
             } else {
-                System.out.println("[WARN PageManager] Null reply generated for player2Id: " + player2Id + " in triggerGameDisplay");
+                System.out.println("[DEBUG PageManager] Initial turn belongs to human player " + currentPlayer.getPlayerId() + ". Waiting for their move.");
             }
+        } else {
+            System.out.println("[WARN PageManager] Could not find game or game inactive when checking for initial bot move trigger.");
         }
     }
 }

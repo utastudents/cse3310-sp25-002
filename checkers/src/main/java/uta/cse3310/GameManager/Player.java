@@ -18,5 +18,10 @@ public class Player {
      public void addScore(int points){score += points;}
      public int getPieces(){return pieceCount;}
      public void takePieces(int numPieces){pieceCount -= numPieces;}
+     public void setPieces(int count) {
+          if (count >= 0) {
+               this.pieceCount = count;
+          }
+     }
      public boolean getColor(){return color;}
 }
