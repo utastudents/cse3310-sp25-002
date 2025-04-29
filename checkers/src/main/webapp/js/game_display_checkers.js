@@ -75,6 +75,10 @@ const add_game_display_user_control_event_listener = () => {
 };
 
 
+const join_response_placeholder = () =>{
+    document.getElementById("game_lobby").style.display = "none";
+    document.getElementById("join_game").style.display = "none";
+}
 
 const show_game_display = (connection, gameid, starting_player, player, player_color, player_id) => {
     // this element is used to display the game board
@@ -100,6 +104,7 @@ const show_game_display = (connection, gameid, starting_player, player, player_c
         add_game_display_user_control_event_listener();
         // set the flag to true to indicate that the game board has been initialized. Note: this is used to prevent the game board from being initialized multiple times
         game_display_checkers_board_initialized = true;
+        join_response_placeholder();
     };
 
     if (checkerBoard.current_player === checkerBoard.player){

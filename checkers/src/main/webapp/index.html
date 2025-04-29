@@ -224,6 +224,9 @@
     console.log("close");
   }
 
+
+
+
   connection.onmessage = function (evt) {
     const msg = evt.data;
 
@@ -267,8 +270,6 @@
         detail: inputData
       }));
     }
-    document.getElementById("game_lobby").style.display = "none";
-    document.getElementById("join_game").style.display = "none";
 
     // Play vs Bot option
     if (inputData.msg && inputData.msg.includes("Matched with Bot")) {
