@@ -190,6 +190,10 @@ class JoinGameManager
           });
           this.botWaitlist.displayWaitlist();
         }
+
+        this.playerWaitlist.waitlist.forEach((player, index) =>{
+          console.log(`${index + 1}. ${player.username} (${player.id})`);
+        });
       });
   
       // Listen for join response events
