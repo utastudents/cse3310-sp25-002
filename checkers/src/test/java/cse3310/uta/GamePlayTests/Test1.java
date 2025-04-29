@@ -9,7 +9,6 @@ import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameManager.Square;
 import uta.cse3310.GameManager.Move;
 import uta.cse3310.GamePlay.rules;
-import uta.cse3310.PageManager.PageManager;
 
 
 
@@ -23,11 +22,15 @@ public class Test1 extends rules
         Board board = new Board();
         board.initializeBoard();
         
-        Square blackSquare = board.getSquare(4,4);
-        blackSquare.placeBlack();
-        Game game = new Game(0,1,true,false,2);
-        
-        assertFalse(rules.canMovePiece(board, blackSquare, game));
+        Square startSquare = board.getSquare(2, 1);
+        Square destSquare = board.getSquare(3, 2);
+        Game game = new Game(0,1,false,true,2);
+        Move testMove = new Move(startSquare, destSquare);
+
+        Square initialBlackPiece = board.getSquare(2,1);
+        Square potentialDestination = board.getSquare(3,0);
+        Move initialMove = new Move(initialBlackPiece, potentialDestination);
+        assertTrue(rules.canMovePiece(game, initialMove));
     }
     
 }

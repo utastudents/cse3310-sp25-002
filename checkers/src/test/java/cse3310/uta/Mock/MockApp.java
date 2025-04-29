@@ -1,3 +1,4 @@
+package cse3310.uta.Mock;
 import uta.cse3310.App;
 import uta.cse3310.PageManager.UserEventReply;
 import java.net.InetSocketAddress;
