@@ -2,7 +2,7 @@ package uta.cse3310.GameManager;
 import uta.cse3310.GamePlay.rules;
 
 public class Board {
-     private Square[][] board;
+     public Square[][] board;
 
      public Board() {
           board = new Square[8][8];
