@@ -30,12 +30,12 @@ public class GamePageController {
         return moves; 
     }
 
-    //returns possible moves 
+    //returns possible moves for a specific square
     public Map<Square, Moves> getAllowedMoves(int playerID, int[] square){
         Game game = gameManager.findGameByPlayerId(playerID);
         GamePlay gp = new GamePlay();
         if(game == null){return null;}
-        return gp.returnMoves(game);
+        return gp.getMovesForSquare(game, square);
     }
 
     //returns who's turn it is

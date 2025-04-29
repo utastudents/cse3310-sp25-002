@@ -75,6 +75,10 @@ const add_game_display_user_control_event_listener = () => {
 };
 
 
+const join_response_placeholder = () =>{
+    document.getElementById("game_lobby").style.display = "none";
+    document.getElementById("join_game").style.display = "none";
+}
 
 const show_game_display = (connection, gameid, starting_player, player, player_color, player_id) => {
     // this element is used to display the game board
@@ -100,6 +104,7 @@ const show_game_display = (connection, gameid, starting_player, player, player_c
         add_game_display_user_control_event_listener();
         // set the flag to true to indicate that the game board has been initialized. Note: this is used to prevent the game board from being initialized multiple times
         game_display_checkers_board_initialized = true;
+        join_response_placeholder();
     };
 
     if (checkerBoard.current_player === checkerBoard.player){
@@ -162,6 +167,10 @@ const game_display_handle_websocket_received_data = (connection, data) => {
                 // this function is used to move the checkers piece from one square to another. This function is called when the opponent makes a move.
                 checkerBoard.move_made_by_other_player_or_bot(data.from[0],data.from[1],data.to[0],data.to[1]);
             };
+            // update the current player display after the opponent's move
+            if (data.current_move && data.id !== undefined) {
+                checkerBoard.update_current_player(data.current_move, data.id);
+            }
 
         } else if(data.type === "resign") {
             // assuming that websocket sends the json string {"type":"resign", "player":"NAME OF PLAYER THAT RESIGNED (STRING)"}
@@ -187,7 +196,7 @@ const game_display_handle_websocket_received_data = (connection, data) => {
         } else if(data.type === 'show_game_display') {
             // this function is used to show the game display. It is called when the game is started.
             console.log("game display initialized")
-            show_game_display(connection, data.game_id, data.starting_player, data.player, data.player_color, data.playerId);
+            show_game_display(connection, data.game_id, data.starting_player, data.player, data.player_color, data.clientId);
 
         } else if(data.type === 'hide_game_display') {
             hide_game_display();
@@ -355,7 +364,7 @@ class CheckersBoard {
                 console.log({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
                 //Does not send a move request to the backend if it is the opponent's turn
                 if(this.player === this.current_player){
-                    this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, id: this.player_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}}));
+                    this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, id: this.player_id, player: this.current_player, from:[move_from_x, move_from_y],to:[move_to_x, move_to_y]}));
                 }
             }
 
@@ -604,8 +613,7 @@ class CheckersBoard {
                 return dest_piece_type === '.' || dest_piece_color !== requested_piece_color;
             });
             if (filtered_legal_moves.length === 0) {
-                game_display_popup_messages(`(gd) return_allowed_moves: No valid moves available for the selected piece at [${this.selected_piece.x}, ${this.selected_piece.y}]`);
-                return;
+                console.log(`(gd) return_allowed_moves: No valid moves available for the selected piece at [${this.selected_piece.x}, ${this.selected_piece.y}]`);
             }
 
             //map the filtered legal moves into array

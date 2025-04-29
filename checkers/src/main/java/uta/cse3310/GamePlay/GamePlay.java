@@ -78,4 +78,21 @@ public class GamePlay
         Map<Square, Moves> moveList = rule.moveList(game.getBoard(), currentPlayer.getColor());
         return moveList;
     }
+
+        public Map<Square, Moves> getMovesForSquare(Game game, int[] squareCoords)
+    {
+        Player currentPlayer = game.getCurrentTurn();
+        rules rule = new rules();
+
+        Moves movesForPiece = rule.getMovesForSquare(game.getBoard(), currentPlayer.getColor(), squareCoords);
+
+        Map<Square, Moves> moveMap = new HashMap<>();
+        if (movesForPiece != null && movesForPiece.size() > 0) {
+            Square startSquare = game.getBoard().getSquare(squareCoords[0], squareCoords[1]);
+            if (startSquare != null) {
+                moveMap.put(startSquare, movesForPiece);
+            }
+        }
+        return moveMap;
+    }
 }

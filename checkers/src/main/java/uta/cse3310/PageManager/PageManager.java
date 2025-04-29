@@ -42,7 +42,7 @@ public class PageManager {
 
         // Create GameTermination and connect it
         GameTermination gameTermination = new GameTermination();
-        displayConnector = new GameDisplayConnector(gamePageController, gameTermination);  
+        displayConnector = new GameDisplayConnector(gamePageController, gameTermination, gameManager);
 
         accountHandler = new NewAcctLogin();
     }
@@ -179,6 +179,11 @@ public class PageManager {
                             break;
             }
 
+            case "move": {
+                System.out.println("[DEBUG] Handling move request from player: " + U.id);
+                // the other player made a move, so we need to update the game state (eg: player 1 made a move so now we notify it to player 2 so his game board can be updated)
+                return displayConnector.handleMoveRequest(U);
+            }
             default: {
                 ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
                 break;

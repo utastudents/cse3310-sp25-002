@@ -30,6 +30,11 @@ public class game_status {
     public List<Integer> to;
     public List<List<Integer>> legal_moves;
 
+    // adding this even if redundant because i do not want to change the rest of the code
+    // Name of the player whose turn it is next
+    public String current_move;
+    // ID of the player whose turn it is next
+    public int id;
     //debugging msg
     public String msg;
 
