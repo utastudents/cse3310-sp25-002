@@ -1,18 +1,15 @@
 package uta.cse3310.GamePlay;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Player;
 import uta.cse3310.GameManager.Square;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 
 
 
@@ -43,7 +40,7 @@ public class rules
         Square start = move.getStart();
         Square dest = move.getDest();
 
-        if (start == null || dest == null || !start.hasPiece()) return false;
+        //if (start == null || dest == null || !start.hasPiece()) return false;
 
         int rowDiff = Math.abs(dest.getRow() - start.getRow());
         int colDiff = Math.abs(dest.getCol() - start.getCol());
@@ -55,11 +52,12 @@ public class rules
             if (!inBounds(middleRow, middleCol)) return false;
 
             Square middleSquare = board.getSquare(middleRow, middleCol);
-            return middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != start.getColor();
+
+            boolean logic = middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != start.getColor();
+            return logic;
         }
         return false;
     }
-
 
     //checks if a move is legal based on checkers rules
     //returns true if:

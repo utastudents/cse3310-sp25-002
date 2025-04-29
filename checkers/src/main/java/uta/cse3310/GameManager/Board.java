@@ -77,12 +77,12 @@ public class Board {
                int middleCol = (start.getCol() + end.getCol()) / 2;
                Square middleSquare = getSquare(middleRow, middleCol); // Fetch fresh from board
                if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != pieceColor) {
-               middleSquare.remove();
-               System.out.println("[DEBUG Board.execute] Middle square state AFTER remove: hasPiece="+middleSquare.hasPiece()+", color=null");
-          } else {
-               System.err.println("[ERROR Board.execute] Inconsistency during capture: Middle square ("+middleRow+","+middleCol+") invalid, empty, or same color.");
-               System.err.println("Middle Square State: " + (middleSquare != null ? "hasPiece="+middleSquare.hasPiece()+", color="+(middleSquare.getColor()==null?"null":middleSquare.getColor()?"W":"B") : "null"));
-          }
+                    middleSquare.remove();
+                    System.out.println("[DEBUG Board.execute] Middle square state AFTER remove: hasPiece="+middleSquare.hasPiece()+", color=null");
+               } else {
+                    System.err.println("[ERROR Board.execute] Inconsistency during capture: Middle square ("+middleRow+","+middleCol+") invalid, empty, or same color.");
+                    System.err.println("Middle Square State: " + (middleSquare != null ? "hasPiece="+middleSquare.hasPiece()+", color="+(middleSquare.getColor()==null?"null":middleSquare.getColor()?"W":"B") : "null"));
+               }
           }
 
           System.out.println("[DEBUG Board.execute] Start square state AFTER remove: hasPiece="+start.hasPiece()+", color=null");

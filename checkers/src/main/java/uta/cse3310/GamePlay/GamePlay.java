@@ -1,15 +1,14 @@
 package uta.cse3310.GamePlay;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import uta.cse3310.GameManager.Board;
 import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
-import uta.cse3310.GameManager.Square;
 import uta.cse3310.GameManager.Player;
-import java.util.Arrays;
+import uta.cse3310.GameManager.Square;
 
 
 public class GamePlay
@@ -37,12 +36,13 @@ public class GamePlay
         {
             boolean isCapture = rules.isCapture(move, currentGameBoard);
 
-            currentGameBoard.execute(move, isCapture);
-
+            System.out.println("[DEBUG isCapture] isCapture value before execute(): " + isCapture);
             if (isCapture) {
                 game.newCapture();
+                currentGameBoard.execute(move, isCapture);
             } else {
                 game.incrementMoveCounter();
+                currentGameBoard.execute(move, isCapture);
             }
 
             System.out.println("[DEBUG GamePlay.processAndExecuteMove] Board after move:\n" + currentGameBoard.toString());
