@@ -270,22 +270,6 @@
         detail: inputData
       }));
     }
-
-    // Play vs Bot option
-    if (inputData.msg && inputData.msg.includes("Matched with Bot")) {
-    console.log("Bot match confirmed - transitioning to game display");
-  }
-  else if (inputData.msg && inputData.msg.includes("Waiting for another player...")) {
-    console.log("Player match confirmed - transitioning to game display");
-    // Extract opponent name if available
-    let opponentName = "Opponent";
-    if (inputData.opponentName) {
-      opponentName = inputData.opponentName;
-    }
-  }
-  else if (inputData.msg && inputData.msg.includes("Bot vs Bot")) {
-    console.log("Bot vs Bot match - transitioning to game display (spectator mode)");
-    }
   }
 
 

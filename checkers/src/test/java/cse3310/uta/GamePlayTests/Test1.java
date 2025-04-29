@@ -9,6 +9,8 @@ import uta.cse3310.GameManager.Game;
 import uta.cse3310.GameManager.Square;
 import uta.cse3310.GameManager.Move;
 import uta.cse3310.GamePlay.rules;
+import uta.cse3310.PageManager.PageManager;
+
 
 
 public class Test1 extends rules 

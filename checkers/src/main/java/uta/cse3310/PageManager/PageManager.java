@@ -7,31 +7,30 @@ import java.util.Map;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
+import java.util.Collections;
 import uta.cse3310.DB.DB;
 import uta.cse3310.DB.Validate;
 import uta.cse3310.GameManager.GameManager;
 import uta.cse3310.GameManager.GamePageController;
 import uta.cse3310.GameTermination.GameTermination;
 import uta.cse3310.PairUp.PairUp;
+import uta.cse3310.App;
 
 public class PageManager {
     DB db;
-    PairUp pu;
+    private PairUp pairUp;
     public NewAcctLogin accountHandler;
     private GameDisplayConnector displayConnector;
     private GameManagerSubsys gameManagerSubsys;
     private GamePageController gamePageController;
-    
-    Integer turn = 0;
+    private App appServer;
 
     Map<String, List<Integer>> gamePlayers = new HashMap<>(); // key = gameId, value = player IDs
 
-    private final PairUp pairUp = new PairUp();
+    private final JoinGameHandler joinGameHandler;
 
-    private final JoinGameHandler joinGameHandler = new JoinGameHandler();
-
-    public PageManager() {
+    public PageManager(App appServer) {
+        this.appServer = appServer;
         db = new DB();
         DB.createTable();
 
@@ -39,12 +38,15 @@ public class PageManager {
         GameManager gameManager = new GameManager();
         gamePageController = new GamePageController(gameManager);
         gameManagerSubsys = new GameManagerSubsys(gamePageController);
-
-        // Create GameTermination and connect it
         GameTermination gameTermination = new GameTermination();
+
         displayConnector = new GameDisplayConnector(gamePageController, gameTermination, gameManager);
 
         accountHandler = new NewAcctLogin();
+        this.pairUp = new PairUp(this);
+        this.joinGameHandler = new JoinGameHandler(this.pairUp);
+
+        System.out.println("PageManager components initialized.");
     }
 
 
@@ -63,7 +65,7 @@ public class PageManager {
         System.out.println("[DEBUG] Handling Bot vs Bot request for creatorID: " + creatorId);
 
         pairUp.createBotGame(creatorId);
-
+        UserEventReply confirmationReply = new UserEventReply();
         int gameId = creatorId; // gameId is the same as creatorId for bot games
 
         return displayConnector.sendBotVsBotBoard(creatorId, gameId);
@@ -74,6 +76,7 @@ public class PageManager {
     {
         //using the DB validation:
         JsonObject responseMsg = new JsonObject();
+        responseMsg.addProperty("type", "username_status");
 
         DB.createTable();
 
@@ -119,15 +122,16 @@ public class PageManager {
                 input.addProperty("username", U.playerName);
 
                 // Call the login handler (returns a JSON string)
-                String loginResult = accountHandler.processUsernameInput(input.toString());
+                JsonObject validationResult = this.handleUsernameValidation(U.playerName);
 
                 // Parse the string response into a JsonObject
-                JsonObject parsed = JsonParser.parseString(loginResult).getAsJsonObject();
+                JsonObject parsed = validationResult;
 
                 // Populate the game_status reply
-                ret.status.Status = parsed.get("Status").getAsString();
-                ret.status.Message = parsed.get("Message").getAsString();
+                boolean accepted = parsed.get("accepted").getAsBoolean();
+                ret.status.Status = accepted ? "Success" : "Failure";
                 ret.status.playerName = U.playerName;
+                ret.status.Message = accepted ? "Username accepted." : "Username already exists or is invalid.";
                 ret.status.clientId = U.id;
 
                 break;
@@ -152,7 +156,11 @@ public class PageManager {
                     return handleBotVsBotRequest(result.clientId);
                 } else if (result.playAgainstBot) {
                     System.out.println("[DEBUG] Player vs Bot match requested. Sending show_game_display...");
-                    return displayConnector.sendShowGameDisplay(result.clientId);
+                    // handles in matchmaking
+                    // return displayConnector.sendShowGameDisplay(result.clientId);
+                    game_status feedback = joinGameHandler.createGameStatusMessage(result.clientId, result.playAgainstBot);
+                    ret.status.type = feedback.type;
+                    ret.status.msg = feedback.msg;
                 } else {
                     game_status feedback = joinGameHandler.createGameStatusMessage(result.clientId, result.playAgainstBot);
                     ret.status.type = feedback.type;
@@ -167,7 +175,7 @@ public class PageManager {
                 ret.status.type = "cancel_status";
                 ret.status.msg = "cancelled";
                 break;
-            } 
+            }
 
             case "get_allowed_moves": {
                 System.out.println("[DEBUG] Handling get_allowed_moves from player: " + U.id);
@@ -175,8 +183,8 @@ public class PageManager {
             }
 
             case "game_status": {
-                            ret.status = gameManagerSubsys.getGameInfo(U.id);
-                            break;
+                ret.status = gameManagerSubsys.getGameInfo(U.id);
+                break;
             }
 
             case "move": {
@@ -188,11 +196,30 @@ public class PageManager {
                 ret.status.msg = "[WARN] Unrecognized event type: " + U.type;
                 break;
             }
-            
         }
 
         // Always send a response back to the sender
         ret.recipients.add(U.id);
         return ret;
+    }
+
+    public void triggerGameDisplay(int gameId, int player1Id, int player2Id) {
+        if (player1Id > 1) { // 0 and 1 are bots
+            UserEventReply reply1 = displayConnector.sendShowGameDisplay(player1Id);
+            if (reply1 != null) {
+                appServer.queueMessage(reply1);
+            } else {
+                System.out.println("[WARN PageManager] Null reply generated for player1Id: " + player1Id + " in triggerGameDisplay");
+            }
+        }
+
+        if (player2Id > 1) {
+            UserEventReply reply2 = displayConnector.sendShowGameDisplay(player2Id);
+            if (reply2 != null) {
+                appServer.queueMessage(reply2);
+            } else {
+                System.out.println("[WARN PageManager] Null reply generated for player2Id: " + player2Id + " in triggerGameDisplay");
+            }
+        }
     }
 }

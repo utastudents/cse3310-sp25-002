@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.Collections;
 
 // Needs from GameManager:
 // getAllowedMoves, getGameState, getGameStatus, getGameOver, getWinner, getLoser, getallPlayerIDs 
@@ -31,6 +32,12 @@ public class GameDisplayConnector {
         this.gamePageController = gamePageController;
         this.gameTermination = gameTermination;
         this.gameManager = gameManager;
+    }
+
+    public String getPlayerName(int playerId) {
+        if (playerId == 0) return "Bot I";
+        if (playerId == 1) return "Bot II";
+        return "Player " + playerId;
     }
 
     // Handle a move from the front-end
@@ -56,9 +63,8 @@ public class GameDisplayConnector {
             // next player's id make it ready because it will be sent in game display
             int nextPlayerId = gamePageController.playerTurn(event.id);
             String nextPlayerName = getPlayerName(nextPlayerId);
-
             reply.status.current_move = nextPlayerName;
-            reply.status.id = nextPlayerId;
+            reply.status.id = event.id;
             System.out.println("[DEBUG] Move processed. Next turn: Player " + nextPlayerId);
         } else {
             reply.status.type = "error";
@@ -94,7 +100,7 @@ public class GameDisplayConnector {
         reply.status.type = "resign";
         // hl reply.status.player = event.playerName + " (ID: " + event.id + ")";
         reply.status.player = getPlayerName(event.id);
-
+        reply.status.gameOver = true;
         // Get all player IDs from GameManager
         int[] playerIds = gamePageController.getAllPlayerIDs(event.id);
         if (playerIds != null) {
@@ -130,6 +136,28 @@ public class GameDisplayConnector {
             }
         }
 
+        return reply;
+    }
+
+
+    public UserEventReply handleDrawAccept(UserEvent event) {
+        System.out.println("[DEBUG DisplayConnector] Handling draw acceptance from player " + event.id);
+        UserEventReply reply = new UserEventReply();
+        reply.status = new game_status();
+        reply.recipients = new ArrayList<>();
+
+
+        reply.status.type = "draw_accept";
+        reply.status.player = getPlayerName(event.id);
+        reply.status.gameOver = true;
+        reply.status.draw = true;
+
+        int[] playerIds = gamePageController.getAllPlayerIDs(event.id);
+        if (playerIds != null) {
+            for (int id : playerIds) {
+                reply.recipients.add(id);
+            }
+        }
         return reply;
     }
 
@@ -230,6 +258,8 @@ public class GameDisplayConnector {
     }
 
     public UserEventReply sendShowGameDisplay(int clientId) {
+        System.out.println("[DEBUG-DisplayConnector] Entered sendShowGameDisplay for clientId: " + clientId);
+
         UserEventReply reply = new UserEventReply();
         reply.status = new game_status();
         reply.recipients = new ArrayList<>();
@@ -237,34 +267,44 @@ public class GameDisplayConnector {
         Game game = gamePageController.returnGame(clientId);
 
         if (game == null) {
-            System.out.println("[DEBUG] No active game found for client ID " + clientId);
-            return null; 
+            System.out.println("[DEBUG-DisplayConnector] No active game found for client ID " + clientId + ". Returning null.");
+            return null;
         }
+
+        System.out.println("[DEBUG-DisplayConnector] Found active game " + game.gameNumber() + " for clientId " + clientId);
 
         reply.status.type = "show_game_display";
         reply.status.game_id = game.gameNumber();
         reply.status.player = getPlayerName(clientId);
         reply.status.playerId = clientId;
 
-        // get player color from Game
-        boolean colorIsWhite;
-        if (game.getPlayer1ID() == clientId) {
+        boolean isPlayer1 = (game.getPlayer1ID() == clientId);
+        boolean isPlayer2 = (game.getPlayer2ID() == clientId);
+        boolean colorIsWhite = false; // Default assumption
+        String playerColor = "S";
+
+        if (isPlayer1) {
             colorIsWhite = game.getPlayer1Color();
-        } else if  (game.getPlayer2ID() == clientId)  {
+            playerColor = colorIsWhite ? "W" : "B";
+        } else if (isPlayer2) {
             colorIsWhite = game.getPlayer2Color();
+            playerColor = colorIsWhite ? "W" : "B";
         } else {
-            System.out.println("[WARN] Client ID " + clientId + " not found as P1 or P2 in game " + game.gameNumber() + ". Assigning spectator.");
-            reply.status.player_color = "S";
-            colorIsWhite = true;
+            System.out.println("[DEBUG DisplayConnector] Client ID " + clientId + " not found as P1 or P2 in game " + game.gameNumber() + ". Assigning spectator color.");
         }
 
-        // skip color if the person is a spectator we only set B/W for players
-        if (!"S".equals(reply.status.player_color)) {
-            reply.status.player_color = colorIsWhite ? "W" : "B";
+        reply.status.player_color = playerColor;
+        Player startingPlayer = game.getCurrentTurn();
+
+        if (startingPlayer != null) {
+            reply.status.starting_player = getPlayerName(startingPlayer.getPlayerId());
+            System.out.println("[DEBUG DisplayConnector] Starting player: " + reply.status.starting_player);
+        } else {
+            System.out.println("[WARN DisplayConnector] Could not determine starting player for game " + game.gameNumber());
         }
 
-        reply.status.starting_player = getPlayerName(game.getCurrentTurn().getPlayerId());
 
+        // Add the client ID as a recipient for this reply
         reply.recipients.add(clientId);
 
         return reply;
@@ -291,13 +331,13 @@ public class GameDisplayConnector {
     }
 
 
-    public String getPlayerName(int playerId) {
-        if (this.gameManager == null) {
-            System.out.println("[ERROR] GameManager instance is null in getPlayerName. Cannot find player name.");
-            return "Player " + playerId;
-        }
-        String formattedName = "Player " + playerId;
-        return formattedName;
-    }
+    // public String getPlayerName(int playerId) {
+    //     if (this.gameManager == null) {
+    //         System.out.println("[ERROR] GameManager instance is null in getPlayerName. Cannot find player name.");
+    //         return "Player " + playerId;
+    //     }
+    //     String formattedName = "Player " + playerId;
+    //     return formattedName;
+    // }
 
 }
