@@ -99,6 +99,7 @@ public class GameTermination
         }
 
         saveResultsToDatabase(playerScores);
+        System.out.println("LOAD_SUMMARY_SCREEN");
 
     }
 
