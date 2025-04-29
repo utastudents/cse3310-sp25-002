@@ -275,17 +275,7 @@
     // Hide join game, show game display
     document.getElementById("game_lobby").style.display = "none";
     document.getElementById("join_game").style.display = "none";
-    /*
-    // Call the show_game_display function with appropriate parameters
-    show_game_display(
-      connection, 
-      inputData.game_id || "0", 
-      window.playerUsername || "Player", 
-      window.playerUsername || "Player", 
-      "W", 
-      window.clientId 
-    );
-    */
+
   } 
   else if (inputData.msg && inputData.msg.includes("Waiting for another player...")) {
     console.log("Player match confirmed - transitioning to game display");
@@ -298,42 +288,21 @@
     if (inputData.opponentName) {
       opponentName = inputData.opponentName;
     }
-    
-    // Call the show_game_display function with appropriate parameters
-    /*
-    show_game_display(
-      connection, 
-      inputData.game_id || "0", 
-      window.playerUsername || "Player", 
-      opponentName, 
-      "W", 
-      window.clientId // Added player_id parameter
-    );
-    */
+ 
   }
   else if (inputData.msg && inputData.msg.includes("Bot vs Bot")) {
     console.log("Bot vs Bot match - transitioning to game display (spectator mode)");
     // Hide join game, show game display
     document.getElementById("game_lobby").style.display = "none";
     document.getElementById("join_game").style.display = "none";
-    /*
-    // Call the show_game_display function with appropriate parameters
-    show_game_display(
-      connection, 
-      inputData.game_id || "0", 
-      "Bot 1", 
-      "Bot 2", 
-      "W", 
-      window.clientId // Added player_id parameter
-    );
-    */
+
     }
   }
 
   else {
 
       // previous comment, not sure if it is valid or a misunderstanding.  leaving it here for now.
-      console.log("msg received, but unknown");
+      //console.log("msg received, but unknown");
     }
 
     // this function handles/receives all the data that is sent to the game dispaly through websockets. Please check `webapp\js\game_display_checkers.js` for more details

@@ -604,8 +604,7 @@ class CheckersBoard {
                 return dest_piece_type === '.' || dest_piece_color !== requested_piece_color;
             });
             if (filtered_legal_moves.length === 0) {
-                game_display_popup_messages(`(gd) return_allowed_moves: No valid moves available for the selected piece at [${this.selected_piece.x}, ${this.selected_piece.y}]`);
-                return;
+                console.log(`(gd) return_allowed_moves: No valid moves available for the selected piece at [${this.selected_piece.x}, ${this.selected_piece.y}]`);
             }
 
             //map the filtered legal moves into array

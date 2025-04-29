@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Arrays;
+import java.util.LinkedList;
 
 // Needs from GameManager:
 // getAllowedMoves, getGameState, getGameStatus, getGameOver, getWinner, getLoser, getallPlayerIDs 
@@ -129,11 +130,21 @@ public class GameDisplayConnector {
 
         List<List<Integer>> legalMoves = new ArrayList<>();
         if (moveMap != null) {
-            for (Square s : moveMap.keySet()) {
-                List<Integer> move = new ArrayList<>();
-                move.add(s.getRow());
-                move.add(s.getCol());
-                legalMoves.add(move);
+            for (Moves possible_moves_obj : moveMap.values()) {
+                if (possible_moves_obj != null) {
+                    LinkedList<Move> piece_moves = possible_moves_obj.getMoves();
+                    if (piece_moves != null) {
+                        for (Move move : piece_moves) {
+                            if (move != null && move.getDest() != null) {
+                                Square destSquare = move.getDest();
+                                List<Integer> moves_to_destination = new ArrayList<>();
+                                moves_to_destination.add(destSquare.getRow());
+                                moves_to_destination.add(destSquare.getCol());
+                                legalMoves.add(moves_to_destination);
+                            }
+                        }
+                    }
+                }
             }
         }
 

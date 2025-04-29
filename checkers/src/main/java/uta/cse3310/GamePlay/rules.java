@@ -10,7 +10,7 @@ import uta.cse3310.GameManager.Move;
 import uta.cse3310.GameManager.Moves;
 import uta.cse3310.GameManager.Player;
 import uta.cse3310.GameManager.Square;
-
+import java.util.Arrays;
 
 //class rules checks if the move is legal
 public class rules
@@ -540,4 +540,107 @@ static protected boolean hasLegalCapture(Game game, Move move) {
         }
         return moveList;
     }
+
+    static protected Moves getMovesForSquare(Board board, boolean color, int[] startSquareCoords)
+        {
+        Moves moves = new Moves();
+        int colorNum;
+        if(color){
+            colorNum = -1; // color is white
+        }
+        else{
+            colorNum = 1; // color is black
+        }
+
+        Square square = board.getSquare(startSquareCoords[0], startSquareCoords[1]);
+        Square squareDup = square;
+
+        if (square != null && square.hasPiece() && square.getColor() == color) {
+
+            if(square.isKing()){
+
+                for(int j = 3; j > -3; j = j - 2 ){
+                    int rowAdd = 1;
+                    int colAdd = -1;
+
+                    if(j<0){
+                        rowAdd = -1;
+                    }
+
+                    int col = square.getCol();
+                    int row = square.getRow();
+
+                    if(col+colAdd < 0 || col+colAdd > 7 || row+rowAdd < 0 || row+rowAdd > 7){
+                        colAdd = colAdd*(-1);
+                        continue;
+                    }
+
+                    Square temp = board.getSquare(row+rowAdd, col+colAdd);
+
+                    if(temp.hasPiece()){
+                        if(row+rowAdd == 0 || row+rowAdd == 7 || col+colAdd == 0 || col+colAdd == 7
+                            || temp.getColor() == square.getColor()){
+                            colAdd = colAdd*(-1);
+                            continue;
+                        }
+                        else{
+                            // opponent's piece found
+                            temp = board.getSquare(row+(rowAdd*2), col+(colAdd*2));
+
+                            if (row+(rowAdd*2) >= 0 && row+(rowAdd*2) <= 7 && col+(colAdd*2) >= 0 && col+(colAdd*2) <= 7 && !temp.hasPiece()){
+                                moves.addNext(squareDup, temp);
+                                kingJump(board, moves, row+rowAdd, col+colAdd, temp, color);
+                            } else {
+                                colAdd = colAdd*(-1);
+                                continue;
+                            }
+                        }
+                    }
+                    else{
+                        // normal move found
+                        moves.addNext(squareDup, temp);
+                        colAdd = colAdd*(-1);
+                        continue;
+                    }
+                    colAdd = colAdd*(-1);
+                }
+            }
+            else{
+                int rowAdd = colorNum;
+                int colAdd = -1;
+
+                for(int j = 0; j < 2; j++){
+
+                    int col = square.getCol();
+                    int row = square.getRow();
+
+                    if(col+colAdd >= 0 && col+colAdd <= 7 && row+rowAdd >= 0 && row+rowAdd <= 7){
+                        Square temp = board.getSquare(row+rowAdd, col+colAdd);
+
+                        if(temp.hasPiece()){
+                            if(row+(rowAdd*2) >= 0 && row+(rowAdd*2) <= 7 && col+(colAdd*2) >= 0 && col+(colAdd*2) <= 7
+                                && temp.getColor() != square.getColor()){
+
+                                Square jumpDest = board.getSquare(row+(rowAdd*2), col+(colAdd*2));
+                                if(!jumpDest.hasPiece()){
+                                    moves.addNext(squareDup, jumpDest);
+                                    pieceJump(board, moves, jumpDest, colorNum);
+                                }
+                            }
+                        }
+                        else{
+                            // empty diagonal square found
+                            moves.addNext(squareDup, temp);
+                        }
+                    }
+                    colAdd = colAdd*(-1);
+                }
+            }
+        } else {
+            System.out.println("[DEBUG rules.getMovesForSquare] No piece found or wrong color at requested square: " + Arrays.toString(startSquareCoords));
+        }
+
+        return moves;
+    }
+
 }
