@@ -2,13 +2,76 @@ package uta.cse3310.GameManager;
 
 import java.util.Map;
 import uta.cse3310.GamePlay.GamePlay;
+import uta.cse3310.GamePlay.rules;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 public class GamePageController {
     private GameManager gameManager;
+    private GamePlay gp;
+
 
     public GamePageController(GameManager gameManager){
         this.gameManager = gameManager;
+        this.gp = new GamePlay();
     }
+
+
+
+public List<List<Integer>> getMovablePieces(int playerID) {
+        List<List<Integer>> movablePiecesCoords = new ArrayList<>();
+        Game game = gameManager.findGameByPlayerId(playerID);
+
+        if (game == null || !game.gameActive() || game.getCurrentTurn() == null) {
+            System.err.println("[ERROR GamePageController] getMovablePieces: Game not found, inactive, or turn is null for player " + playerID);
+            return movablePiecesCoords;
+        }
+
+        Player currentPlayer = game.getCurrentTurn();
+        if (currentPlayer.getPlayerId() != playerID) {
+            System.out.println("[INFO GamePageController] getMovablePieces: Not player " + playerID + "'s turn.");
+            return movablePiecesCoords;
+        }
+
+        Board board = game.getBoard();
+        boolean playerColor = currentPlayer.getColor();
+
+        boolean captureIsMandatory = rules.isCaptureAvailableForPlayer(game);
+        List<Square> piecesToConsider = new ArrayList<>();
+
+        if (captureIsMandatory) {
+            System.out.println("[DEBUG GamePageController] getMovablePieces: Capture is mandatory for player " + playerID);
+            ArrayList<Square> allPlayerPieces = rules.getAllPiecesForColor(board, playerColor);
+            for (Square piece : allPlayerPieces) {
+                if (rules.isCaptureAvailableFromSquare(game, piece)) {
+                    piecesToConsider.add(piece);
+                    System.out.println("[DEBUG GamePageController] getMovablePieces: Found mandatory capture piece at [" + piece.getRow() + "," + piece.getCol() + "]");
+                }
+            }
+        } else {
+            System.out.println("[DEBUG GamePageController] getMovablePieces: No mandatory capture for player " + playerID);
+            piecesToConsider = rules.getAllPiecesForColor(board, playerColor);
+        }
+
+
+        for (Square piece : piecesToConsider) {
+            if (piece == null) continue;
+            int[] coords = {piece.getRow(), piece.getCol()};
+            Moves pieceMoves = rules.getMovesForSquare(board, playerColor, coords);
+            if (pieceMoves != null && pieceMoves.size() > 0) {
+                System.out.println("[DEBUG GamePageController] getMovablePieces: Piece at [" + piece.getRow() + "," + piece.getCol() + "] has " + pieceMoves.size() + " valid moves.");
+                movablePiecesCoords.add(List.of(piece.getRow(), piece.getCol()));
+            } else {
+                System.out.println("[DEBUG GamePageController] getMovablePieces: Piece at [" + piece.getRow() + "," + piece.getCol() + "] has NO valid moves in current context.");
+            }
+        }
+
+        System.out.println("[DEBUG GamePageController] getMovablePieces: Returning movable pieces for player " + playerID + ": " + movablePiecesCoords);
+        return movablePiecesCoords;
+    }
+
+
 
     //sending the board to page controller
     public Board sendBoard(int playerID){

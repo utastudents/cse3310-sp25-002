@@ -15,7 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Game
 {
     private Board board;
-    private final ReentrantLock boardLock = new ReentrantLock();
+    public final ReentrantLock boardLock = new ReentrantLock();
     private Player player1;
     private Player player2;
     private String player1Name;

@@ -179,15 +179,15 @@ public class rules
     static protected boolean hasLegalCaptureFromSquare(Game game, Square start) {
         Board board = game.getBoard();
         if (board == null || start == null || !start.hasPiece() || start.getColor() == null) {
+            System.out.println("[DEBUG rules.hasLegalCaptureFromSquare] Internal check fail: board/start null or no piece/color.");
             return false;
         }
-
 
         boolean playerColor = start.getColor();
         int row = start.getRow();
         int col = start.getCol();
 
-        int[] rowOffsets = start.isKing() ? new int[]{-2, 2} : (playerColor ? new int[]{-2} : new int[]{2}); // White(true) moves -2, Black(false) moves +2
+        int[] rowOffsets = start.isKing() ? new int[]{-2, 2} : (playerColor ? new int[]{-2} : new int[]{2});
         int[] colOffsets = {-2, 2};
         System.out.println("[DEBUG rules.hasLegalCaptureFromSquare] Checking piece at ("+row+","+col+"), King="+start.isKing()+", Color="+(playerColor?"W":"B"));
 
@@ -204,24 +204,38 @@ public class rules
                     Square middle = board.getSquare(midRow, midCol);
 
                     boolean landingOk = landing != null && !landing.hasPiece();
-                    boolean middleOk = middle != null && middle.hasPiece() && middle.getColor() != null && middle.getColor() != playerColor;
 
-                    System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]     LandingOK="+landingOk+" (Dest="+ (landing!=null?landing.hasPiece():"null")+"). MiddleOK="+middleOk+" (Mid="+ (middle!=null?middle.hasPiece():"null")+", MidColor="+ (middle!=null&&middle.getColor()!=null?(middle.getColor()?"W":"B"):"null") + ")");
+                    boolean middleIsNotNull = middle != null;
+                    boolean middleHasPiece = middleIsNotNull && middle.hasPiece();
+                    Boolean middleColor = middleHasPiece ? middle.getColor() : null;
+                    boolean middleColorNotNull = middleColor != null;
+                    boolean middleColorIsOpponent = middleColorNotNull && middleColor.booleanValue() != playerColor;
+
+                    boolean middleOk = middleIsNotNull && middleHasPiece && middleColorNotNull && middleColorIsOpponent;
+                    System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]     LandingOK="+landingOk+" (Dest="+ (landing!=null?("hasPiece="+landing.hasPiece()):"null")+")");
+                    System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]     Middle Square ("+midRow+","+midCol+"):");
+                    System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]       middleIsNotNull=" + middleIsNotNull);
+                    System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]       middleHasPiece=" + middleHasPiece);
+                    System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]       middleColor=" + (middleColor == null ? "null" : (middleColor ? "W" : "B")));
+                    System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]       middleColorNotNull=" + middleColorNotNull);
+                    System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]       middleColorIsOpponent=" + middleColorIsOpponent + " (Comparing middle " + (middleColor == null ? "null" : (middleColor ? "W" : "B")) + " != player " + (playerColor?"W":"B") + ")");
+                    System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]     Calculated middleOk = " + middleOk);
 
 
                     if (landingOk && middleOk)
                     {
-                        System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]   Found valid capture from ("+row+","+col+") to ("+newRow+","+newCol+") over ("+midRow+","+midCol+") ");
+                        System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]  Found valid capture from ("+row+","+col+") to ("+newRow+","+newCol+") over ("+midRow+","+midCol+") ");
                         return true;
                     }
                 } else {
                     System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]   Path out of bounds.");
                 }
-                }
             }
-        System.out.println("[DEBUG rules.hasLegalCaptureFromSquare] No legal captures found from ("+row+","+col+")");
+        }
+        System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]   No legal captures found from ("+row+","+col+")");
         return false;
     }
+
 
 
     // Checks if a legal capture is available from the starting square of the move.

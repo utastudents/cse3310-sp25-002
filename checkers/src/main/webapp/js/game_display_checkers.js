@@ -12,7 +12,7 @@ let checkerBoard = null;
     The logic for handling resign and draw button is extremely simple. Removing the event listener and adding it again prevents event duplication. This is a very common practice in the industry.
 */
 const game_display_popup_messages = (message) =>{
-    if(!message){
+    if(!message || message === ""|| message==="undefined"){
         return;
     }
     // this function handles the popup messages for the game display. All errors/alters/announcements are handled here.
@@ -151,7 +151,7 @@ const game_display_handle_websocket_received_data = (connection, data) => {
 
 
 
-        let game_display_event_types = ["move_ack","game_over","valid_moves", "move_made_by_other_player_or_bot", "resign", "draw_offer", "draw_accept", "player_name_update", "notify_players", "show_game_display", "hide_game_display"];
+        let game_display_event_types = ["movable_pieces_list","move_ack","game_over","valid_moves", "move_made_by_other_player_or_bot", "resign", "draw_offer", "draw_accept", "player_name_update", "notify_players", "show_game_display", "hide_game_display"];
 
         // this ignores any data that is not related to the game display.
         if(!game_display_event_types.includes(data.type)){ return; }
@@ -177,12 +177,11 @@ const game_display_handle_websocket_received_data = (connection, data) => {
 
         } else if (data.type === "move_made_by_other_player_or_bot") {
             if (!checkerBoard) return;
+            checkerBoard.update_current_player(data.current_move, data.id);
             checkerBoard.move_made_by_other_player_or_bot(data.from[0], data.from[1], data.to[0], data.to[1]);
             if (data.capturedSquare) {
                 checkerBoard.remove_captured_piece(data.capturedSquare[0], data.capturedSquare[1]);
             }
-            checkerBoard.update_current_player(data.current_move, data.id);
-
         } else if(data.type === "resign") {
             // assuming that websocket sends the json string {"type":"resign", "player":"NAME OF PLAYER THAT RESIGNED (STRING)"}
             alert(`${data.player} has resigned. The game is now over.`);
@@ -232,6 +231,11 @@ const game_display_handle_websocket_received_data = (connection, data) => {
                 if (data.capturedSquare) {
                     checkerBoard.remove_captured_piece(data.capturedSquare[0], data.capturedSquare[1]);
                 }
+            } else if (data.type === "movable_pieces_list") {
+                console.log("Received movable pieces list:", data.movable_pieces);
+                // if (checkerBoard) {
+                //     checkerBoard.highlight_movable_pieces(data.movable_pieces);
+                // }
             }
 
 
@@ -297,10 +301,27 @@ class CheckersBoard {
     }
 
 
+
+    request_movable_pieces() {
+        try {
+            console.log("Requesting list of movable pieces for player ID:", this.player_id);
+            const requestMovable = {
+                type: "get_movable_pieces",
+                id: this.player_id,
+                game_id: this.game_id
+            };
+            this.connection.send(JSON.stringify(requestMovable));
+        } catch (error) {
+            console.error("Error requesting movable pieces:", error);
+            game_display_popup_messages("Error requesting movable pieces. Check console.");
+        }
+    }
+
     update_current_player(player, player_id) {
         // Update the UI to show whose turn it is
 
         try{
+
             this.current_player = player;
             this.player_id = player_id;
             game_display_current_player_name = player;
@@ -730,7 +751,7 @@ class CheckersBoard {
                 const piece_color_at_request = this.get_piece_color(piece_type_at_request);
 
                 this.last_requested_moves = { resolver: resolve, requested_piece_color: piece_color_at_request };
-
+                this.request_movable_pieces();
                 // TODO: This needs to be handled by the java backend since this involves making game logic
                 this.connection.send(JSON.stringify({type: "get_allowed_moves", game_id: this.game_id, id: this.player_id, player: this.current_player, square: [x, y] }));
                 // we do not receive a response from the request to the websocket, so i prevented a non thread blocking mechanism.

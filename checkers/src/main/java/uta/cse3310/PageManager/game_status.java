@@ -1,7 +1,7 @@
 package uta.cse3310.PageManager;
 
 import java.util.List;
-import java.util.ArrayList; // Keep original imports if needed elsewhere, though not directly in declarations here
+import java.util.ArrayList;
 
 public class game_status {
 
@@ -29,5 +29,6 @@ public class game_status {
     public int id;
     public String msg;
     public List<Integer> capturedSquare;
+    public List<List<Integer>> movable_pieces;
 
 }

@@ -125,8 +125,22 @@ public class PageManager {
         UserEventReply ret = new UserEventReply();
         ret.status = new game_status();
         ret.recipients = new ArrayList<>();
+        ret.status.game_id = U.gameId;
+        ret.status.id = U.id;
+
 
         switch (U.type) {
+
+            case "get_movable_pieces": {
+                System.out.println("[DEBUG PageManager] Handling get_movable_pieces for player: " + U.id);
+                List<List<Integer>> movable = gamePageController.getMovablePieces(U.id);
+                ret.status.type = "movable_pieces_list";
+                ret.status.movable_pieces = movable;
+                ret.status.msg = "List of pieces with available moves.";
+                ret.recipients.add(U.id);
+                break;
+            }
+
             case "join": {
                 System.out.println("Received username: " + U.playerName);
 
