@@ -591,12 +591,23 @@ class CheckersBoard {
     async show_possible_moves(x, y) {
         try{
             this.hide_possible_moves();
-            let valid_moves = await this.return_allowed_moves(x, y);
-            this.checkers_board.forEach((square) => {
-                let check_valid_move = valid_moves.some(move => move.x === square.x && move.y === square.y);
-                if (check_valid_move) {
-                    square.el.style.background = "rgba(190, 228, 229, 0.5)";
-                    square.el.dataset.highlighted = "true";
+            let valid_moves_from_backend = await this.return_allowed_moves(x, y);
+            if (!Array.isArray(valid_moves_from_backend)) {
+                console.error("Received invalid format for valid_moves:", valid_moves_from_backend);
+                return;
+            }
+            console.log("Highlighting based on valid moves received from backend:", JSON.stringify(valid_moves_from_backend)); // Debug log
+
+            valid_moves_from_backend.forEach(move => {
+                // Find the corresponding square element on the board using the x (row) and y (col) from the move object
+                const target_square = this.checkers_board.find(sq => sq.x === move.x && sq.y === move.y);
+
+                if (target_square) {
+                    console.log(`Highlighting target square: (${move.x}, ${move.y})`);
+                    target_square.el.style.background = "rgba(190, 228, 229, 0.5)";
+                    target_square.el.dataset.highlighted = "true"; // Mark as highlighted
+                } else {
+                    console.warn(`Could not find board square element for valid move: (${move.x}, ${move.y})`);
                 }
             });
         } catch (error) {
