@@ -135,27 +135,36 @@ public class rules
         Board board = game.getBoard();
         Player player = game.getCurrentTurn();
 
-        if (board == null || player == null) return false;
+        if (board == null || player == null) {
+            System.err.println("[ERROR rules.isCaptureAvailableForPlayer] Game, Board or Player is null.");
+            return false;
+        }
 
         boolean playerColor = player.getColor();
 
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
                 Square start = board.getSquare(r, c);
-                if (start != null && start.hasPiece() && start.getColor() == playerColor) {
+                if (start != null && start.hasPiece() && start.getColor() != null && start.getColor() == playerColor) {
                     if (hasLegalCaptureFromSquare(game, start)) {
+                        System.out.println("[DEBUG rules.isCaptureAvailableForPlayer] Capture found for piece at ("+r+","+c+")");
                         return true;
                     }
                 }
             }
         }
+        System.out.println("[DEBUG rules.isCaptureAvailableForPlayer] No captures found for player " + (playerColor ? "White" : "Black"));
         return false;
     }
 
 
     static protected boolean hasLegalCaptureFromSquare(Game game, Square start) {
         Board board = game.getBoard();
-        if (board == null || start == null || !start.hasPiece()) return false;
+        if (board == null || start == null || !start.hasPiece() || start.getColor() == null) {
+            System.err.println("[ERROR rules.hasLegalCaptureFromSquare] Invalid input: null board/start or no piece/color.");
+            return false;
+        }
+
 
         boolean playerColor = start.getColor();
         int row = start.getRow();
@@ -171,16 +180,20 @@ public class rules
                 int midRow = row + rOff / 2;
                 int midCol = col + cOff / 2;
 
-                if (inBounds(newRow, newCol)) { 
+                if (inBounds(newRow, newCol)) {
                     Square landing = board.getSquare(newRow, newCol);
                     Square middle = board.getSquare(midRow, midCol);
 
-                    if (landing != null && !landing.hasPiece() && middle != null && middle.hasPiece() && middle.getColor() != playerColor) {
+                    if (landing != null && !landing.hasPiece() &&
+                        middle != null && middle.hasPiece() && middle.getColor() != null && middle.getColor() != playerColor)
+                    {
+                        System.out.println("[DEBUG rules.hasLegalCaptureFromSquare] Found valid capture from ("+row+","+col+") to ("+newRow+","+newCol+") over ("+midRow+","+midCol+")");
                         return true;
                     }
                 }
             }
         }
+        System.out.println("[DEBUG rules.hasLegalCaptureFromSquare] No legal captures found from ("+row+","+col+")");
         return false;
     }
 
@@ -502,7 +515,7 @@ static protected boolean hasLegalCapture(Game game, Move move) {
 
 
 
-    public static Moves getMovesForSquare(Board board, boolean color, int[] startSquareCoords) 
+    public static Moves getMovesForSquare(Board board, boolean color, int[] startSquareCoords)
     {
         Moves legalMoves = new Moves();
         int startRow = startSquareCoords[0];
@@ -512,49 +525,60 @@ static protected boolean hasLegalCapture(Game game, Move move) {
 
         Square startSquare = board.getSquare(startRow, startCol);
 
+
         if (startSquare == null || !startSquare.hasPiece() || startSquare.getColor() != color) {
-            System.out.println("[DEBUG rules.getMovesForSquare] Invalid start square or wrong color at: " + Arrays.toString(startSquareCoords) + ". Expected color: " + (color ? "W" : "B"));
+
             return legalMoves;
         }
 
-        Game tempGame = new Game(color ? 100 : 200, color ? 200 : 100, color, !color, 999);
+
+        Game tempGame = new Game(color ? 101 : 102, color ? 102 : 101, color, !color, 999);
         tempGame.updateBoard(board.copy());
+
         while (tempGame.getCurrentTurn().getColor() != color) {
             tempGame.switchTurn();
         }
+
         boolean captureAvailableGlobally = isCaptureAvailableForPlayer(tempGame);
-        System.out.println("[DEBUG rules.getMovesForSquare] Checking piece ("+startRow+","+startCol+"). Capture available globally? " + captureAvailableGlobally);
+
 
 
         Moves jumpMoves = new Moves();
-        findPossibleJumpsRecursive(board, startSquare, startSquare, jumpMoves, new HashMap<>()); // Populates jumpMoves
 
-        if (jumpMoves.size() > 0) {
-            System.out.println("[DEBUG rules.getMovesForSquare] Jumps found for piece at ("+startRow+","+startCol+"). Returning "+jumpMoves.size()+" jumps.");
+        findPossibleJumpsRecursive(board, startSquare, startSquare, jumpMoves, new HashMap<>());
+
+
+        if (captureAvailableGlobally) {
+
+
             return jumpMoves;
-        }
-
-        if (!captureAvailableGlobally) {
-            System.out.println("[DEBUG rules.getMovesForSquare] No jumps for this piece and none globally. Checking normal moves for ("+startRow+","+startCol+").");
-            findPossibleNormalMoves(board, startSquare, legalMoves);
         } else {
-            System.out.println("[DEBUG rules.getMovesForSquare] No jumps for this piece, BUT jumps available elsewhere. No normal moves allowed for ("+startRow+","+startCol+").");
-        }
 
-        System.out.println("[DEBUG rules.getMovesForSquare] Final legal moves count for ("+startRow+","+startCol+"): " + legalMoves.size());
-        return legalMoves;
+            if (jumpMoves.size() == 0) {
+
+                findPossibleNormalMoves(board, startSquare, legalMoves);
+                return legalMoves;
+            } else {
+
+                System.out.println("[WARN rules.getMovesForSquare] Jumps found for ("+startRow+","+startCol+") but global capture check was false. Returning jumps.");
+                return jumpMoves;
+            }
+        }
     }
 
 
 
 
-    static private void findPossibleNormalMoves(Board board, Square start, Moves normalMoves) {
-        if (board == null || start == null || normalMoves == null) return;
+
+
+        static private void findPossibleNormalMoves(Board board, Square start, Moves normalMoves) {
+        if (board == null || start == null || normalMoves == null || !start.hasPiece()) return;
 
         boolean isKing = start.isKing();
         boolean color = start.getColor();
         int[] rowOffsets = isKing ? new int[]{-1, 1} : (color ? new int[]{-1} : new int[]{1});
         int[] colOffsets = {-1, 1};
+
         for (int rOff : rowOffsets) {
             for (int cOff : colOffsets) {
                 int destRow = start.getRow() + rOff;
@@ -571,20 +595,37 @@ static protected boolean hasLegalCapture(Game game, Move move) {
         }
     }
 
+static private void findPossibleJumpsRecursive(Board board, Square originalStart, Square currentSquare, Moves jumpMoves, Map<String, Boolean> visitedInSequence) {
 
-    static private void findPossibleJumpsRecursive(Board board, Square originalStart, Square currentSquare, Moves jumpMoves, Map<String, Boolean> visitedInSequence) {
-        if (board == null || originalStart == null || currentSquare == null || jumpMoves == null || visitedInSequence == null) return;
+        if (board == null || originalStart == null || currentSquare == null || jumpMoves == null || visitedInSequence == null) {
+            System.err.println("[ERROR rules.findJumpsRec] Null parameter passed.");
+            return;
+        }
+
 
         boolean isKing = currentSquare.isKing();
+
+        if (!currentSquare.equals(originalStart)) {
+            boolean landedOnPromotionRow = (originalStart.getColor() && currentSquare.getRow() == 0) || (!originalStart.getColor() && currentSquare.getRow() == 7);
+            if (landedOnPromotionRow && !originalStart.isKing()) {
+                isKing = true;
+            }
+        }
+
+
         boolean movingPieceColor = originalStart.getColor();
         int[] rowOffsets = isKing ? new int[]{-2, 2} : (movingPieceColor ? new int[]{-2} : new int[]{2});
         int[] colOffsets = {-2, 2};
         boolean foundFurtherJump = false;
+
         String currentKey = currentSquare.getRow() + "," + currentSquare.getCol();
 
+
         if (visitedInSequence.containsKey(currentKey)) {
+
             return;
         }
+
         visitedInSequence.put(currentKey, true);
 
 
@@ -596,30 +637,30 @@ static protected boolean hasLegalCapture(Game game, Move move) {
                 int midCol = currentSquare.getCol() + cOff / 2;
                 String destKey = destRow + "," + destCol;
 
+
                 if (inBounds(destRow, destCol)) {
                     Square dest = board.getSquare(destRow, destCol);
                     Square middle = board.getSquare(midRow, midCol);
-                    if (dest != null && middle != null && middle.hasPiece() && middle.getColor() != movingPieceColor) {
-                        if (!dest.hasPiece()) {
-                            foundFurtherJump = true;
-                            findPossibleJumpsRecursive(board, originalStart, dest, jumpMoves, new HashMap<>(visitedInSequence));
-                        }
-                        else {
-                            Boolean destColor = dest.getColor();
-                            if (destColor != null && destColor == movingPieceColor) {
-                                System.out.println("[WARN rules.findJumpsRec] Invalid jump: Dest ("+destRow+","+destCol+") occupied by friendly piece. Stale board read likely.");
-                            } else if (destColor != null && destColor != movingPieceColor) {
-                                System.out.println("[WARN rules.findJumpsRec] Invalid jump: Dest ("+destRow+","+destCol+") occupied by opponent piece.");
-                            }
-                        }
+
+
+                    if (dest != null && middle != null && middle.hasPiece() && middle.getColor() != movingPieceColor &&!dest.hasPiece() )
+                    {
+
+                        foundFurtherJump = true;
+
+                        Map<String, Boolean> nextVisited = new HashMap<>(visitedInSequence);
+
+                        findPossibleJumpsRecursive(board, originalStart, dest, jumpMoves, nextVisited);
                     }
                 }
             }
         }
 
         if (!foundFurtherJump && !currentSquare.equals(originalStart)) {
+
             boolean alreadyAdded = false;
             for(Move existingMove : jumpMoves.getMoves()) {
+
                 if (existingMove.getStart().getRow() == originalStart.getRow() &&
                     existingMove.getStart().getCol() == originalStart.getCol() &&
                     existingMove.getDest().getRow() == currentSquare.getRow() &&
@@ -628,7 +669,9 @@ static protected boolean hasLegalCapture(Game game, Move move) {
                     break;
                 }
             }
+
             if (!alreadyAdded) {
+
                 jumpMoves.addNext(originalStart, currentSquare);
             }
         }
@@ -642,7 +685,7 @@ static protected boolean hasLegalCapture(Game game, Move move) {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 Square boardSquare = board.getSquare(i, j);
-                if (boardSquare != null && boardSquare.hasPiece() && boardSquare.getColor() == color) {
+                if (boardSquare != null && boardSquare.hasPiece() && boardSquare.getColor() != null && boardSquare.getColor() == color) {
                     pieces.add(boardSquare);
                 }
             }
