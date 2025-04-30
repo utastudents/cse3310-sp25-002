@@ -25,4 +25,8 @@ class DisplayNotification {
       this.notificationElement.style.display = "none";
     }, 5000);
   }
+
+  display(message, type = "info") {
+    this.displayNotification(message, type);
+  }
 }
