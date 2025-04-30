@@ -4,11 +4,14 @@ import uta.cse3310.GamePlay.GamePlay;
 import java.util.Map;
 import java.util.HashMap;
 import uta.cse3310.DB.DB;
+import uta.cse3310.PageManager.Summary;
+
 public class GameTermination
 {
 
     private boolean gameOver = false; // Flag to indicate if the game is over, game state
     private String finalWinner = null; // Stores the winner's ID or "Draw"
+    private Summary summary = new Summary();
 
     //hardcoded methods for unit testing
     //player 1 lost
@@ -99,6 +102,18 @@ public class GameTermination
         }
 
         saveResultsToDatabase(playerScores);
+
+        if (playerScores != null) 
+        {
+            for (Map.Entry<Integer, Integer> entry : playerScores.entrySet()) 
+            {
+                String username = "Player" + entry.getKey();  
+                int clientID = entry.getKey();                
+                int score = entry.getValue();
+        
+                summary.addSummary(username, clientID, score);
+            }
+        }
         System.out.println("LOAD_SUMMARY_SCREEN");
 
     }
