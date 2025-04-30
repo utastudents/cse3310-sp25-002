@@ -13,6 +13,7 @@ class DisplayNotification {
     // Clear previous timeout if exists
     if (this.timeout) {
       clearTimeout(this.timeout);
+      this.timeout = null;
     }
 
     // Set message and styling
@@ -23,6 +24,7 @@ class DisplayNotification {
     // Auto-hide after 5 seconds
     this.timeout = setTimeout(() => {
       this.notificationElement.style.display = "none";
+      this.timeout = null;
     }, 5000);
   }
 
