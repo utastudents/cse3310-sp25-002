@@ -114,4 +114,8 @@ class Communication {
       console.log("Sent cancel request via postMessage:", message);
     }
   }
+
+  isConnected() {
+    return this.socket && this.socket.readyState === WebSocket.OPEN;
+  }
 }
