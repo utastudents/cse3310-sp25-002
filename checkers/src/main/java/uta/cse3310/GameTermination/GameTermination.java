@@ -105,6 +105,10 @@ public class GameTermination
 
     // This method will save the results to the database
     public void saveResultsToDatabase(Map<Integer, Integer> playerScores) {
+        if (playerScores == null || playerScores.isEmpty()) {
+            System.out.println("No scores to save.");
+            return;
+        }
         System.out.println("Saving results to database...");
         System.out.println("Final winner: " + finalWinner);
         System.out.println("Scores: " + playerScores);
