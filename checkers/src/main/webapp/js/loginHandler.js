@@ -107,6 +107,7 @@ function joinGame()
     } 
   else 
   {
+    alert('Joining Game');
     sendUsername(username);
     
   }
