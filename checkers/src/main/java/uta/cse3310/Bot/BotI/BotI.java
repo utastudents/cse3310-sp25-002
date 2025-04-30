@@ -351,6 +351,8 @@ public class BotI extends Bot {
     }
 
     private boolean canBeAttackedFrom(int targetRow, int targetCol, int attackerRow, int attackerCol, Board board) {
+    // Check if attacker position is valid
+    if (!isInsideBoard(attackerRow, attackerCol)) return false;   
         // Get the potential attacker square
     Square attacker = board.getSquare(attackerRow, attackerCol);
 
