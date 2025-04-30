@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" hidden>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>The Leaderboard</title>
+  <link rel="stylesheet" href="summary.css" />
+
+  <script defer src="summary.js"></script> 
+</head>
+<body>
+  <button class="back">◄ Back</button>
+
+  <h1 class="title">
+    LEADERBOARD
+  </h1>
+
+  <input class="search" type="text" placeholder="Enter player name" />
+
+  <div class="personal" onload="callPlayerStats">
+    Current stats <br>
+    <div id="playerStats">
+
+    </div>
+    <!-- 
+    Pseudocode for java script implementation of player stats intented to be implemented by page manager
+    <script>
+    function callPlayerStats() {
+          call java function and return current player stats
+    return playerStats
+  }
+
+  function showPlayerStats() {
+    const result = callPlayerStats(); 
+        could implement over several js functions and format in result variable or format callPlayerStats return value 
+    document.getElementById("playerStats").innerText = result;
+  }
+  </script> 
+    -->
+
+    <!-- moved to summary.js -->
+  </div>
+
+  <div class="header">
+    <p class = "hRank">Rank</p>
+    <p class = "hName">Name</p>
+    <p class = "hWin">Win</p>
+    <p class = "hLoss">Loss</p>
+    <p class = "hTime">Time</p>
+  </div>
+
+  <!-- Just an example of what it should look like, in practice we can add mode li components when fetching players -->
+  <div class="mainLB">
+    <ul class="player-list">
+      <li>
+        <p class = "playerRank">1</p>
+        <p class = "playerName">Rank 1</p>
+        <p class = "playerWin">10</p>
+        <p class = "playerLoss">5</p>
+        <p class = "playerTime">2h</p>
+      <!--Player 1 - Wins: 10, Losses: 5, Time: 2h--></li>
+      <li>
+        <p class = "playerRank">1</p>
+        <p class = "playerName">fjlajflka</p>
+        <p class = "playerWin">10</p>
+        <p class = "playerLoss">5</p>
+        <p class = "playerTime">2h</p>
+      <!--Player 2 - Wins: 8, Losses: 3, Time: 1.5h--></li>
+      <li>
+        <p class = "playerRank">1</p>
+        <p class = "playerName">s</p>
+        <p class = "playerWin">10</p>
+        <p class = "playerLoss">5</p>
+        <p class = "playerTime">2h</p>
+        <!--Player 3 - Wins: 15, Losses: 7, Time: 3h--></li>
+      <li>
+        <p class = "playerRank">1</p>
+        <p class = "playerName">sdlkfajwlkfjawel;fa</p>
+        <p class = "playerWin">10</p>
+        <p class = "playerLoss">5</p>
+        <p class = "playerTime">2h</p>
+        <!--Player 4 - Wins: 12, Losses: 4, Time: 2.2h--></li>
+      <li>
+        <p class = "playerRank">1</p>
+        <p class = "playerName">test</p>
+        <p class = "playerWin">10</p>
+        <p class = "playerLoss">5</p>
+        <p class = "playerTime">2h</p>
+        <!--Player 5 - Wins: 9, Losses: 6, Time: 1.8h--></li>
+    </ul>
+  </div>
+</body>
+</html>
