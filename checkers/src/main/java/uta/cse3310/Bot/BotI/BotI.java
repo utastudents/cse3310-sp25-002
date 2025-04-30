@@ -351,11 +351,21 @@ public class BotI extends Bot {
     }
 
     private boolean canBeAttackedFrom(int targetRow, int targetCol, int attackerRow, int attackerCol, Board board) {
-        if (!isInsideBoard(attackerRow, attackerCol))
-            return false;
+        // Get the potential attacker square
+    Square attacker = board.getSquare(attackerRow, attackerCol);
 
-        Square attacker = board.getSquare(attackerRow, attackerCol);
-        return attacker.hasPiece() && attacker.getColor() != this.color;
+    // Check if there's a piece and it's the opponent's
+    if (!attacker.hasPiece() || attacker.getColor() == this.color) return false;
+
+    // Calculate where the attacker would land if it captured
+    int landingRow = attackerRow + (attackerRow - targetRow);
+    int landingCol = attackerCol + (attackerCol - targetCol);
+
+    // Landing position must be on the board and empty
+    if (!isInsideBoard(landingRow, landingCol)) return false;
+
+    Square landing = board.getSquare(landingRow, landingCol);
+    return !landing.hasPiece();
     }
 
     // Checks if the move ends on a square protected by an ally
