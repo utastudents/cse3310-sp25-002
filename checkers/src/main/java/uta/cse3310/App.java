@@ -41,12 +41,14 @@ package uta.cse3310;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import com.google.gson.JsonObject;
 
 import uta.cse3310.PageManager.PageManager;
 import uta.cse3310.PageManager.UserEventReply;
 import uta.cse3310.PageManager.UserEvent;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
@@ -75,8 +77,9 @@ public class App extends WebSocketServer {
 
   Hashtable<WebSocket, Integer> con2id = new Hashtable<>();
   Hashtable<Integer, WebSocket> id2con = new Hashtable<>();
+  Hashtable<String, WebSocket> playerName2con = new Hashtable<>();
 
-  int clientId = 1; // start the index at one becuase 0 and 1 are being used by GameManger as Bot I&II
+  int nextClientId = 2; // start the index at one becuase 0 and 1 are being used by GameManger as Bot I&II
   PageManager PM;
 
   private final ConcurrentLinkedQueue<UserEventReply> outboundMessageQueue = new ConcurrentLinkedQueue<>();
@@ -87,6 +90,7 @@ public class App extends WebSocketServer {
 
   class id {
     int clientId;
+    String type = "assign_id";
   }
 
   public App(int port) {
@@ -154,69 +158,111 @@ public class App extends WebSocketServer {
   @Override
   public void onOpen(WebSocket conn, ClientHandshake handshake) {
     System.out.println("A new connection has been opened");
-    clientId = clientId + 1;
-    System.out.println("the client id is " + clientId);
+    int newClientId = nextClientId++;
+    System.out.println("Connection opened: " + conn.getRemoteSocketAddress() + ", assigning Client ID: " + newClientId);
 
     // save off the ID and conn ptr so they can be easily fetched
-    con2id.put(conn, clientId);
-    id2con.put(clientId, conn);
+    con2id.put(conn, newClientId);
+    id2con.put(newClientId, conn);
 
     id ID = new id();
-    ID.clientId = clientId;
-
-    // Note only send to the single connection
+    ID.clientId = newClientId;
     String jsonString = gson.toJson(ID);
-    System.out.println("sending " + jsonString);
+    System.out.println("sending assigned ID: " + jsonString + " to " + newClientId);
     conn.send(jsonString);
   }
 
   @Override
   public void onClose(WebSocket conn, int code, String reason, boolean remote) {
-    System.out.println(conn + " has closed");
-    // need to delete from id2con and con2 at this time ....
-    Integer closedId = con2id.get(conn);
-    if (closedId != null) {
-      id2con.remove(closedId);
-      con2id.remove(conn);
-    } else {
-      System.err.println("Connection not found in con2id mapping.");
-    }
+    Integer closedId = con2id.get(conn);;
+    System.out.println("Connection closed: " + conn.getRemoteSocketAddress() + ", ID: " + (closedId != null ? closedId : "N/A") + ", Code: " + code + ", Reason: " + reason + ", Remote: " + remote);
+    removePlayerMappings(closedId, conn, null);
+  }
+
+
+  private void removePlayerMappings(Integer clientId, WebSocket conn, String playerName) {
+      if (clientId != null) {
+          id2con.remove(clientId);
+          if (playerName == null && conn != null) {
+            String foundName = null;
+            for (String pName : playerName2con.keySet()) {
+                if (playerName2con.get(pName) == conn) {
+                    foundName = pName;
+                    break;
+                }
+            }
+            playerName = foundName;
+          }
+          if (playerName != null) {
+              playerName2con.remove(playerName);
+              System.out.println("Removed playerName mapping for: " + playerName);
+          }
+      }
+      if (conn != null) {
+          con2id.remove(conn);
+      }
+      System.out.println("Cleaned up mappings for Client ID: " + (clientId != null ? clientId : "N/A"));
   }
 
   @Override
   public void onMessage(WebSocket conn, String message) {
     UserEventReply Reply = null;
     UserEvent U = null;
-
+    Gson gson = new GsonBuilder().create();
     try {
-      GsonBuilder builder = new GsonBuilder();
-      Gson gson = builder.create();
 
       U = gson.fromJson(message, UserEvent.class);
 
       // where did this message come from?
       U.id = con2id.get(conn);
 
+
+      if ("join".equals(U.type) && U.playerName != null && !U.playerName.isEmpty()) {
+            System.out.println("Processing join request for player: " + U.playerName + " (ID: " + U.id + ")");
+            WebSocket existingConn = playerName2con.get(U.playerName);
+
+            if (existingConn != null && existingConn != conn && existingConn.isOpen()) {
+                System.out.println("Player " + U.playerName + " already connected. Closing old connection: " + existingConn.getRemoteSocketAddress());
+                JsonObject kickMsg = new JsonObject();
+                kickMsg.addProperty("type", "force_disconnect");
+                kickMsg.addProperty("msg", "You have connected from another location. This session is closing.");
+                existingConn.send(gson.toJson(kickMsg));
+                existingConn.close(1008, "Duplicate login");
+
+                Integer oldId = con2id.get(existingConn);
+                removePlayerMappings(oldId, existingConn, U.playerName);
+            }
+        }
+
+
       // now, need to call a function to get this processed.
       Reply = PM.ProcessInput(U);
 
+      if ("join".equals(U.type) && Reply != null && Reply.status != null && "Success".equals(Reply.status.Status)) {
+          if(U.playerName != null && !U.playerName.isEmpty()){
+              playerName2con.put(U.playerName, conn); // Map name to the *current* connection
+              System.out.println("Mapped playerName " + U.playerName + " to connection ID " + U.id);
+          }
+      }
+
       // Send it to all that need it
       if (Reply != null && Reply.recipients != null && !Reply.recipients.isEmpty()) {
-        for (Integer id : Reply.recipients) {
-          Reply.status.clientId = id;
-          WebSocket destination = id2con.get(id);
-          if (destination != null && destination.isOpen()) {
-            if (Reply.status != null) {
-              Reply.status.clientId = id;
-              String jsonString = gson.toJson(Reply.status);
-              destination.send(jsonString);
-              System.out.println("sending " + jsonString + " to " + id);
-            }
+          for (Integer recipientId : Reply.recipients) {
+              WebSocket destination = id2con.get(recipientId);
+              if (destination != null && destination.isOpen()) {
+                  if (Reply.status != null) {
+                      Reply.status.clientId = recipientId;
+                      String jsonString = gson.toJson(Reply.status);
+                      destination.send(jsonString);
+                      System.out.println("sending " + jsonString + " to ID " + recipientId);
+                  } else {
+                    System.err.println("Reply has null status for recipient ID: " + recipientId);
+                  }
+              } else {
+                System.err.println("Could not send reply to client ID: " + recipientId + " (Connection not found or not open)");
+              }
           }
         }
-      } else {
-        System.out.println("[DEBUG App] ProcessInput returned a reply with no recipients.");
-      }
     } catch (Exception e) {
       e.printStackTrace();
       System.out.println("[ERROR App] Failed to process incoming message: " + message);
@@ -236,6 +282,7 @@ public class App extends WebSocketServer {
       // some errors like port binding failed may not be assignable to a specific
       // websocket
       Integer errorId = con2id.get(conn);
+      removePlayerMappings(errorId, conn, null);
       if (errorId != null) {
         id2con.remove(errorId);
         con2id.remove(conn);
@@ -245,7 +292,7 @@ public class App extends WebSocketServer {
 
   @Override
   public void onStart() {
-    setConnectionLostTimeout(0);
+    setConnectionLostTimeout(50);
     if (queueTimer == null) {
         queueTimer = new Timer(true); // Use daemon thread
         queueTimer.scheduleAtFixedRate(new TimerTask() {
@@ -258,7 +305,7 @@ public class App extends WebSocketServer {
                 e.printStackTrace();
               }
             }
-        }, 50, 200);
+        }, 50, 100);
         System.out.println("Outbound message queue processor started.");
     }
   }
@@ -268,6 +315,11 @@ public class App extends WebSocketServer {
       if (queueTimer != null) {
           queueTimer.cancel();
           queueTimer = null;
+      }
+      for (WebSocket conn : con2id.keySet()) {
+        if (conn != null && conn.isOpen()) {
+          conn.close(1001, "Server shutdown");
+        }
       }
       super.stop(timeout);
   }

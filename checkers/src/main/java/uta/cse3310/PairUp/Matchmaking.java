@@ -22,11 +22,10 @@ public class Matchmaking {
     private MatchmakingScheduler scheduler;
     private PageManager pageManager;
 
-    public Matchmaking(PageManager pageManager) {
+    public Matchmaking(PageManager pageManager, GameManager gameManager) {
         players = new LinkedHashMap<>();
         gameId = 0;
-        gameManagerCommunication = new GameManager();
-        gameManagerCommunication.initializeGames();
+        this.gameManagerCommunication = gameManager;
         this.pageManager = pageManager;
         this.scheduler = new MatchmakingScheduler(this);
         this.scheduler.start();

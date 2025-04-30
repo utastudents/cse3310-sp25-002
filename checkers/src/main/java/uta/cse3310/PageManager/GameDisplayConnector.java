@@ -159,6 +159,7 @@ public class GameDisplayConnector {
             if (player2Id > 1) gameOverNotification.recipients.add(player2Id);
 
             if (game.gameActive()) { game.endGame(); }
+            gameManager.terminateGame(game.gameNumber()); 
 
             if (!gameOverNotification.recipients.isEmpty()) {
                 appServer.queueMessage(gameOverNotification);
@@ -263,6 +264,7 @@ public class GameDisplayConnector {
                             botGameOverNotification.status.capturedSquare = List.of(botMiddleRow, botMiddleCol);
                         }
                         if (game.gameActive()) { game.endGame(); }
+                        gameManager.terminateGame(game.gameNumber());
                         appServer.queueMessage(botGameOverNotification);
                         System.out.println("[DEBUG DisplayConnector] Queued game over notification after bot move.");
 
@@ -291,10 +293,12 @@ public class GameDisplayConnector {
                         drawNotification.status.msg = "Game ended in a draw (Bot " + nextPlayer.getPlayerId() + " has no valid moves)!";
                         drawNotification.status.game_id = game.gameNumber();
                         if(game.gameActive()) game.GameDeclareDraw();
+                        gameManager.terminateGame(game.gameNumber());
                         appServer.queueMessage(drawNotification);
                     } else if (!game.isDraw() && game.gameActive()) {
                         System.err.println("[ERROR PageManager] Bot could not move, forcing draw for game " + game.gameNumber());
                         game.GameDeclareDraw();
+                        gameManager.terminateGame(game.gameNumber());
                     }
                 }
             } else if (!isNextTurnBot) {
@@ -511,11 +515,8 @@ public class GameDisplayConnector {
             System.out.println("[DEBUG DisplayConnector] Starting player: " + reply.status.starting_player);
         } else {
             System.out.println("[WARN DisplayConnector] Could not determine starting player for game " + game.gameNumber());
+            reply.status.starting_player = "Unknown";
         }
-
-
-        // Add the client ID as a recipient for this reply
-        reply.recipients.add(clientId);
 
         return reply;
     }

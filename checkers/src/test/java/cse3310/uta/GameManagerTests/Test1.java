@@ -11,8 +11,6 @@ public class Test1 {
     @Test
     public void testCreateGameSuccessfully() {
         GameManager gm = new GameManager();
-        gm.initializeGames();
-        
         int player1Id = 2;
         int player2Id = 3;
         boolean player1Color = true;

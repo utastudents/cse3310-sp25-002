@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import uta.cse3310.PairUp.Matchmaking;
 import uta.cse3310.PairUp.PlayerInMatchmaking;
+import uta.cse3310.GameManager.GameManager; // <-- Import GameManager
 import uta.cse3310.App;
 import cse3310.uta.Mock.MockApp;
 
@@ -19,22 +20,24 @@ class DummyPageManagerTest5 extends PageManager {
     public DummyPageManagerTest5(App app) {
         super(app);
     }
+     // Add a constructor that accepts GameManager if needed, or rely on the superclass's GM
 }
 
 
-
 public class Test5 {
-    // Custom PlayerInMatchmaking class for testing
+    // Custom PlayerInMatchmaking class for testing queue time
     private class TestPlayer extends PlayerInMatchmaking {
-        private long queueTime;
-    
-        public TestPlayer(long userId, int playerId, String name, boolean bot, int wins) {
-            super(userId, playerId, name, bot, wins);
+        private long queueTime; // Override queue time calculation
+
+        public TestPlayer(long timeOfEntry, int playerId, String name, boolean bot, int wins) {
+            // Pass actual timeOfEntry or 0 to super, manage queueTime separately for test
+            super(timeOfEntry, playerId, name, bot, wins);
             this.queueTime = 0;
         }
 
         @Override
         public long getQueueTime() {
+            // Return the explicitly set queue time for testing purposes
             return this.queueTime;
         }
 
@@ -46,52 +49,44 @@ public class Test5 {
     @Test
     public void TestMatching() {
         MockApp mockApp = new MockApp();
-
         PageManager dummyPageManagerTest5 = new DummyPageManagerTest5(mockApp);
-        Matchmaking matchmaking = new Matchmaking(dummyPageManagerTest5);
+        GameManager gameManager = new GameManager();
+
+        Matchmaking matchmaking = new Matchmaking(dummyPageManagerTest5, gameManager);
         matchmaking.players = new LinkedHashMap<>();
 
-        // Test 1: Players with similar wins should match
-        TestPlayer player1 = new TestPlayer(1L, 1, "Player1", false, 5);
-        TestPlayer player2 = new TestPlayer(2L, 2, "Player2", false, 6);
-        matchmaking.players.put(1, player1);
-        matchmaking.players.put(2, player2);
-        
-        matchmaking.matching();
-        // Similar win players should be matched and removed
-        assertTrue(matchmaking.players.isEmpty());
-
-        // Test 2: Players with large win difference should not match initially
-        TestPlayer player3 = new TestPlayer(3L, 3, "Player3", false, 1);
-        TestPlayer player4 = new TestPlayer(4L, 4, "Player4", false, 8);
-        player3.setQueueTime(0); // Set queue time to less than 60 seconds
-        player4.setQueueTime(0);
-        matchmaking.players.put(3, player3);
-        matchmaking.players.put(4, player4);
-        /*System.out.println("p3 q time:" + player3.getQueueTime());
-        System.out.println("p4 q time:" + player4.getQueueTime());
-        System.out.println("Before:");
-        for (Map.Entry<Integer, PlayerInMatchmaking> entry : matchmaking.players.entrySet()) {
-            System.out.println(entry.getKey() + " => " + entry.getValue());
-        }*/
+        TestPlayer player1 = new TestPlayer(System.currentTimeMillis(), 1, "Player1", false, 5);
+        TestPlayer player2 = new TestPlayer(System.currentTimeMillis(), 2, "Player2", false, 6);
+        matchmaking.addPlayer(1, player1);
+        matchmaking.addPlayer(2, player2);
 
         matchmaking.matching();
-        /*System.out.println("After:");
-        for (Map.Entry<Integer, PlayerInMatchmaking> entry : matchmaking.players.entrySet()) {
-            System.out.println(entry.getKey() + " => " + entry.getValue());
-        }*/
-        // Players with large win difference should stay in queue
-        assertEquals(2, matchmaking.players.size());
+        assertTrue("Queue should be empty after matching similar players", matchmaking.players.isEmpty());
 
-        // Test 3: Single player should remain in queue
         matchmaking.players.clear();
-        TestPlayer soloPlayer = new TestPlayer(5L, 5, "Solo", false, 5);
-        matchmaking.players.put(5, soloPlayer);
-        
+        TestPlayer player3 = new TestPlayer(System.currentTimeMillis(), 3, "Player3", false, 1);
+        TestPlayer player4 = new TestPlayer(System.currentTimeMillis(), 4, "Player4", false, 8);
+        player3.setQueueTime(10000);
+        player4.setQueueTime(10000);
+        matchmaking.addPlayer(3, player3);
+        matchmaking.addPlayer(4, player4);
+
         matchmaking.matching();
-        // Single player should remain in queue
-        assertEquals(1, matchmaking.players.size());
-        // Queue should contain the solo player
-        assertTrue(matchmaking.players.containsKey(5));
+        assertEquals("Queue should have 2 players with large win difference", 2, matchmaking.players.size());
+
+        player3.setQueueTime(70000);
+        matchmaking.matching();
+        assertTrue("Queue should be empty after timeout matching", matchmaking.players.isEmpty());
+
+
+        matchmaking.players.clear();
+        TestPlayer soloPlayer = new TestPlayer(System.currentTimeMillis(), 5, "Solo", false, 5);
+        matchmaking.addPlayer(5, soloPlayer);
+
+        matchmaking.matching();
+        assertEquals("Queue should have 1 player when only one is present", 1, matchmaking.players.size());
+        assertTrue("Queue should contain the solo player", matchmaking.players.containsKey(5));
+
+        matchmaking.players.clear();
     }
 }

@@ -43,22 +43,24 @@ public class PageManager {
         DB.createTable();
 
         this.gp = new GamePlay();
-        // Create GameManager and pass it into both controllers
         this.gameManager = new GameManager();
-        gameManager.initializeGames();
-        gamePageController = new GamePageController(gameManager);
+        gamePageController = new GamePageController(this.gameManager);
         gameManagerSubsys = new GameManagerSubsys(gamePageController);
         GameTermination gameTermination = new GameTermination();
 
         displayConnector = new GameDisplayConnector(gamePageController, gameTermination, this.gameManager, this.appServer);
 
         accountHandler = new NewAcctLogin();
-        this.pairUp = new PairUp(this);
+        this.pairUp = new PairUp(this, this.gameManager);
         this.joinGameHandler = new JoinGameHandler(this.pairUp);
 
         System.out.println("PageManager components initialized.");
     }
 
+
+    public GameManager getGameManager() {
+        return gameManager;
+    }
 
     // Add a new player to matchmaking
     public void handleNewPlayer(long timestamp, int clientId, String playerName, boolean playAgainstBot, int wins) {
@@ -70,10 +72,6 @@ public class PageManager {
         pairUp.removePlayer(clientId);
     }
 
-
-    public GameManager getGameManager() {
-        return gameManager;
-    }
 
     // Create a new bot vs bot game and send the board
     public UserEventReply handleBotVsBotRequest(int creatorId) {

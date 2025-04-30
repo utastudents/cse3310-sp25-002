@@ -1,6 +1,6 @@
 package uta.cse3310.GameManager;
 
-
+import java.util.Collection;
 import uta.cse3310.GamePlay.rules;
 import uta.cse3310.GamePlay.GamePlay;
 import uta.cse3310.GameTermination.GameTermination;
@@ -14,11 +14,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class GameManager {
 
-    private static final int MAXIMUM_GAMES = 10;
-    private static ArrayList<Game> games;
+    private Map<Integer, Game> activeGames;
     private GamePlay gp;
     private GameTermination gt;
     GamePageController ggc;
@@ -29,39 +29,23 @@ public class GameManager {
         gp = new GamePlay();
         gt = new GameTermination();
         grc = new GamePairController();
-        if (games == null) {
-            initializeGames();
-        }
+        activeGames = new HashMap<>();
     }
 
-    public void initializeGames(){
-        games = new ArrayList<>(MAXIMUM_GAMES);
-        for (int i = 0; i < MAXIMUM_GAMES; ++i){
-            games.add(null);
-        }
-    }
-    // Create a new game with two players
+
     public Game createGame(Match match){
-        int availableSlot = getAvailableGameSlot();
-        if(availableSlot == -1){
-            System.out.println("No available game slots.");
+        Game newGame = grc.newMatch(match);
+        if (newGame != null) {
+            activeGames.put(newGame.gameNumber(), newGame);
+            System.out.println("Game created and added to map with ID: " + newGame.gameNumber());
+        } else {
+            System.err.println("Failed to create a new game from match.");
             return null;
         }
-        Game newGame = grc.newMatch(match);
-        games.set(availableSlot, newGame);
-        
         return newGame;
     }
 
-    // Find first available game slot
-    private int getAvailableGameSlot(){
-        for (int i = 0; i < MAXIMUM_GAMES; i++){
-            if(games.get(i) == null || !games.get(i).gameActive()){ // gameActive() is handled by Game.java
-                return i;
-            }
-        }
-        return -1;
-    }
+
 
     // Process a move from a player
     public void processMove(int playerId, Move move){
@@ -88,8 +72,8 @@ public class GameManager {
 
    //Terminate a game and notify GameTermination
     public void terminateGame(int gameNumber){
-        if(gameNumber >= 0 && gameNumber < MAXIMUM_GAMES && games.get(gameNumber) != null){
-            Game game = games.get(gameNumber);
+        Game game = activeGames.get(gameNumber);
+        if(game != null){
 
             int player1Id = game.getPlayer1ID();
             int player2Id = game.getPlayer2ID();
@@ -104,7 +88,7 @@ public class GameManager {
                     : (player2Score > player1Score) ? player2Id : -1;
 
             gt.endGame(playerScores, winningPlayerId);
-            games.set(gameNumber, null);
+            activeGames.remove(gameNumber);
             System.out.println("Game " + gameNumber + " has been terminated.");
         }
     }
@@ -131,22 +115,25 @@ public class GameManager {
     }
 
     public void progressGame(int gameNumber){
-        if (gameNumber < 0 || gameNumber >= games.size() || games.get(gameNumber) == null) {
-            System.err.println("[ERROR GameManager] progressGame called with invalid game number: " + gameNumber);
-            return;
-        }
-        Game game = games.get(gameNumber);
+        Game game = activeGames.get(gameNumber);
 
-        if(game == null || !game.gameActive()){
-            System.out.println("[DEBUG GameManager] progressGame: Game " + gameNumber + " is null or inactive.");
+        if (game == null) {
+            System.err.println("[ERROR GameManager] progressGame called with invalid or terminated game number: " + gameNumber);
             return;
         }
 
+        if(!game.gameActive()){
+            System.out.println("[DEBUG GameManager] progressGame: Game " + gameNumber + " is inactive. Removing if present.");
+            activeGames.remove(gameNumber);
+            return;
+        }
         Player currentPlayer = game.getCurrentTurn();
         if (currentPlayer == null) {
             System.err.println("[ERROR GameManager] progressGame: Current turn player is null for game " + gameNumber);
+            terminateGame(gameNumber);
             return;
         }
+        
         int playerId = currentPlayer.getPlayerId();
 
         boolean isBot = (playerId == 0 || playerId == 1);
@@ -189,6 +176,7 @@ public class GameManager {
             if (!game.isDraw() && game.gameActive()) {
                 System.err.println("Forcing draw for game " + gameNumber + " as bot provided no moves.");
                 game.GameDeclareDraw();
+                terminateGame(gameNumber);
             }
         }
     } else {
@@ -197,11 +185,10 @@ public class GameManager {
     }
 
 
-    // Find a game by player ID
     public Game findGameByPlayerId(int playerId){
-        for (Game game : games){
-            if(game != null){
-                if(game.getPlayer1ID()==playerId || game.getPlayer2ID()==playerId){
+        for (Game game : activeGames.values()){
+            if(game != null && game.gameActive()){
+                if(game.getPlayer1ID() == playerId || game.getPlayer2ID() == playerId){
                     return game;
                 }
             }
@@ -210,23 +197,14 @@ public class GameManager {
     }
 
     public Game findGameById(int gameId) {
-        for (Game game : games) {
-            if (game != null && game.gameNumber() == gameId) {
-                return game;
-            }
-        }
-        return null;
+        return activeGames.get(gameId);
     }
 
 
-    // Check if any slot is free
-    public boolean hasAvailableSlot(){
-        return getAvailableGameSlot() != -1;
-    }
 
-    // Returns all games (used by frontend or controller)
-    public ArrayList<Game> getGames(){
-        return games;
+
+    public Collection<Game> getGames(){
+        return activeGames.values();
     }
 
     // Check if a player is in any active game
@@ -237,7 +215,7 @@ public class GameManager {
     // Count active games
     public int getActiveGameCount(){
         int count = 0;
-        for (Game game : games){
+        for (Game game : activeGames.values()){
             if(game != null && game.gameActive()){
                 count++;
             }
@@ -246,47 +224,55 @@ public class GameManager {
     }
 
     // Remove a player from a game (e.g., on disconnect)
-    public void removePlayer(int playerId){
-        Game game = findGameByPlayerId(playerId);
-        if(game != null){
-            if(game.getPlayer1ID() == playerId){
-                game.Player1Quit(); // Implemented in Game.java
-            } else {
-                game.Player2Quit();
-            }
-        }
-    }
+    // public void removePlayer(int playerId){
+    //     Game game = findGameByPlayerId(playerId);
+    //     if(game != null){
+    //         if(game.getPlayer1ID() == playerId){
+    //             game.Player1Quit(); // Implemented in Game.java
+    //         } else {
+    //             game.Player2Quit();
+    //         }
+    //     }
+    // }
 
    //Player requests to quit and ends game
     public void playerQuit(int playerId){
-        Game game = findGameByPlayerId(playerId); // Local method
+        Game game = findGameByPlayerId(playerId);
         if(game == null){
             System.out.println("Player " + playerId + " is not in any active game.");
             return;
         }
+        int gameNumber = game.gameNumber();
+
         int player1Id = game.getPlayer1ID();
         int player2Id = game.getPlayer2ID();
         int player1Score = game.getPlayer1Score();
         int player2Score = game.getPlayer2Score();
+        int opponentId = -1;
 
         if(player1Id == playerId){
-            game.Player1Quit(); // Game.java
-            System.out.println("Player " + playerId + "(Player 1) quit.");
-            
-            
+            game.Player1Quit();
+            opponentId = player2Id;
+            System.out.println("Player " + playerId + "(Player 1) quit game " + gameNumber);
+        } else if (player2Id == playerId) {
+            game.Player2Quit();
+            opponentId = player1Id;
+            System.out.println("Player " + playerId + "(Player 2) quit game " + gameNumber);
         } else {
-            game.Player2Quit(); // Game.java
-            System.out.println("Player " + playerId + "(Player 2) quit.");
+            System.err.println("Error: Player " + playerId + " tried to quit game " + gameNumber + " but was not found as P1 or P2.");
+            return;
         }
+
+        Player winner = game.getWinner();
+        int winningPlayerId = (winner != null) ? winner.getPlayerId() : -2;
 
         Map<Integer, Integer> playerScores = new HashMap<>();
         playerScores.put(player1Id, player1Score);
         playerScores.put(player2Id, player2Score);
 
-        int winningPlayerId = (player1Id == playerId) ? player2Id : player1Id;
         gt.endGame(playerScores, winningPlayerId);
-        games.set(game.gameNumber(), null); // gameNumber() in Game.java
-        System.out.println("Player " + playerId + " quit. Game " + game.gameNumber() + " ended.");
+        activeGames.remove(gameNumber);
+        System.out.println("Player " + playerId + " quit. Game " + gameNumber + " ended and removed.");
 
     }
 }

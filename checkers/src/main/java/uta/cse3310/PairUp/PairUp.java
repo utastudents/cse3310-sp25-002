@@ -2,7 +2,7 @@
 // -- Import Dependencies --
 package uta.cse3310.PairUp;
 import uta.cse3310.PageManager.PageManager;
-
+import uta.cse3310.GameManager.GameManager;
 
 /*
     The PairUp class will handle recieving info from the page manager system
@@ -16,21 +16,17 @@ public class PairUp {
 
     private final Matchmaking Mmaker;
 
-    public PairUp(PageManager pageManager)
+    public PairUp(PageManager pageManager, GameManager gameManager)
     {
-        Mmaker = new Matchmaking(pageManager);
+        Mmaker = new Matchmaking(pageManager, gameManager);
     }
 
 
     // Add a player to the Map
     public void AddPlayer(long timeOfEntry, int playerID, String playerName, boolean playAgainstBot, int wins)
     {
-        // Create a new instance of a player from the player in match making class
         PlayerInMatchmaking player = new PlayerInMatchmaking(timeOfEntry, playerID, playerName, playAgainstBot, wins);
-
-        // Pass player to Matchmaking
         Mmaker.addPlayer(playerID, player);
-
     }
 
     /*
