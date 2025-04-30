@@ -40,6 +40,7 @@ class Communication {
   }
 
   handleWaitlistUpdate(waitlistData) {
+    console.log("[DEBUG] Received waitlist data from Page Manager:", waitlistData);
     // Process waitlist update from Page Manager
     window.dispatchEvent(new CustomEvent("waitlistUpdated", {
       detail: waitlistData

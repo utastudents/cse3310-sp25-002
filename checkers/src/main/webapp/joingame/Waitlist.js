@@ -20,7 +20,7 @@ class Waitlist{
 		player.waitlistStatus = true; // Update the flag to true to indicate player is on the waitlist
 		this.waitlist.push(player); // Add the Player object to the waitlist
 
-		console.log('[Waitlist] Added: ${player.username} (${player.id})');
+		console.log(`[Waitlist] Added: ${player.username} (${player.id})`);
 
 		this.displayWaitlist(); // Update/display the waitlist again with the new Player
 		return player; 
@@ -43,7 +43,7 @@ class Waitlist{
 	displayWaitlist(){	//Displays the updated waitlist
 		const listElement = document.getElementById(this.waitlistElementId);
         if (!listElement) {
-		    console.warn('[Waitlist] Element not found: ${this.waitlistElementId}');
+		    console.warn(`[Waitlist] Element not found: ${this.waitlistElementId}`);
 			return;
 		}
 
@@ -54,6 +54,6 @@ class Waitlist{
             listElement.appendChild(li);
         });
 
-		console.log('[Waitlist] Displayed ${this.waitlist.length} player(s)');
+		console.log(`[Waitlist] Displayed ${this.waitlist.length} player(s)`);
     }
 }
