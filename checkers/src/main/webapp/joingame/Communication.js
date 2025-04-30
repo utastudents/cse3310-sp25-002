@@ -1,4 +1,3 @@
-
 class Communication {
   constructor(dataManager) {
     this.dataManager = dataManager;
@@ -17,9 +16,11 @@ class Communication {
       if (message.type === "playerData") {
         console.log("Received player data:", message.payload);
         this.handlePlayerData(message.payload);
+
       } else if (message.type === "waitlistUpdate") {
         console.log("Received waitlist update:", message.payload);
         this.handleWaitlistUpdate(message.payload);
+
       } else if (message.type === "join_response") {
         // Handle join_response message type from Page Manager's JoinGameHandler
         console.log("Received join response:", message);
