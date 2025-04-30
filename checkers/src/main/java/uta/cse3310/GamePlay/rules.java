@@ -141,6 +141,7 @@ public class rules
         }
 
         boolean playerColor = player.getColor();
+        System.out.println("[DEBUG rules.isCaptureAvailableForPlayer] Checking for color: " + (playerColor ? "White" : "Black")); // Added TEMP_DEBUG
 
         for (int r = 0; r < 8; r++) {
             for (int c = 0; c < 8; c++) {
@@ -161,7 +162,6 @@ public class rules
     static protected boolean hasLegalCaptureFromSquare(Game game, Square start) {
         Board board = game.getBoard();
         if (board == null || start == null || !start.hasPiece() || start.getColor() == null) {
-            System.err.println("[ERROR rules.hasLegalCaptureFromSquare] Invalid input: null board/start or no piece/color.");
             return false;
         }
 
