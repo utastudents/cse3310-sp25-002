@@ -595,39 +595,38 @@ static protected boolean hasLegalCapture(Game game, Move move) {
         }
     }
 
-static private void findPossibleJumpsRecursive(Board board, Square originalStart, Square currentSquare, Moves jumpMoves, Map<String, Boolean> visitedInSequence) {
+    static private void findPossibleJumpsRecursive(Board board, Square originalStart, Square currentSquare, Moves jumpMoves, Map<String, Boolean> visitedInSequence) {
 
         if (board == null || originalStart == null || currentSquare == null || jumpMoves == null || visitedInSequence == null) {
-            System.err.println("[ERROR rules.findJumpsRec] Null parameter passed.");
+            System.err.println("[DEBUG rules.findJumpsRec] ERROR: Null parameter passed.");
             return;
         }
 
+        String currentKey = currentSquare.getRow() + "," + currentSquare.getCol();
+        System.out.println("[DEBUG rules.findJumpsRec] ----- Entered for originalStart=("+originalStart.getRow()+","+originalStart.getCol()+"), currentSquare=(" + currentSquare.getRow() + "," + currentSquare.getCol() + ") -----");
+        System.out.println("[DEBUG rules.findJumpsRec]   Visited in this sequence: " + visitedInSequence.keySet());
+
+        if (visitedInSequence.containsKey(currentKey)) {
+            System.out.println("[DEBUG rules.findJumpsRec]   Already visited (" + currentSquare.getRow() + "," + currentSquare.getCol() + ") in this sequence. Returning.");
+            return;
+        }
+        visitedInSequence.put(currentKey, true);
 
         boolean isKing = currentSquare.isKing();
-
-        if (!currentSquare.equals(originalStart)) {
+        if (!isKing && !currentSquare.equals(originalStart)) {
             boolean landedOnPromotionRow = (originalStart.getColor() && currentSquare.getRow() == 0) || (!originalStart.getColor() && currentSquare.getRow() == 7);
             if (landedOnPromotionRow && !originalStart.isKing()) {
                 isKing = true;
+                System.out.println("[DEBUG rules.findJumpsRec]   Piece at (" + currentSquare.getRow() + "," + currentSquare.getCol() + ") acts as King for next potential jumps.");
             }
-        }
-
+    }
 
         boolean movingPieceColor = originalStart.getColor();
         int[] rowOffsets = isKing ? new int[]{-2, 2} : (movingPieceColor ? new int[]{-2} : new int[]{2});
         int[] colOffsets = {-2, 2};
         boolean foundFurtherJump = false;
 
-        String currentKey = currentSquare.getRow() + "," + currentSquare.getCol();
-
-
-        if (visitedInSequence.containsKey(currentKey)) {
-
-            return;
-        }
-
-        visitedInSequence.put(currentKey, true);
-
+        System.out.println("[DEBUG rules.findJumpsRec]   Checking jumps from (" + currentSquare.getRow() + "," + currentSquare.getCol() + "). King status: " + isKing + ". Color: " + (movingPieceColor ? "White" : "Black"));
 
         for (int rOff : rowOffsets) {
             for (int cOff : colOffsets) {
@@ -635,46 +634,57 @@ static private void findPossibleJumpsRecursive(Board board, Square originalStart
                 int destCol = currentSquare.getCol() + cOff;
                 int midRow = currentSquare.getRow() + rOff / 2;
                 int midCol = currentSquare.getCol() + cOff / 2;
-                String destKey = destRow + "," + destCol;
 
+                System.out.println("[DEBUG rules.findJumpsRec]     Checking potential jump: (" + currentSquare.getRow() + "," + currentSquare.getCol() + ") -> Mid(" + midRow + "," + midCol + ") -> Dest(" + destRow + "," + destCol + ")");
 
                 if (inBounds(destRow, destCol)) {
                     Square dest = board.getSquare(destRow, destCol);
                     Square middle = board.getSquare(midRow, midCol);
 
+                    System.out.println("[DEBUG rules.findJumpsRec]       Dest square ("+destRow+","+destCol+"): " + (dest == null ? "null" : ("HasPiece=" + dest.hasPiece())));
+                    System.out.println("[DEBUG rules.findJumpsRec]       Middle square ("+midRow+","+midCol+"): " + (middle == null ? "null" : ("HasPiece=" + middle.hasPiece() + ", Color=" + (middle.getColor() == null ? "null" : (middle.getColor() ? "White" : "Black")))));
 
-                    if (dest != null && middle != null && middle.hasPiece() && middle.getColor() != movingPieceColor &&!dest.hasPiece() )
+                    if (dest != null && middle != null && middle.hasPiece() && middle.getColor() != movingPieceColor && !dest.hasPiece() )
                     {
-
+                        System.out.println("[DEBUG rules.findJumpsRec]       <<< Valid jump condition MET >>>");
                         foundFurtherJump = true;
 
                         Map<String, Boolean> nextVisited = new HashMap<>(visitedInSequence);
-
+                            System.out.println("[DEBUG rules.findJumpsRec]       Making RECURSIVE call for jump to ("+destRow+","+destCol+"). Passing visited: " + nextVisited.keySet());
                         findPossibleJumpsRecursive(board, originalStart, dest, jumpMoves, nextVisited);
+                    } else {
+                            System.out.println("[DEBUG rules.findJumpsRec]       Jump condition NOT MET.");
                     }
+                } else {
+                        System.out.println("[DEBUG rules.findJumpsRec]     Destination (" + destRow + "," + destCol + ") is out of bounds.");
                 }
             }
         }
 
         if (!foundFurtherJump && !currentSquare.equals(originalStart)) {
-
+            System.out.println("[DEBUG rules.findJumpsRec]   No further jumps found from (" + currentSquare.getRow() + "," + currentSquare.getCol() + "). Checking if this move should be added.");
             boolean alreadyAdded = false;
             for(Move existingMove : jumpMoves.getMoves()) {
-
                 if (existingMove.getStart().getRow() == originalStart.getRow() &&
                     existingMove.getStart().getCol() == originalStart.getCol() &&
                     existingMove.getDest().getRow() == currentSquare.getRow() &&
                     existingMove.getDest().getCol() == currentSquare.getCol()) {
                     alreadyAdded = true;
+                        System.out.println("[DEBUG rules.findJumpsRec]     Move (" + originalStart.getRow() + "," + originalStart.getCol() + ") -> (" + currentSquare.getRow() + "," + currentSquare.getCol() + ") already present in jumpMoves.");
                     break;
                 }
             }
 
             if (!alreadyAdded) {
-
+                    System.out.println("[DEBUG rules.findJumpsRec]     <<< Adding jump move to list: (" + originalStart.getRow() + "," + originalStart.getCol() + ") -> (" + currentSquare.getRow() + "," + currentSquare.getCol() + ") >>>");
                 jumpMoves.addNext(originalStart, currentSquare);
             }
+        } else if (foundFurtherJump) {
+                System.out.println("[DEBUG rules.findJumpsRec]   Further jumps WERE found from (" + currentSquare.getRow() + "," + currentSquare.getCol() + "). Not adding this intermediate step as a final move.");
+        } else if (currentSquare.equals(originalStart)) {
+                System.out.println("[DEBUG rules.findJumpsRec]   Finished checking jumps from the original starting square (" + currentSquare.getRow() + "," + currentSquare.getCol() + ").");
         }
+        System.out.println("[DEBUG rules.findJumpsRec] ----- Exiting for currentSquare=(" + currentSquare.getRow() + "," + currentSquare.getCol() + ") -----");
     }
 
 

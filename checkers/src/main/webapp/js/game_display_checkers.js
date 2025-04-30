@@ -229,8 +229,9 @@ const game_display_handle_websocket_received_data = (connection, data) => {
         }  else if (data.type === 'game_over') {
             if (!checkerBoard) return;
             handleCapture(data.capturedSquare);
-            alert(data.message);
-            hide_game_display()
+            console.log("game over data",data)
+            game_display_popup_messages(data.msg);
+            hide_game_display();
         }
 
     } catch (error) {

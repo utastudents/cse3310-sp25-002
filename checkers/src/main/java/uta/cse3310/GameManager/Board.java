@@ -58,14 +58,14 @@ public class Board {
           boolean pieceColor = start.getColor();
           boolean isKing = start.isKing();
           int destRow = end.getRow();
-          // Determine if promotion happens based on reaching the opponent's back row
+
           boolean promote = (!isKing && ((pieceColor && destRow == 0) || (!pieceColor && destRow == 7)));
 
           System.out.println("[DEBUG Board.execute] Executing move: ("+start.getRow()+","+start.getCol()+") -> ("+end.getRow()+","+end.getCol()+") Capture: " + isCapture + " Promote: " + promote);
           System.out.println("[DEBUG Board.execute] Start square state before: hasPiece="+start.hasPiece()+", color="+(start.getColor() ? "W" : "B")+", isKing="+start.isKing());
           System.out.println("[DEBUG Board.execute] End square state before: hasPiece="+end.hasPiece()+", color="+(end.getColor() == null ? "null" : (end.getColor() ? "W" : "B")));
 
-          end.place(pieceColor, isKing || promote); // Place and promote if necessary
+          end.place(pieceColor, isKing || promote);
           if (promote) {
                System.out.println("[DEBUG Board.execute] Piece promoted to King at ("+end.getRow()+","+end.getCol()+")");
           }
@@ -73,15 +73,31 @@ public class Board {
           start.remove();
 
           if (isCapture) {
-               int middleRow = (start.getRow() + end.getRow()) / 2;
-               int middleCol = (start.getCol() + end.getCol()) / 2;
-               Square middleSquare = getSquare(middleRow, middleCol); // Fetch fresh from board
-               if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != pieceColor) {
-                    middleSquare.remove();
-                    System.out.println("[DEBUG Board.execute] Middle square state AFTER remove: hasPiece="+middleSquare.hasPiece()+", color=null");
-               } else {
-                    System.err.println("[ERROR Board.execute] Inconsistency during capture: Middle square ("+middleRow+","+middleCol+") invalid, empty, or same color.");
-                    System.err.println("Middle Square State: " + (middleSquare != null ? "hasPiece="+middleSquare.hasPiece()+", color="+(middleSquare.getColor()==null?"null":middleSquare.getColor()?"W":"B") : "null"));
+               System.out.println("[DEBUG Board.execute] Processing capture(s)...");
+               int rowDiff = end.getRow() - start.getRow();
+               int colDiff = end.getCol() - start.getCol();
+               int steps = Math.abs(rowDiff) / 2;
+
+                    System.out.println("[DEBUG Board.execute]   Detected jump distance: " + Math.abs(rowDiff) + " rows. Number of jumps: " + steps);
+
+               for (int i = 1; i <= steps; i++) {
+                    int midRow = start.getRow() + (rowDiff / steps) * i - (rowDiff / steps / 2);
+                    int midCol = start.getCol() + (colDiff / steps) * i - (colDiff / steps / 2);
+
+                    System.out.println("[DEBUG Board.execute]   Checking middle square for jump " + i + ": (" + midRow + "," + midCol + ")");
+
+                    if (rules.inBounds(midRow, midCol)) {
+                         Square middleSquare = getSquare(midRow, midCol);
+                         if (middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != pieceColor) {
+                              System.out.println("[DEBUG Board.execute]     Removing opponent piece at (" + midRow + "," + midCol + ")");
+                              middleSquare.remove();
+                         } else {
+                              System.err.println("[WARN Board.execute]     Expected opponent piece at ("+midRow+","+midCol+") for capture sequence, but found none or same color.");
+                              System.err.println("[WARN Board.execute]       Middle Square State: " + (middleSquare != null ? "hasPiece="+middleSquare.hasPiece()+", color="+(middleSquare.getColor()==null?"null":middleSquare.getColor()?"W":"B") : "null"));
+                         }
+                    } else {
+                              System.err.println("[ERROR Board.execute] Calculated middle square ("+midRow+","+midCol+") is out of bounds for capture sequence.");
+                    }
                }
           }
 
@@ -91,21 +107,23 @@ public class Board {
 
      public String toString(){
           StringBuilder builder = new StringBuilder();
-
           builder.append("\n------------------\n");
           for(int i = 0; i<8; i++){
                builder.append("|");
                for(int j=0;j<8;j++){
                     Square sq = getSquare(i, j);
-                    String piece = "  ";
+                    String pieceRep = "  ";
                     if (sq != null && sq.hasPiece()) {
                          boolean color = sq.getColor();
                          boolean king = sq.isKing();
-                         if (color) {
-                              piece = king ? "WW" : "ww";
-                         } else {
-                              piece = king ? "BB" : "bb";
+                         if (color) { // White
+                              pieceRep = king ? "WW" : "ww";
+                         } else { // Black
+                              pieceRep = king ? "BB" : "bb";
                          }
+                         builder.append(pieceRep);
+                    } else {
+                         builder.append("..");
                     }
                }
                builder.append("|\n");
