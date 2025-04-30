@@ -188,7 +188,7 @@ const game_display_handle_websocket_received_data = (connection, data) => {
         } else if(data.type === "resign") {
             // assuming that websocket sends the json string {"type":"resign", "player":"NAME OF PLAYER THAT RESIGNED (STRING)"}
             alert(`${data.player} has resigned. The game is now over.`);
-
+            checkerBoard.gameOver = true;
         } else if(data.type === "draw_offer") {
             // assuming that websocket sends the json string {"type":"draw_offer", "player":"NAME OF PLAYER THAT OFFERED THE DRAW (STRING)"}
             if(confirm(`${data.player} offered a draw, would you like to accept?`)) {
@@ -263,6 +263,7 @@ class CheckersBoard {
         this.player_id = player_id;
         // flags for handling valid moves and the last clicked coordinate
         this.last_requested_moves = null;
+        this.gameOver = false;
     }
 
     //function is used to get the color of the piece
@@ -302,53 +303,54 @@ class CheckersBoard {
         Rules referenced from: https://en.wikipedia.org/wiki/English_draughts
     */
     async handle_checkers_piece_click(x, y) {
-        try{
+        if(!this.gameOver)
+        {    try{
 
-            // if it's not the player's turn, do nothing. Note: We added this to prevent the user from clicking on the board when it's not their turn. Or when a bot or opponent makes a move which shouldn't be registered as the user's move.
-            if(this.player !== this.current_player) return;
+                // if it's not the player's turn, do nothing. Note: We added this to prevent the user from clicking on the board when it's not their turn. Or when a bot or opponent makes a move which shouldn't be registered as the user's move.
+                if(this.player !== this.current_player) return;
 
-            const square = this.checkers_board.find(sq => sq.x === x && sq.y === y);
-            if (!square) return;
-            // either "b" or "w" or "." Note: . means an empty square with no piece
-            const checkers_piece_type = square.el.getAttribute("data-piece");
+                const square = this.checkers_board.find(sq => sq.x === x && sq.y === y);
+                if (!square) return;
+                // either "b" or "w" or "." Note: . means an empty square with no piece
+                const checkers_piece_type = square.el.getAttribute("data-piece");
 
-            // if piece if first clicked
-            if (!this.selected_piece && checkers_piece_type !== ".") {
-                this.selected_piece = {x, y, type: checkers_piece_type};
-                this.last_clicked_coordinate = {x, y};
-                await this.show_possible_moves(x, y);
-            }
-            // if a piece is already selected and the user clicks on another square
-            else if (this.selected_piece) {
-                // If clicking on the same piece, deselect it
-                if (this.selected_piece.x === x && this.selected_piece.y === y) {
-                    this.selected_piece = null;
-                    this.hide_possible_moves();
+                // if piece if first clicked
+                if (!this.selected_piece && checkers_piece_type !== ".") {
+                    this.selected_piece = {x, y, type: checkers_piece_type};
+                    this.last_clicked_coordinate = {x, y};
+                    await this.show_possible_moves(x, y);
                 }
-                // if user has clicked on a valid move
-                else if (await this.is_valid_move(this.selected_piece.x, this.selected_piece.y, x, y)) {
-                    this.move_checkers_piece(this.selected_piece.x, this.selected_piece.y, x, y);
-                    // reset piece selection
-                    this.selected_piece = null;
-                    this.hide_possible_moves();
-                }
-                // if user clicked in an invalid square
-                else {
-                    this.selected_piece = null;
-                    this.hide_possible_moves();
-                    // if user clicks on another piece then select that piece
-                    if (checkers_piece_type !== ".") {
-                        this.selected_piece = {x, y, type: checkers_piece_type};
-                        this.last_clicked_coordinate = {x, y};
-                        await this.show_possible_moves(x, y);
+                // if a piece is already selected and the user clicks on another square
+                else if (this.selected_piece) {
+                    // If clicking on the same piece, deselect it
+                    if (this.selected_piece.x === x && this.selected_piece.y === y) {
+                        this.selected_piece = null;
+                        this.hide_possible_moves();
                     }
-                }
+                    // if user has clicked on a valid move
+                    else if (await this.is_valid_move(this.selected_piece.x, this.selected_piece.y, x, y)) {
+                        this.move_checkers_piece(this.selected_piece.x, this.selected_piece.y, x, y);
+                        // reset piece selection
+                        this.selected_piece = null;
+                        this.hide_possible_moves();
+                    }
+                    // if user clicked in an invalid square
+                    else {
+                        this.selected_piece = null;
+                        this.hide_possible_moves();
+                        // if user clicks on another piece then select that piece
+                        if (checkers_piece_type !== ".") {
+                            this.selected_piece = {x, y, type: checkers_piece_type};
+                            this.last_clicked_coordinate = {x, y};
+                            await this.show_possible_moves(x, y);
+                        }
+                    }
 
-            }
-        } catch (error) {
-            console.error("Error in game_display_checkers.js: ", error);
-            game_display_popup_messages(`(gd) handle_checkers_piece_click: An error occurred while handling the game display. Please check the console.`);
-        }
+                }
+            } catch (error) {
+                console.error("Error in game_display_checkers.js: ", error);
+                game_display_popup_messages(`(gd) handle_checkers_piece_click: An error occurred while handling the game display. Please check the console.`);
+            }}
     }
 
     //move_made_by_other_player_or_bot() sets a flag to call move_checkers_piece() without sending a move request to the backend.
