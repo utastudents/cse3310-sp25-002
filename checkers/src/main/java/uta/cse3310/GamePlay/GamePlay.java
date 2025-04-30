@@ -23,8 +23,6 @@ public class GamePlay
         }
 
         Board currentGameBoard = game.getBoard();
-        game.lockBoard();
-        try {
         Player activePlayer = game.getCurrentTurn();
 
         if (currentGameBoard == null || activePlayer == null) {
@@ -32,28 +30,34 @@ public class GamePlay
             return false;
         }
 
-        if (rules.canMovePiece(game, move))
-        {
-            boolean isCapture = rules.isCapture(move, currentGameBoard);
+        game.lockBoard();
+        try {
+            System.out.println("[DEBUG GamePlay.processAndExecuteMove] Validating move: (" + move.getStart().getRow() + "," + move.getStart().getCol() + ") -> (" + move.getDest().getRow() + "," + move.getDest().getCol() + ") for Player " + activePlayer.getPlayerId());
+            if (rules.canMovePiece(game, move))
+            {
+                System.out.println("[DEBUG GamePlay.processAndExecuteMove] Move validation PASSED.");
+                boolean isCapture = rules.isCapture(move, currentGameBoard);
+                System.out.println("[DEBUG GamePlay.processAndExecuteMove] Is this step a capture? " + isCapture);
 
-            System.out.println("[DEBUG isCapture] isCapture value before execute(): " + isCapture);
-            if (isCapture) {
-                game.newCapture();
                 currentGameBoard.execute(move, isCapture);
-            } else {
-                game.incrementMoveCounter();
-                currentGameBoard.execute(move, isCapture);
+
+                if (isCapture) {
+                    game.newCapture();
+                } else {
+                    game.incrementMoveCounter();
+                }
+
+                System.out.println("[DEBUG GamePlay.processAndExecuteMove] Move executed. Board state updated.");
+                System.out.println(currentGameBoard.toString());
+
+                return true;
             }
-
-            System.out.println("[DEBUG GamePlay.processAndExecuteMove] Board after move:\n" + currentGameBoard.toString());
-            return true;
-        }
-        else
-        {
-            System.out.println("[WARN GamePlay.processAndExecuteMove] Move deemed illegal by rules.canMovePiece. Move rejected.");
-            System.out.println("[WARN GamePlay.processAndExecuteMove] Board state remains unchanged:\n" + currentGameBoard.toString());
-            return false;
-        }
+            else
+            {
+                System.out.println("[WARN GamePlay.processAndExecuteMove] Move deemed illegal by rules.canMovePiece. Move rejected.");
+                System.out.println(currentGameBoard.toString());
+                return false;
+            }
         } finally {
             game.unlockBoard();
         }

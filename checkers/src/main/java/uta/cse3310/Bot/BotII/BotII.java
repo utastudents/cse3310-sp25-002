@@ -250,7 +250,7 @@ public class BotII extends Bot {
      * 
      * @param none
      * 
-     * @return LinkedList<Pair<Square, LinkedList<MoveRating>>> - a list of pairs
+     * @return LinkedList<Pair<Square, LinkedList<MoveRating - a list of pairs
      *         where each s
      * 
      * @see BotII#requestMove()

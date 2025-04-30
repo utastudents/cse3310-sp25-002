@@ -34,13 +34,30 @@ public class rules
         return row >= 0 && row < 8 && col >= 0 && col < 8;
     }
 
+ 
+
+    public static boolean isCaptureAvailableFromSquare(Game game, Square startSquare) {
+        if (game == null || startSquare == null) {
+            System.out.println("[DEBUG rules.isCaptureAvailableFromSquare] Null game or startSquare provided.");
+            return false;
+        }
+        Board board = game.getBoard();
+        Player player = game.getCurrentTurn();
+
+        if (board == null || player == null || !startSquare.hasPiece() || startSquare.getColor() != player.getColor()) {
+            System.out.println("[DEBUG rules.isCaptureAvailableFromSquare] Invalid start square for check: " + (startSquare != null ? "("+startSquare.getRow()+","+startSquare.getCol()+")" : "null") + ", Player: " + (player != null ? player.getPlayerId() : "null") + ", PieceColorMatch: " + (startSquare != null && player != null && startSquare.hasPiece() ? (startSquare.getColor() == player.getColor()) : "N/A"));
+            return false;
+        }
+
+        System.out.println("[DEBUG rules.isCaptureAvailableFromSquare] Checking captures for Player " + player.getPlayerId() + " from square ("+startSquare.getRow()+","+startSquare.getCol()+")");
+        return hasLegalCaptureFromSquare(game, startSquare);
+    }
 
 
     public static boolean isCapture(Move move, Board board) {
         Square start = move.getStart();
         Square dest = move.getDest();
 
-        //if (start == null || dest == null || !start.hasPiece()) return false;
 
         int rowDiff = Math.abs(dest.getRow() - start.getRow());
         int colDiff = Math.abs(dest.getCol() - start.getCol());
@@ -170,8 +187,9 @@ public class rules
         int row = start.getRow();
         int col = start.getCol();
 
-        int[] rowOffsets = start.isKing() ? new int[]{-2, 2} : (playerColor ? new int[]{-2} : new int[]{2});
+        int[] rowOffsets = start.isKing() ? new int[]{-2, 2} : (playerColor ? new int[]{-2} : new int[]{2}); // White(true) moves -2, Black(false) moves +2
         int[] colOffsets = {-2, 2};
+        System.out.println("[DEBUG rules.hasLegalCaptureFromSquare] Checking piece at ("+row+","+col+"), King="+start.isKing()+", Color="+(playerColor?"W":"B"));
 
         for (int rOff : rowOffsets) {
             for (int cOff : colOffsets) {
@@ -179,20 +197,28 @@ public class rules
                 int newCol = col + cOff;
                 int midRow = row + rOff / 2;
                 int midCol = col + cOff / 2;
+                System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]   Testing jump path: Mid("+midRow+","+midCol+") -> Dest("+newRow+","+newCol+")");
 
-                if (inBounds(newRow, newCol)) {
+                if (inBounds(newRow, newCol) && inBounds(midRow, midCol)) {
                     Square landing = board.getSquare(newRow, newCol);
                     Square middle = board.getSquare(midRow, midCol);
 
-                    if (landing != null && !landing.hasPiece() &&
-                        middle != null && middle.hasPiece() && middle.getColor() != null && middle.getColor() != playerColor)
+                    boolean landingOk = landing != null && !landing.hasPiece();
+                    boolean middleOk = middle != null && middle.hasPiece() && middle.getColor() != null && middle.getColor() != playerColor;
+
+                    System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]     LandingOK="+landingOk+" (Dest="+ (landing!=null?landing.hasPiece():"null")+"). MiddleOK="+middleOk+" (Mid="+ (middle!=null?middle.hasPiece():"null")+", MidColor="+ (middle!=null&&middle.getColor()!=null?(middle.getColor()?"W":"B"):"null") + ")");
+
+
+                    if (landingOk && middleOk)
                     {
-                        System.out.println("[DEBUG rules.hasLegalCaptureFromSquare] Found valid capture from ("+row+","+col+") to ("+newRow+","+newCol+") over ("+midRow+","+midCol+")");
+                        System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]   Found valid capture from ("+row+","+col+") to ("+newRow+","+newCol+") over ("+midRow+","+midCol+") ");
                         return true;
                     }
+                } else {
+                    System.out.println("[DEBUG rules.hasLegalCaptureFromSquare]   Path out of bounds.");
+                }
                 }
             }
-        }
         System.out.println("[DEBUG rules.hasLegalCaptureFromSquare] No legal captures found from ("+row+","+col+")");
         return false;
     }
@@ -646,7 +672,7 @@ static protected boolean hasLegalCapture(Game game, Move move) {
 
                     if (dest != null && middle != null && middle.hasPiece() && middle.getColor() != movingPieceColor && !dest.hasPiece() )
                     {
-                        System.out.println("[DEBUG rules.findJumpsRec]       <<< Valid jump condition MET >>>");
+                        System.out.println("[DEBUG rules.findJumpsRec]       Valid jump condition MET ");
                         foundFurtherJump = true;
 
                         Map<String, Boolean> nextVisited = new HashMap<>(visitedInSequence);
@@ -676,7 +702,7 @@ static protected boolean hasLegalCapture(Game game, Move move) {
             }
 
             if (!alreadyAdded) {
-                    System.out.println("[DEBUG rules.findJumpsRec]     <<< Adding jump move to list: (" + originalStart.getRow() + "," + originalStart.getCol() + ") -> (" + currentSquare.getRow() + "," + currentSquare.getCol() + ") >>>");
+                    System.out.println("[DEBUG rules.findJumpsRec]     Adding jump move to list: (" + originalStart.getRow() + "," + originalStart.getCol() + ") -> (" + currentSquare.getRow() + "," + currentSquare.getCol() + ") ");
                 jumpMoves.addNext(originalStart, currentSquare);
             }
         } else if (foundFurtherJump) {
@@ -703,5 +729,4 @@ static protected boolean hasLegalCapture(Game game, Move move) {
         return pieces;
     }
 
-
-    }
+}

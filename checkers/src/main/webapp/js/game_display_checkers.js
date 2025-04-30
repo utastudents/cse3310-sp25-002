@@ -156,12 +156,12 @@ const game_display_handle_websocket_received_data = (connection, data) => {
         // this ignores any data that is not related to the game display.
         if(!game_display_event_types.includes(data.type)){ return; }
 
-        if(!game_display_checkers_board_initialized && !(data.type === "show_game_display")){
-            // if the game board is not initialized and the data type is not show_game_display, then return
-            game_display_popup_messages(`(gd) game_display_handle_websocket_received_data: game board not initialized and data type is not show_game_display.`);
+        if (!checkerBoard && data.type !== 'show_game_display') {
+            console.error("Checkerboard not initialized, cannot process message type: " + data.type);
             return;
-        };
-        console.log("game display",data)
+        }
+
+        console.log("Received game display data:", data);
         if (data?.clientId){
             data.id = data.clientId;
         }
@@ -170,21 +170,19 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             alert(data.message);
         }
         if (data.type==="valid_moves") {
-            // assuming that websocket sends the json string {"type":"valid_moves", "legal_moves":[[x1,y1],[x2,y2],...]}
 
             if (checkerBoard && checkerBoard.last_requested_moves) {
                 checkerBoard.handle_valid_move_received_from_websocket(data);
             }
 
-        } else if(data.type === "move_made_by_other_player_or_bot") {
+        } else if (data.type === "move_made_by_other_player_or_bot") {
             if (!checkerBoard) return;
-            if(data.player != checkerBoard.player){
-                checkerBoard.move_made_by_other_player_or_bot(data.from[0],data.from[1],data.to[0],data.to[1]);
-                    handleCapture(data.capturedSquare);
+            checkerBoard.move_made_by_other_player_or_bot(data.from[0], data.from[1], data.to[0], data.to[1]);
+            if (data.capturedSquare) {
+                checkerBoard.remove_captured_piece(data.capturedSquare[0], data.capturedSquare[1]);
             }
-            if (data.current_move && data.id !== undefined) {
-                checkerBoard.update_current_player(data.current_move, data.id);
-            }
+            checkerBoard.update_current_player(data.current_move, data.id);
+
         } else if(data.type === "resign") {
             // assuming that websocket sends the json string {"type":"resign", "player":"NAME OF PLAYER THAT RESIGNED (STRING)"}
             alert(`${data.player} has resigned. The game is now over.`);
@@ -207,29 +205,52 @@ const game_display_handle_websocket_received_data = (connection, data) => {
             game_display_popup_messages(data.message);
 
         } else if(data.type === 'show_game_display') {
-            // this function is used to show the game display. It is called when the game is started.
             console.log("game display initialized")
             show_game_display(connection, data.game_id, data.starting_player, data.player, data.player_color, data.clientId);
 
         } else if(data.type === 'hide_game_display') {
             hide_game_display();
-        } else if (data.type === 'move_ack') {
+        } else if (data.type === "move_ack") {
             if (!checkerBoard) return;
-
-            if (data.capturedSquare && data.capturedSquare.length === 2) {
-                console.log(`Move acknowledged with capture. Removing piece at [${data.capturedSquare[0]}, ${data.capturedSquare[1]}]`);
-                handleCapture(data.capturedSquare);
+            console.log("Move acknowledged by server. Turn likely switched.");
+            if (data.capturedSquare) {
+                checkerBoard.remove_captured_piece(data.capturedSquare[0], data.capturedSquare[1]);
             }
             if (data.current_move && data.id !== undefined) {
-                console.log(`Received move_ack, updating current player view to: ${data.current_move} (ID: ${data.id})`);
                 checkerBoard.update_current_player(data.current_move, data.id);
-            } else {
-                console.log("Received move_ack without sufficient data or checkerBoard not initialized.");
             }
-        }  else if (data.type === 'game_over') {
+
+        }  else if (data.type === "continue_turn" || data.type === "move_ack_continue") {
+            if (!checkerBoard) return;
+            console.log("Received mid-jump notification. Player " + data.player + " must continue jump.");
+
+            if (data.type === "continue_turn") {
+                if (data.capturedSquare) {
+                    checkerBoard.remove_captured_piece(data.capturedSquare[0], data.capturedSquare[1]);
+                }
+            } else if (data.type === "move_ack_continue") {
+                if (data.capturedSquare) {
+                    checkerBoard.remove_captured_piece(data.capturedSquare[0], data.capturedSquare[1]);
+                }
+            }
+
+
+            document.getElementById("current-player").innerText = "You must complete the jump!";
+
+            const pieceToHighlight = checkerBoard.checkers_board.find(sq => sq.x === data.to[0] && sq.y === data.to[1]);
+            if (pieceToHighlight && pieceToHighlight.el) {
+                checkerBoard.selected_piece = { x: data.to[0], y: data.to[1], type: pieceToHighlight.el.getAttribute('data-piece') };
+                checkerBoard.show_possible_moves(data.to[0], data.to[1]);
+            }
+
+
+        } else if (data.type === 'game_over') {
             if (!checkerBoard) return;
             handleCapture(data.capturedSquare);
-            console.log("game over data",data)
+            console.log("game over data",data);
+            if(!data?.msg){
+                return;
+            }
             game_display_popup_messages(data.msg);
             hide_game_display();
         }
