@@ -20,43 +20,38 @@ public class DB
 		try(Connection connection = SQLiteConnector.connect();
 			Statement stmt = connection.createStatement()) 
 		{
-			if(connection != null)
-			{
 				stmt.execute(createStatement);
 				insertUser("Bot1");
 				insertUser("Bot2");
-			}
-			else
-			{
-				System.err.println("Failed to connect to database in Create table command");
-			}
-		}
-		catch(SQLException e)
-		{
+			} catch(SQLException e) {
 			System.err.println("Error creating table: " + e.getMessage());
 		}
 	}
 
-	public static void insertUser(String username)				//assumes username is already validated 
+	public static int insertUser(String username)				//assumes username is already validated 
 	{
-		String insertStatement = "INSERT INTO USERS (username) VALUES(?)";
-		try(Connection connection = SQLiteConnector.connect();
-			PreparedStatement pstmt = connection.prepareStatement(insertStatement)) 
-		{
-			if(connection != null)
-			{
-				pstmt.setString(1, username); 			//inserts the username into the placeholder 
-				pstmt.executeUpdate();
-			}
-			else
-			{
-				System.err.println("Failed to connect to database in Insert User command");
+		String insertStatement = "INSERT INTO USERS (username) Values(?)";
+		int generatedId= -1;
+
+		if (username == null || username.trim().isEmpty()) {
+			System.err.println("Username is null or empty");
+			return -1;
+	}
+	try (Connection connection = SQLiteConnector.connect();
+	     PreparedStatement pstmt = connection.prepareStatement(insertStatement, Statement.RETRURN_GENERATED_KEYS)) {
+
+		pstmt.setString(1, username.trim());
+		pstmt.executeUpdate();
+
+		try(ResulSet generateKeys = pstmt.getGeneratedKeys()) {
+			if (generatedKeys.next()) {
+				generatedId = generatedKeys.getInt(1);
 			}
 		}
-		catch(SQLException e)
-		{
-			System.err.println("Error inserting user: " + e.getMessage());
-		}
+	} catch (SQLException e) {
+		System.err.printIn("Error inserting user: "+ e.getMessage());
+	}
+	return generatedId;
 	}
 
 	public static List<String> getLeaderboard()
@@ -68,18 +63,11 @@ public class DB
 			 Statement stmt = connection.createStatement();
 			 ResultSet rs = stmt.executeQuery(selectStatement))
 		{
-			if (connection != null)
-			{
 				while(rs.next())
 				{
 					String entry = rs.getString("username") + ": " + rs.getInt("rank"); //here the query is parsed and entered into the List
 					leaderboard.add(entry);
 				}
-			}
-			else
-			{
-				System.err.println("Failed to connect to database in Leaderboard query");
-			}
 		}
 		catch (SQLException e)
 		{
@@ -91,26 +79,27 @@ public class DB
 
 	public static void updatePlayer(String username, int newRank )			
 	{
-		String updatePlayer = "UPDATE USERS SET rank = ? WHERE username = ?";  		
+		String updatePlayer = "UPDATE USERS SET rank = ? WHERE username = ?";  	
+		boolean success = false;
+
+		if (usename == null || username.trim().isEmpty()) {
+			System.err.println("Username is null or empty");
+			return false;
+		}
 		try(Connection connection = SQLiteConnector.connect();
 			PreparedStatement pstmt = connection.prepareStatement(updatePlayer)) 
 		{
-			if(connection != null)
-			{
 				pstmt.setInt(1, newRank); 			//sets the newRank into the placeholder
-				pstmt.setString(2, username);				
-				pstmt.executeUpdate();
-			}
-			else
-			{
-				System.err.println("Failed to connect to database in Update User command");
-			}
+				pstmt.setString(2, username.trim());	
+				int rowsUpdated = pstmt.executeUpdate();
+				success = rowsUpdateed > 0;
+			
 		}
 		catch(SQLException e)
 		{
 			System.err.println("Error updating user: " + e.getMessage());
 		}
 
-	}
+	return success;
 }
 
