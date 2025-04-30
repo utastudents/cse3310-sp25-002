@@ -105,6 +105,7 @@ const show_game_display = (connection, gameid, starting_player, player, player_c
         // set the flag to true to indicate that the game board has been initialized. Note: this is used to prevent the game board from being initialized multiple times
         game_display_checkers_board_initialized = true;
         join_response_placeholder();
+        checkerBoard.rotateBoardIfBlack();
     };
 
     if (checkerBoard.current_player === checkerBoard.player){
@@ -398,7 +399,8 @@ class CheckersBoard {
                 console.log({type: "move", game_id: this.game_id, player: this.current_player, square: {"from":[move_from_x, move_from_y],"to":[move_to_x, move_to_y]}});
                 //Does not send a move request to the backend if it is the opponent's turn
                 if(this.player === this.current_player){
-                    this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, id: this.player_id, player: this.current_player, from:[move_from_x, move_from_y],to:[move_to_x, move_to_y]}));
+                    //this.connection.send(JSON.stringify({type: "move", game_id: this.game_id, id: this.player_id, player: this.current_player, from:[move_from_x, move_from_y],to:[move_to_x, move_to_y]}));
+                    sendMove([move_from_x, move_from_y], [move_to_x, move_to_y]);
                 }
             }
 
@@ -406,6 +408,16 @@ class CheckersBoard {
             console.error("Error in game_display_checkers.js: ", error);
             game_display_popup_messages(`(gd) move_checkers_piece: An error occurred while handling the game display. Please check the console.`);
         }
+    }
+
+    sendMove(from, to) {
+      const msg = {
+        type:     "move",
+        game_id:  this.game_id,
+        clientId: this.player_id,   
+        from, to
+      };
+      this.connection.send(JSON.stringify(msg));
     }
 
     rotateBoardIfBlack() {
