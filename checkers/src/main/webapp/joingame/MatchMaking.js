@@ -1,8 +1,8 @@
 class Matchmaking {
     constructor(communication, dataManager, notification, playerWaitlist, botWaitlist) {
-        this.queue = []; // Queue for players waiting for a match
-        this.dataManager = dataManager; // Use the passed data manager
-        this.communication = communication; // Use the passed communication instance
+        this.queue = []; 
+        this.dataManager = dataManager; 
+        this.communication = communication; 
         this.notification = notification;
         this.playerWaitlist = playerWaitlist;
         this.botWaitlist = botWaitlist;
@@ -19,6 +19,12 @@ class Matchmaking {
         console.log(`Player ${playerID} added to queue`);
     }
 
+    removeFromQueue(playerID) {
+        // Handles when a player leaves the queue
+        this.queue = this.queue.filter(id => id !== playerID); // Remove the player from the queue
+        console.log(`Player ${playerID} removed from queue`);
+    }
+
     requestPlayerMatch(playerID) {
         // Handles when a player clicks the "Challenge Player" button
 
@@ -28,19 +34,10 @@ class Matchmaking {
             return;
         }
 
-        // Remove from waitlist
         this.playerWaitlist.remove(playerID);
-
-        // Set game mode
         this.dataManager.setGameMode("Human");
-
-        // Send player attributes to Page Manager
         this.communication.sendPlayerAttributes(this.dataManager.getGameMode());
-
-        // Display notification
         this.notification.displayNotification("Finding player match...");
-
-        // Add to internal queue
         this.addToQueue(playerID);
     }
 
@@ -53,35 +50,17 @@ class Matchmaking {
             return;
         }
 
-        // Remove from waitlist
         this.botWaitlist.remove(playerID);
-
-        // Set game mode
         this.dataManager.setGameMode("Bot");
-
-        // Send player attributes to Page Manager
         this.communication.sendPlayerAttributes(this.dataManager.getGameMode());
-
-        // Display notification
         this.notification.displayNotification("Starting bot match...");
     }
 
     requestSpectateBotVsBot(playerID) {
-        // Called when a player wants to spectate a match between two bots
-
-        // Set game mode
         this.dataManager.setGameMode("Spectate");
-
-        // Send player attributes to Page Manager
         this.communication.sendPlayerAttributes(this.dataManager.getGameMode());
-
-        // Display notification
         this.notification.displayNotification("Loading bot vs bot match...");
     }
 
-    removeFromQueue(playerID) {
-        // Handles when a player leaves the queue
-        this.queue = this.queue.filter(id => id !== playerID); // Remove the player from the queue
-        console.log(`Player ${playerID} removed from queue`);
-    }
+
 }
