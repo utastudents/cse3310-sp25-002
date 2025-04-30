@@ -108,4 +108,27 @@ public class DB
 	return success;
 }
 
+public static String getPlayerInfo(String username){
+	String query ="SELECT id, username, rank FROM USERS WHERE username= ?";
+
+	try(Connection connection=SQLiteConnector.connect();
+	PreparedStatement pstmt = connection.prepareStatement(query)) {
+
+		pstmt.setString(1,username.trim());
+		try (ResultSet rs = pstmt.executeQuery()) {
+			if (rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("username");
+				int rank= rs.getInt("rank");
+
+				return "Player Info -> ID: " + id + ", Username: " + name + ", Rank:  " + rank;
+
+			}
+		}
+	} catch (SQLException e) {
+		System.err.println("Error fetching player info: " + e.getMessage());
+	}
+	return "Player not found";
 }
+}
+
