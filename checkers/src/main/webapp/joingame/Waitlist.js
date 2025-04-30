@@ -48,6 +48,7 @@ class Waitlist{
 		}
 
         listElement.innerHTML = '';
+		
         this.waitlist.forEach((player, index) => {
             const li = document.createElement('li');
             li.textContent = `${index + 1}. ${player.username} (${player.id})`;
