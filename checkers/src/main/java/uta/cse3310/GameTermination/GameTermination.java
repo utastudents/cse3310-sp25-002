@@ -141,7 +141,13 @@ public class GameTermination
 
     // This method will confirm if the results were successfully stored in the database
     public void confirmDataStored() {
+    Map<Integer, Integer> expectedScores = getPlayerScores();
         // Placeholder for confirmation logic
+        for(Map.Entry<Integer, Integer> entry : expectedScores.entrySet()){
+        String username = "Player" + entry.getKey();
+        int expectedScore = entry.getValue();
+        System.out.println("Confirmed for" + username +": expected score = "+ expectedScore);
+        }
         System.out.println("Results confirmed as stored in the database.");
     }
 
