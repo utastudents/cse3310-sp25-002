@@ -55,22 +55,42 @@ public class rules
 
 
     public static boolean isCapture(Move move, Board board) {
-        Square start = move.getStart();
-        Square dest = move.getDest();
+        Square startInput = move.getStart();
+        Square destInput = move.getDest();
 
+        if (startInput == null || destInput == null || board == null) {
+            System.err.println("[rules.isCapture] ERROR: Null input move details or board.");
+            return false;
+        }
 
-        int rowDiff = Math.abs(dest.getRow() - start.getRow());
-        int colDiff = Math.abs(dest.getCol() - start.getCol());
+        Square boardStartSquare = board.getSquare(startInput.getRow(), startInput.getCol());
+
+        if (boardStartSquare == null || !boardStartSquare.hasPiece() || boardStartSquare.getColor() == null) {
+            System.out.println("[rules.isCapture] DEBUG: No piece found on board at start coords ("+startInput.getRow()+","+startInput.getCol()+") or piece has no color.");
+            return false;
+        }
+        Boolean movingPieceColor = boardStartSquare.getColor();
+
+        int rowDiff = Math.abs(destInput.getRow() - startInput.getRow());
+        int colDiff = Math.abs(destInput.getCol() - startInput.getCol());
 
         if (rowDiff == 2 && colDiff == 2) {
-            int middleRow = (start.getRow() + dest.getRow()) / 2;
-            int middleCol = (start.getCol() + dest.getCol()) / 2;
+            int middleRow = (startInput.getRow() + destInput.getRow()) / 2;
+            int middleCol = (startInput.getCol() + destInput.getCol()) / 2;
 
-            if (!inBounds(middleRow, middleCol)) return false;
+            if (!inBounds(middleRow, middleCol)) {
+                System.out.println("[rules.isCapture] DEBUG: Middle square ("+middleRow+","+middleCol+") out of bounds.");
+                return false;
+            }
 
             Square middleSquare = board.getSquare(middleRow, middleCol);
 
-            boolean logic = middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != start.getColor();
+            boolean logic = middleSquare != null && middleSquare.hasPiece() && middleSquare.getColor() != null && middleSquare.getColor() != movingPieceColor;
+            if (!logic) {
+                System.out.println("[rules.isCapture] DEBUG: Jump detected, but middle square ("+middleRow+","+middleCol+") check failed. HasPiece=" + (middleSquare != null && middleSquare.hasPiece()) + ", MiddleColor=" + (middleSquare != null && middleSquare.getColor() != null ? middleSquare.getColor() : "null") + ", MovingColor=" + movingPieceColor);
+            } else {
+                System.out.println("[rules.isCapture] DEBUG: Valid capture condition met over ("+middleRow+","+middleCol+").");
+            }
             return logic;
         }
         return false;
