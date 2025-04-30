@@ -28,7 +28,7 @@ public class BotII extends Bot {
     /**
      * Handles the first move logic for BotII.
      * It checks all pieces in the front row and tries to move them diagonally if
-     * possible.
+     * possible. 
      *
      * @param board the current game board
      * @return a single randomly chosen move if valid ones exist, null otherwise
