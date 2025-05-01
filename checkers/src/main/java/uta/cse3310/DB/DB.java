@@ -37,7 +37,7 @@ public class DB
                    + ");";
 
         try (Connection conn = SQLiteConnector.connect();
-             Statement stmt = conn.createStatement()) {
+             Statement stmt = connectiom.createStatement()) {
             stmt.execute(sql);
         } catch (SQLException e) {
             System.err.println("Error creating GAMES table: " + e.getMessage());
