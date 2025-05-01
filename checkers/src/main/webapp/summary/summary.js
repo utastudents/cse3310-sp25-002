@@ -53,15 +53,15 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     try {
-      const res = await fetch(/api/user/${encodeURIComponent(currentUser)});
+      const res = await fetch(`/api/user/${encodeURIComponent(currentUser)}`);
       if (!res.ok) throw new Error(res.statusText);
       const u = await res.json(); 
-      statsEl.innerHTML = 
+      statsEl.innerHTML = `
         <p>Name: ${u.username}</p>
         <p>Wins: ${u.wins}</p>
         <p>Losses: ${u.losses}</p>
-        <p>Time Played: ${u.timePlayed}</p>
-      ;
+        <p>Rank: ${u.rank || 'N/A'}</p>
+      `;
     } catch (err) {
       console.error('loadPlayerStats()', err);
       statsEl.innerText = 'Stats unavailable';
@@ -69,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   let leaderboard = [];
+
   async function loadLeaderboard() {
     try {
       const res = await fetch('/api/leaderboard');
@@ -88,17 +89,18 @@ document.addEventListener('DOMContentLoaded', () => {
       listEl.innerHTML = '<li class="error">Failed to load leaderboard</li>';
     }
   }
+
   function renderList(arr) {
     listEl.innerHTML = '';
     arr.forEach((p, i) => {
       const li = document.createElement('li');
-      li.innerHTML = 
+      li.innerHTML = `
         <p class="playerRank">${i + 1}</p>
         <p class="playerName">${p.username}</p>
         <p class="playerWin">${p.wins}</p>
         <p class="playerLoss">${p.losses}</p>
-        <p class="playerTime">${p.timePlayed}</p>
-      ;
+        <p class="playerTime">—</p> <!-- You can replace this with actual time if available -->
+      `;
       listEl.appendChild(li);
     });
   }
@@ -119,3 +121,4 @@ document.addEventListener('DOMContentLoaded', () => {
   loadPlayerStats();
   loadLeaderboard();
 });
+
