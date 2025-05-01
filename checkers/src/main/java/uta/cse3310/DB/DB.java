@@ -36,8 +36,8 @@ public class DB
                    + " timestamp DATETIME DEFAULT CURRENT_TIMESTAMP\n"
                    + ");";
 
-        try (Connection conn = SQLiteConnector.connect();
-             Statement stmt = connectiom.createStatement()) {
+        try (Connection connection = SQLiteConnector.connect();
+             Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
         } catch (SQLException e) {
             System.err.println("Error creating GAMES table: " + e.getMessage());
