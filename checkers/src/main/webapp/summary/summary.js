@@ -39,7 +39,7 @@
 //       list.appendChild(li);
 //     });
 //   }
-  
+  /*
 document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.querySelector('.search');
   const listEl = document.querySelector('.player-list');
@@ -122,3 +122,4 @@ document.addEventListener('DOMContentLoaded', () => {
   loadLeaderboard();
 });
 
+*/
