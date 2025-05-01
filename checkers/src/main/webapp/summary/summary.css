@@ -41,7 +41,7 @@ body {
   color: #e0e0e0;
 }
 
-.personal1 {
+.personal {
   background-color: #0a0a0a;
   color: white;
   width: 60%;
@@ -52,7 +52,7 @@ body {
   margin-bottom: 20px;
 }
 
-.header1{
+.header{
   padding: 5px;
   max-height: 40px;
   font-size: 20px;
@@ -79,7 +79,7 @@ body {
   padding-right: 40px;
 }
 
-.mainLB1 {
+.mainLB {
   background-color: #0a0a0a;
   width: 60%;
   margin: 0 auto;
@@ -89,13 +89,13 @@ body {
   overflow-y: auto;
 }
 
-.player-list1 {
+.player-list {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.player-list1 li {
+.player-list li {
   background-color: #d3d3d3;
   color: black;
   margin: 10px 0;
