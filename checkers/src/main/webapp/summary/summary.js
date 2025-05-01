@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function loadPlayerStats() {
     if (!currentUser) {
-      statsEl.innerText = 'Not logged in';
+    //  statsEl.innerText = 'Not logged in';
       return;
     }
     try {
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     } catch (err) {
       console.error('loadPlayerStats()', err);
-      statsEl.innerText = 'Stats unavailable';
+    //  statsEl.innerText = 'Stats unavailable';
     }
   }
 
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderList(leaderboard);
     } catch (err) {
       console.error('loadLeaderboard()', err);
-      listEl.innerHTML = '<li class="error">Failed to load leaderboard</li>';
+     // listEl.innerHTML = '<li class="error">Failed to load leaderboard</li>';
     }
   }
 
