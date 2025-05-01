@@ -14,7 +14,7 @@ public class DB
 	{
 		String createStatement = "CREATE TABLE IF NOT EXISTS USERS (\n"
                 + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                + " username varchar(30) NOT NULL,\n"
+                + " username varchar(30) NOT NULL UNIQUE,\n"
                 + "rank INTEGER NOT NULL DEFAULT 0)"; //here the schema is to be established and create statement 
 		
 		try(Connection connection = SQLiteConnector.connect();
@@ -137,8 +137,8 @@ public class DB
             System.err.println("Error recording game: " + e.getMessage());
         }
     }
-	public static List<String> getLeaderboard() {
-    List<String> leaderboard = new ArrayList<>();
+	public static List<PlayerStat> getLeaderboard() {
+    List<PlayerStat> leaderboard = new ArrayList<>();
     
     String sql = "SELECT username, " +
                  "SUM(CASE WHEN username = winner THEN 1 ELSE 0 END) AS wins, " +
@@ -152,24 +152,34 @@ public class DB
                  "ORDER BY wins DESC, losses ASC";
 
     try (Connection connection = SQLiteConnector.connect();
-         PreparedStatement stmt = connection.prepareStatement(sql);
+         PreparedStatement stmt = conn.prepareStatement(sql);
          ResultSet rs = stmt.executeQuery()) {
 
         while (rs.next()) {
-            String username = rs.getString("username");
-            int wins = rs.getInt("wins");
-            int losses = rs.getInt("losses");
-
-            String entry = username + ": Wins = " + wins + ", Losses = " + losses;
-            leaderboard.add(entry);
+		PlayerStat stat = new PlayerStat();
+            stat.username = rs.getString("username");
+            stat.wins = rs.getInt("wins");
+            stat.losses = rs.getInt("losses");
+            leaderboard.add(stat);
         }
 
     } catch (SQLException e) {
-        System.err.println("Error retrieving leaderboard from GAMES table: " + e.getMessage());
+        System.err.println("Error retrieving leaderboard: " + e.getMessage());
     }
 
     return leaderboard;
 }
+	public static class PlayerStat {
+        public String username;
+        public int wins;
+        public int losses;
 
+        @Override
+        public String toString() {
+            return username + ": Wins = " + wins + ", Losses = " + losses;
+        }
+    }
 }
+
+
 
