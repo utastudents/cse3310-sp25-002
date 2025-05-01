@@ -152,7 +152,7 @@ public class DB
                  "ORDER BY wins DESC, losses ASC";
 
     try (Connection connection = SQLiteConnector.connect();
-         PreparedStatement stmt = conn.prepareStatement(sql);
+         PreparedStatement stmt = connection.prepareStatement(sql);
          ResultSet rs = stmt.executeQuery()) {
 
         while (rs.next()) {
