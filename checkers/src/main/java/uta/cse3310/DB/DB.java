@@ -27,6 +27,22 @@ public class DB
 			System.err.println("Error creating table: " + e.getMessage());
 		}
 	}
+	public static void createGamesTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS GAMES (\n"
+                   + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+                   + " player1 TEXT NOT NULL,\n"
+                   + " player2 TEXT NOT NULL,\n"
+                   + " winner TEXT,\n"
+                   + " timestamp DATETIME DEFAULT CURRENT_TIMESTAMP\n"
+                   + ");";
+
+        try (Connection conn = SQLiteConnector.connect();
+             Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.err.println("Error creating GAMES table: " + e.getMessage());
+        }
+    }
 
 	public static int insertUser(String username)				//assumes username is already validated 
 	{
@@ -58,30 +74,6 @@ public class DB
 	}
 	return generatedId;
 	}
-
-	public static List<String> getLeaderboard()
-	{
-		List<String> leaderboard = new ArrayList<>();
-		String selectStatement = "SELECT username, rank FROM USERS ORDER BY rank DESC";
-
-		try (Connection connection = SQLiteConnector.connect();
-			 Statement stmt = connection.createStatement();
-			 ResultSet rs = stmt.executeQuery(selectStatement))
-		{
-				while(rs.next())
-				{
-					String entry = rs.getString("username") + ": " + rs.getInt("rank"); //here the query is parsed and entered into the List
-					leaderboard.add(entry);
-				}
-		}
-		catch (SQLException e)
-		{
-			System.err.println("Error retrieving Leaderboard: " + e.getMessage());
-		}
-		
-		return leaderboard;
-	}
-
 	public static boolean updatePlayer(String username, int newRank )			
 	{
 		String updatePlayer = "UPDATE USERS SET rank = ? WHERE username = ?";  	
@@ -107,8 +99,7 @@ public class DB
 
 	return success;
 }
-
-public static String getPlayerInfo(String username){
+	public static String getPlayerInfo(String username){
 	String query ="SELECT id, username, rank FROM USERS WHERE username= ?";
 
 	try(Connection connection=SQLiteConnector.connect();
@@ -130,5 +121,55 @@ public static String getPlayerInfo(String username){
 	}
 	return "Player not found";
 }
+	
+ public static void recordGame(String player1, String player2, String winner) {
+        String sql = "INSERT INTO GAMES (player1, player2, winner) VALUES (?, ?, ?)";
+
+        try (Connection conn = SQLiteConnector.connect();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, player1);
+            stmt.setString(2, player2);
+            stmt.setString(3, winner); // Use "draw" if needed
+            stmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.err.println("Error recording game: " + e.getMessage());
+        }
+    }
+	public static List<String> getLeaderboard() {
+    List<String> leaderboard = new ArrayList<>();
+    
+    String sql = "SELECT username, " +
+                 "SUM(CASE WHEN username = winner THEN 1 ELSE 0 END) AS wins, " +
+                 "SUM(CASE WHEN username != winner AND winner != 'draw' THEN 1 ELSE 0 END) AS losses " +
+                 "FROM ( " +
+                 "  SELECT player1 AS username, winner FROM GAMES " +
+                 "  UNION ALL " +
+                 "  SELECT player2 AS username, winner FROM GAMES " +
+                 ") " +
+                 "GROUP BY username " +
+                 "ORDER BY wins DESC, losses ASC";
+
+    try (Connection connection = SQLiteConnector.connect();
+         PreparedStatement stmt = connection.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
+
+        while (rs.next()) {
+            String username = rs.getString("username");
+            int wins = rs.getInt("wins");
+            int losses = rs.getInt("losses");
+
+            String entry = username + ": Wins = " + wins + ", Losses = " + losses;
+            leaderboard.add(entry);
+        }
+
+    } catch (SQLException e) {
+        System.err.println("Error retrieving leaderboard from GAMES table: " + e.getMessage());
+    }
+
+    return leaderboard;
+}
+
 }
 
