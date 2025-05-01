@@ -44,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const searchInput = document.querySelector('.search');
   const listEl = document.querySelector('.player-list');
   const statsEl = document.getElementById('playerStats');
-
   const currentUser = sessionStorage.getItem('username');
 
   async function loadPlayerStats() {
@@ -55,49 +54,52 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const res = await fetch(`/api/user/${encodeURIComponent(currentUser)}`);
       if (!res.ok) throw new Error(res.statusText);
-      const u = await res.json(); 
+      const user = await res.json(); 
+      
       statsEl.innerHTML = `
-        <p>Name: ${u.username}</p>
-        <p>Wins: ${u.wins}</p>
-        <p>Losses: ${u.losses}</p>
-        <p>Time Played: ${u.timePlayed}</p>
+        <p>Name: ${user.username}</p>
+        <p>Wins: ${user.wins}</p>
+        <p>Losses: ${user.losses}</p>
+        <p>Rank:${user.rank || 'N/A'}</p>
       `;
+      
     } catch (err) {
-      console.error('loadPlayerStats()', err);
-      statsEl.innerText = 'Stats unavailable';
+      console.error('Error loading player stats:', err);
+      statsEl.innerText = 'Error loading stats';
     }
   }
 
   let leaderboard = [];
+  
   async function loadLeaderboard() {
     try {
       const res = await fetch('/api/leaderboard');
       if (!res.ok) throw new Error(res.statusText);
-      const players = await res.json(); 
+      const data = await res.json(); 
 
-      players.sort((a, b) => {
+      data.sort((a, b) => {
         const rA = a.losses === 0 ? a.wins : a.wins / a.losses;
         const rB = b.losses === 0 ? b.wins : b.wins / b.losses;
         return rB - rA;
       });
 
-      leaderboard = players.slice(0, 100);
+      leaderboard = data.slice(0, 100);
       renderList(leaderboard);
     } catch (err) {
-      console.error('loadLeaderboard()', err);
+      console.error('Error loading leaderboard:', err);
       listEl.innerHTML = '<li class="error">Failed to load leaderboard</li>';
     }
   }
-  function renderList(arr) {
+  function renderList(players) {
     listEl.innerHTML = '';
-    arr.forEach((p, i) => {
+    players.forEach((player, i) => {
       const li = document.createElement('li');
       li.innerHTML = `
         <p class="playerRank">${i + 1}</p>
-        <p class="playerName">${p.username}</p>
-        <p class="playerWin">${p.wins}</p>
-        <p class="playerLoss">${p.losses}</p>
-        <p class="playerTime">${p.timePlayed}</p>
+        <p class="playerName">${player.username}</p>
+        <p class="playerWin">${player.wins}</p>
+        <p class="playerLoss">${player.losses}</p>
+        <p class="playerTime">—</p> <!-- Placeholder for time played -->
       `;
       listEl.appendChild(li);
     });
@@ -105,15 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   searchInput.addEventListener('input', () => {
     const q = searchInput.value.trim().toLowerCase();
-    if (!q) {
-      renderList(leaderboard);
-    } else {
-      renderList(
-        leaderboard.filter(p =>
-          p.username.toLowerCase().includes(q)
-        )
-      );
-    }
+     const filtered = leaderboard.filter(p => p.username.toLowerCase().includes(q));
+      renderList(filtered);
   });
 
   loadPlayerStats();
