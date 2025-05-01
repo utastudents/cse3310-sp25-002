@@ -41,7 +41,7 @@ body {
   color: #e0e0e0;
 }
 
-.personal {
+.personal1 {
   background-color: #0a0a0a;
   color: white;
   width: 60%;
@@ -79,7 +79,7 @@ body {
   padding-right: 40px;
 }
 
-.mainLB {
+.mainLB1 {
   background-color: #0a0a0a;
   width: 60%;
   margin: 0 auto;
@@ -89,13 +89,13 @@ body {
   overflow-y: auto;
 }
 
-.player-list {
+.player-list1 {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.player-list li {
+.player-list1 li {
   background-color: #d3d3d3;
   color: black;
   margin: 10px 0;
