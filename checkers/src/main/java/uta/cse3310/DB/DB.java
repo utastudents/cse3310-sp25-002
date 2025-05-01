@@ -8,95 +8,126 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DB {
-
-    // Creates the USERS table with unique usernames and default rank 0
-    public static void createTable() {
-        String createStatement = "CREATE TABLE IF NOT EXISTS USERS (\n"
+public class DB
+{
+	public static void createTable()
+	{
+		String createStatement = "CREATE TABLE IF NOT EXISTS USERS (\n"
                 + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                + " username VARCHAR(30) NOT NULL UNIQUE,\n"
-                + " rank INTEGER NOT NULL DEFAULT 0)";
+                + " username varchar(30) NOT NULL,\n"
+                + "rank INTEGER NOT NULL DEFAULT 0)"; //here the schema is to be established and create statement 
+		
+		try(Connection connection = SQLiteConnector.connect();
+			Statement stmt = connection.createStatement()) 
+		{
+				stmt.execute(createStatement);
+				insertUser("Bot1");
+				insertUser("Bot2");
+			} catch(SQLException e) {
+			System.err.println("Error creating table: " + e.getMessage());
+		}
+	}
 
-        try (Connection connection = SQLiteConnector.connect();
-             Statement stmt = connection.createStatement()) {
-            stmt.execute(createStatement);
-            insertUser("Bot1");
-            insertUser("Bot2");
-        } catch (SQLException e) {
-            System.err.println("Error creating table: " + e.getMessage());
-        }
-    }
+	public static int insertUser(String username)				//assumes username is already validated 
+	{
+		String insertStatement = "INSERT INTO USERS (username) Values(?)";
+		int generatedId= -1;
 
-    // Inserts a new user and returns the auto-generated ID
-    public static int insertUser(String username) {
-        String insertStatement = "INSERT INTO USERS (username) VALUES(?)";
-        int generatedId = -1;
+		if (username == null || username.trim().isEmpty()) {
+			System.err.println("Username is null or empty");
+			return -1;
+	}
+	try (Connection connection = SQLiteConnector.connect();
+	     PreparedStatement pstmt = connection.prepareStatement(insertStatement, Statement.RETURN_GENERATED_KEYS)) {
 
-        if (username == null || username.trim().isEmpty()) {
-            System.err.println("Username is null or empty");
-            return -1;
-        }
+		pstmt.setString(1, username.trim());
+		pstmt.executeUpdate();
 
-        try (Connection connection = SQLiteConnector.connect();
-             PreparedStatement pstmt = connection.prepareStatement(insertStatement, Statement.RETURN_GENERATED_KEYS)) {
+		try(ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+			if (generatedKeys.next()) {
+				generatedId = generatedKeys.getInt(1);
+			}
+		}
+	} catch (SQLException e) {
+		if (e.getMessage().toLowerCase().contains("unique") || e.getMessage().toLowerCase().contains("constraint")) {
+		System.err.println("Username unavailable: "+username);
+		return -2; //-2 means username is already taken
+		} else{
+			System.err.println("Error inserting user: "+ e.getMessage());
+		}
+	}
+	return generatedId;
+	}
 
-            pstmt.setString(1, username.trim());
-            pstmt.executeUpdate();
+	public static List<String> getLeaderboard()
+	{
+		List<String> leaderboard = new ArrayList<>();
+		String selectStatement = "SELECT username, rank FROM USERS ORDER BY rank DESC";
 
-            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    generatedId = generatedKeys.getInt(1); // Get generated ID
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error inserting user: " + e.getMessage());
-        }
+		try (Connection connection = SQLiteConnector.connect();
+			 Statement stmt = connection.createStatement();
+			 ResultSet rs = stmt.executeQuery(selectStatement))
+		{
+				while(rs.next())
+				{
+					String entry = rs.getString("username") + ": " + rs.getInt("rank"); //here the query is parsed and entered into the List
+					leaderboard.add(entry);
+				}
+		}
+		catch (SQLException e)
+		{
+			System.err.println("Error retrieving Leaderboard: " + e.getMessage());
+		}
+		
+		return leaderboard;
+	}
 
-        return generatedId;
-    }
+	public static boolean updatePlayer(String username, int newRank )			
+	{
+		String updatePlayer = "UPDATE USERS SET rank = ? WHERE username = ?";  	
+		boolean success = false;
 
-    // Retrieves the leaderboard sorted by rank descending
-    public static List<String> getLeaderboard() {
-        List<String> leaderboard = new ArrayList<>();
-        String selectStatement = "SELECT username, rank FROM USERS ORDER BY rank DESC";
+		if (username == null || username.trim().isEmpty()) {
+			System.err.println("Username is null or empty");
+			return false;
+		}
+		try(Connection connection = SQLiteConnector.connect();
+			PreparedStatement pstmt = connection.prepareStatement("UPDATE USERS SET rank=? WHERE username = ?")) 
+		{
+				pstmt.setInt(1, newRank); 			//sets the newRank into the placeholder
+				pstmt.setString(2, username.trim());	
+				int rowsUpdated = pstmt.executeUpdate();
+				success = rowsUpdated > 0;
+			
+		}
+		catch(SQLException e)
+		{
+			System.err.println("Error updating user: " + e.getMessage());
+		}
 
-        try (Connection connection = SQLiteConnector.connect();
-             Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(selectStatement)) {
+	return success;
+}
 
-            while (rs.next()) {
-                String entry = rs.getString("username") + ": " + rs.getInt("rank");
-                leaderboard.add(entry);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error retrieving leaderboard: " + e.getMessage());
-        }
+public static String getPlayerInfo(String username){
+	String query ="SELECT id, username, rank FROM USERS WHERE username= ?";
 
-        return leaderboard;
-    }
+	try(Connection connection=SQLiteConnector.connect();
+	PreparedStatement pstmt = connection.prepareStatement(query)) {
 
-    // Updates a user's rank based on their username
-    public static boolean updatePlayer(String username, int newRank) {
-        String updatePlayer = "UPDATE USERS SET rank = ? WHERE username = ?";
-        boolean success = false;
+		pstmt.setString(1,username.trim());
+		try (ResultSet rs = pstmt.executeQuery()) {
+			if (rs.next()) {
+				int id = rs.getInt("id");
+				String name = rs.getString("username");
+				int rank= rs.getInt("rank");
 
-        if (username == null || username.trim().isEmpty()) {
-            System.err.println("Username is null or empty");
-            return false;
-        }
+				return "Player Info -> ID: " + id + ", Username: " + name + ", Rank:  " + rank;
 
-        try (Connection connection = SQLiteConnector.connect();
-             PreparedStatement pstmt = connection.prepareStatement(updatePlayer)) {
-
-            pstmt.setInt(1, newRank);
-            pstmt.setString(2, username.trim());
-            int rowsUpdated = pstmt.executeUpdate();
-            success = rowsUpdated > 0;
-
-        } catch (SQLException e) {
-            System.err.println("Error updating user: " + e.getMessage());
-        }
-
-        return success;
-    }
+			}
+		}
+	} catch (SQLException e) {
+		System.err.println("Error fetching player info: " + e.getMessage());
+	}
+	return "Player not found";
+}
 }
