@@ -1,8 +1,9 @@
 body {
-  background-color: #3a3a3a;
   margin: 0;
-  font-family: sans-serif;
-  color: white;
+  background: url('Checkers3.png') no-repeat center center fixed;
+  background-size: cover;
+  background-color: burlywood;
+  color: #000;
 }
 
 .title {
