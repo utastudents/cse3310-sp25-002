@@ -17,12 +17,13 @@ body {
   position: absolute;
   top: 20px;
   left: 20px;
-  background-color: #1a0d0d;
-  color: white;
+  background-color: #975930;
+  color: #fff;
   border: none;
   padding: 10px 15px;
-  border-radius: 10px;
+  border-radius: 5px;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .search {
