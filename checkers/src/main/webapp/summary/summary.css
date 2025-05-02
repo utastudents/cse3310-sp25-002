@@ -52,15 +52,13 @@ body {
 }
 
 
-.header{
+.header {
   padding: 5px;
-  max-height: 40px;
   font-size: 20px;
   display: flex;
-  justify-content:space-between;
-  width: 50%;
-  margin: auto;
-  
+  justify-content: space-between;
+  width: 60%;
+  margin: 0 auto;
 }
 
 .hRank{
