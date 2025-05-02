@@ -29,17 +29,16 @@ body {
 .search {
   display: block;
   margin: 40px auto 20px auto;
-  padding: 15px;
+  padding: 12px;
   font-size: 18px;
-  border: none;
-  border-radius: 25px;
   width: 60%;
-  background-color: #5a1414;
-  color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+  color: #000;
 }
-
 .search::placeholder {
-  color: #e0e0e0;
+  color: #888;
 }
 
 .personal {
