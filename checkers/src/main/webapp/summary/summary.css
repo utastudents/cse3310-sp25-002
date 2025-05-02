@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background: url('Checkers3.png') no-repeat center center fixed;
+  background: url('../login/Checkers3.png') no-repeat center center fixed;
   background-size: cover;
   background-color: burlywood;
   color: #000;
